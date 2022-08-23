@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
+    <string name="facebook_app_id">425200889605289</string>
+    <string name="fb_login_protocol_scheme">fb425200889605289</string>
+
+    <string name="facebook_client_token">be5791110e46a23539b7625b09d3c16b</string>
+
 </resources>
