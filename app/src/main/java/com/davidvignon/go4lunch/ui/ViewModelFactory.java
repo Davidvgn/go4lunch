@@ -1,18 +1,17 @@
-package com.davidvignon.go4lunch.view;
+package com.davidvignon.go4lunch.ui;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.view.dispatcher.DispatcherViewModel;
+import com.davidvignon.go4lunch.ui.dispatcher.DispatcherViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
-    private static ViewModelFactory factory;
+    private static volatile ViewModelFactory factory;
 
-    private FirebaseAuth firebaseAuth;
-
+    private final FirebaseAuth firebaseAuth;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -25,6 +24,11 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         return factory;
     }
 
+    public ViewModelFactory() {
+        firebaseAuth = FirebaseAuth.getInstance();
+    }
+
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {

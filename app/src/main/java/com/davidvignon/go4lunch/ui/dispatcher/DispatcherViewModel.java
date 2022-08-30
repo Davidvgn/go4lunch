@@ -1,9 +1,9 @@
-package com.davidvignon.go4lunch.view.dispatcher;
+package com.davidvignon.go4lunch.ui.dispatcher;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.view.utils.SingleLiveEvent;
+import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class DispatcherViewModel extends ViewModel {

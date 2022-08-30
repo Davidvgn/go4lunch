@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.view.dispatcher;
+package com.davidvignon.go4lunch.ui.dispatcher;
 
 public enum DispatcherViewAction {
     GO_TO_CONNECT_SCREEN,

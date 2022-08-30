@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.view.utils;
+package com.davidvignon.go4lunch.ui.utils;
 
 import android.util.Log;
 
