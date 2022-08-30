@@ -4,5 +4,9 @@
     <string name="fb_login_protocol_scheme">fb425200889605289</string>
 
     <string name="facebook_client_token">be5791110e46a23539b7625b09d3c16b</string>
+    <string name="auth_text">Find a nice restaurant and invite your co-workers for lunch!</string>
 
+    <string name="map">Map View</string>
+    <string name="list">List View</string>
+    <string name="workmates">Workmates</string>
 </resources>
