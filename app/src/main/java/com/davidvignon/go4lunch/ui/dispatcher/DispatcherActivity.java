@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.view.dispatcher;
+package com.davidvignon.go4lunch.ui.dispatcher;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,10 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.view.MainActivity;
-import com.davidvignon.go4lunch.OAuthActivity;
-import com.davidvignon.go4lunch.view.utils.SingleLiveEvent;
+import com.davidvignon.go4lunch.ui.main.MainActivity;
+import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 
-import com.davidvignon.go4lunch.view.ViewModelFactory;
+import com.davidvignon.go4lunch.ui.ViewModelFactory;
 
 public class DispatcherActivity extends AppCompatActivity {
 
@@ -25,7 +24,7 @@ public class DispatcherActivity extends AppCompatActivity {
         viewModel.getViewActionSingleLiveEvent().observe(this, dispatcherViewAction -> {
             switch (dispatcherViewAction) {
                 case GO_TO_CONNECT_SCREEN:
-                    startActivity(new Intent(DispatcherActivity.this, OAuthActivity.class));
+                    startActivity(new Intent(DispatcherActivity.this, MainActivity.class));
                     finish();
                     break;
                 case GO_TO_MAIN_SCREEN:

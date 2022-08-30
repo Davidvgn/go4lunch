@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/o_auth_background"
-    tools:context=".OAuthActivity">
+    tools:context=".ui.ui.oauth.OAuthActivity">
     
     <TextView
         android:id="@+id/auth_tv_title"
