@@ -4,8 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.davidvignon.go4lunch"
     >
+    <queries>
+        <package android:name="com.facebook.katana" />
+    </queries>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove"
@@ -28,6 +34,15 @@
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token"
             />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDaUksbxS0FSRi9yMg_5xw5-wgKwoXQ-Rw"
+            />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
 
         <activity
             android:name=".ui.dispatcher.DispatcherActivity"
@@ -60,5 +75,9 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 </manifest>

@@ -24,7 +24,7 @@ public class DispatcherActivity extends AppCompatActivity {
         viewModel.getViewActionSingleLiveEvent().observe(this, dispatcherViewAction -> {
             switch (dispatcherViewAction) {
                 case GO_TO_CONNECT_SCREEN:
-                    startActivity(new Intent(DispatcherActivity.this, MainActivity.class));
+                    startActivity(new Intent(DispatcherActivity.this, OAuthActivity.class));
                     finish();
                     break;
                 case GO_TO_MAIN_SCREEN:
