@@ -4,18 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.davidvignon.go4lunch"
     >
-    <queries>
-        <package android:name="com.facebook.katana" />
-    </queries>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="com.google.android.gms.permission.AD_ID"
-        tools:node="remove"
-        />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name=".MainApplication"
@@ -24,7 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Go4Lunch"
+        android:theme="@style/Theme.Go4Lunch.NoActionBar"
         >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -37,7 +29,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDaUksbxS0FSRi9yMg_5xw5-wgKwoXQ-Rw"
+            android:value="${MAPS_API_KEY}"
             />
         <meta-data
             android:name="com.google.android.gms.version"
