@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.main;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
@@ -23,21 +23,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MainActivityBinding binding;
-    public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
+    MainActivityBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = MainActivityBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
+
         setSupportActionBar(binding.mainToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         if (savedInstanceState == null) {
@@ -52,24 +53,24 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
                 switch (item.getItemId()) {
                     case (R.id.bottom_nav_map):
-                        getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_FrameLayout_fragment_container, MapFragment.newInstance(), null)
-                            .commitNow();
+                        displayFragment(MapFragment.newInstance());
                         break;
                     case (R.id.bottom_nav_list):
-                        getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_FrameLayout_fragment_container, RestaurantsFragment.newInstance(), null)
-                            .commitNow();
+                        displayFragment(RestaurantsFragment.newInstance());
                         break;
                     case (R.id.bottom_nav_workmates):
-                        getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_FrameLayout_fragment_container, WorkmatesFragment.newInstance(), null)
-                            .commitNow();
+                        displayFragment(WorkmatesFragment.newInstance());
                         break;
                 }
                 return true;
             }
         });
+    }
+
+    private void displayFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+            .replace(R.id.main_FrameLayout_fragment_container, fragment, null)
+            .commitNow();
     }
 
     @Override
@@ -97,5 +98,6 @@ public class MainActivity extends AppCompatActivity {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        return super.onOptionsItemSelected(item);    }
+        return super.onOptionsItemSelected(item);
+    }
 }
