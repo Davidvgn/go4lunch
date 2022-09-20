@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.map;
 
-import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_GREEN;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE;
 
 import android.os.Bundle;
@@ -9,10 +8,9 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.davidvignon.go4lunch.data.MapRepository;
-import com.davidvignon.go4lunch.data.NearbySearchResponse;
-import com.davidvignon.go4lunch.data.PlacesApi;
-import com.davidvignon.go4lunch.data.ResultsItem;
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
+import com.davidvignon.go4lunch.data.google_places.PlacesApi;
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,7 +35,8 @@ public class MapFragment extends SupportMapFragment {
     LatLng latLng = (new LatLng(45.7282, 4.8307));
 
     private static final Gson gson = new GsonBuilder().setLenient().create();
-    private static final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private static final OkHttpClient httpClient = new OkHttpClient.Builder()
+        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
     private static final String BASE_URL = "https://maps.googleapis.com/";
     private static final Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -62,10 +62,6 @@ public class MapFragment extends SupportMapFragment {
                         .title("Ninka Lyon Gerland")
                         .alpha(0.8f)
                 );
-                if (marker != null) {
-                    marker.showInfoWindow();
-                }
-
 
                 PlacesApi placesApi = retrofit.create(PlacesApi.class);
 //
@@ -78,7 +74,7 @@ public class MapFragment extends SupportMapFragment {
                     public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
                         NearbySearchResponse nearbySearchResponse = response.body();
 //
-                        for (ResultsItem result : nearbySearchResponse.getResults()) {
+                        for (RestaurantResponse result : nearbySearchResponse.getResults()) {
                             Marker responseMarker = googleMap.addMarker(
                                 new MarkerOptions()
                                     .position(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))
@@ -86,9 +82,6 @@ public class MapFragment extends SupportMapFragment {
                                     .alpha(0.8f)
                                     .icon(BitmapDescriptorFactory.defaultMarker(HUE_ROSE))
                             );
-                            if (responseMarker != null) {
-                                responseMarker.showInfoWindow();
-                            }
                         }
                     }
 

@@ -1,7 +1,8 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-import com.google.gson.annotations.SerializedName;
 
 public class NearbySearchResponse {
 
@@ -12,24 +13,24 @@ public class NearbySearchResponse {
     private List<Object> htmlAttributions;
 
     @SerializedName("results")
-    private List<ResultsItem> results;
+    private List<RestaurantResponse> results;
 
     @SerializedName("status")
     private String status;
 
-    public String getNextPageToken(){
+    public String getNextPageToken() {
         return nextPageToken;
     }
 
-    public List<Object> getHtmlAttributions(){
+    public List<Object> getHtmlAttributions() {
         return htmlAttributions;
     }
 
-    public List<ResultsItem> getResults(){
+    public List<RestaurantResponse> getResults() {
         return results;
     }
 
-    public String getStatus(){
+    public String getStatus() {
         return status;
     }
 

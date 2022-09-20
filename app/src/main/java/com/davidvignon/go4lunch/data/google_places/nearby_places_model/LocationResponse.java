@@ -1,8 +1,8 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Southwest{
+public class LocationResponse {
 
     @SerializedName("lng")
     private double lng;
@@ -10,18 +10,18 @@ public class Southwest{
     @SerializedName("lat")
     private double lat;
 
-    public double getLng(){
+    public double getLng() {
         return lng;
     }
 
-    public double getLat(){
+    public double getLat() {
         return lat;
     }
 
     @Override
     public String toString() {
         return
-            "Southwest{" +
+            "Location{" +
                 "lng = '" + lng + '\'' +
                 ",lat = '" + lat + '\'' +
                 "}";

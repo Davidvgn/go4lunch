@@ -1,4 +1,6 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places;
+
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -11,6 +13,6 @@ public interface PlacesApi {
         @Query("location") String location,
         @Query("radius") String radius,
         @Query("type") String type,
-        @Query("apiKey") String apiKey
+        @Query("key") String key
     );
 }

@@ -1,9 +1,10 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class ResultsItem{
+import java.util.List;
+
+public class RestaurantResponse {
 
     @SerializedName("types")
     private List<String> types;
@@ -21,7 +22,7 @@ public class ResultsItem{
     private String iconBackgroundColor;
 
     @SerializedName("photos")
-    private List<PhotosItem> photos;
+    private List<PhotosItemResponse> photos;
 
     @SerializedName("reference")
     private String reference;
@@ -39,10 +40,10 @@ public class ResultsItem{
     private String name;
 
     @SerializedName("opening_hours")
-    private OpeningHours openingHours;
+    private OpeningHoursResponse openingHoursResponse;
 
     @SerializedName("geometry")
-    private Geometry geometry;
+    private GeometryResponse geometryResponse;
 
     @SerializedName("icon_mask_base_uri")
     private String iconMaskBaseUri;
@@ -51,7 +52,7 @@ public class ResultsItem{
     private String vicinity;
 
     @SerializedName("plus_code")
-    private PlusCode plusCode;
+    private PlusCodeResponse plusCodeResponse;
 
     @SerializedName("place_id")
     private String placeId;
@@ -59,75 +60,75 @@ public class ResultsItem{
     @SerializedName("permanently_closed")
     private boolean permanentlyClosed;
 
-    public List<String> getTypes(){
+    public List<String> getTypes() {
         return types;
     }
 
-    public String getBusinessStatus(){
+    public String getBusinessStatus() {
         return businessStatus;
     }
 
-    public String getIcon(){
+    public String getIcon() {
         return icon;
     }
 
-    public double getRating(){
+    public double getRating() {
         return rating;
     }
 
-    public String getIconBackgroundColor(){
+    public String getIconBackgroundColor() {
         return iconBackgroundColor;
     }
 
-    public List<PhotosItem> getPhotos(){
+    public List<PhotosItemResponse> getPhotos() {
         return photos;
     }
 
-    public String getReference(){
+    public String getReference() {
         return reference;
     }
 
-    public int getUserRatingsTotal(){
+    public int getUserRatingsTotal() {
         return userRatingsTotal;
     }
 
-    public int getPriceLevel(){
+    public int getPriceLevel() {
         return priceLevel;
     }
 
-    public String getScope(){
+    public String getScope() {
         return scope;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public OpeningHours getOpeningHours(){
-        return openingHours;
+    public OpeningHoursResponse getOpeningHours() {
+        return openingHoursResponse;
     }
 
-    public Geometry getGeometry(){
-        return geometry;
+    public GeometryResponse getGeometry() {
+        return geometryResponse;
     }
 
-    public String getIconMaskBaseUri(){
+    public String getIconMaskBaseUri() {
         return iconMaskBaseUri;
     }
 
-    public String getVicinity(){
+    public String getVicinity() {
         return vicinity;
     }
 
-    public PlusCode getPlusCode(){
-        return plusCode;
+    public PlusCodeResponse getPlusCode() {
+        return plusCodeResponse;
     }
 
-    public String getPlaceId(){
+    public String getPlaceId() {
         return placeId;
     }
 
-    public boolean isPermanentlyClosed(){
+    public boolean isPermanentlyClosed() {
         return permanentlyClosed;
     }
 
@@ -146,11 +147,11 @@ public class ResultsItem{
                 ",price_level = '" + priceLevel + '\'' +
                 ",scope = '" + scope + '\'' +
                 ",name = '" + name + '\'' +
-                ",opening_hours = '" + openingHours + '\'' +
-                ",geometry = '" + geometry + '\'' +
+                ",opening_hours = '" + openingHoursResponse + '\'' +
+                ",geometry = '" + geometryResponse + '\'' +
                 ",icon_mask_base_uri = '" + iconMaskBaseUri + '\'' +
                 ",vicinity = '" + vicinity + '\'' +
-                ",plus_code = '" + plusCode + '\'' +
+                ",plus_code = '" + plusCodeResponse + '\'' +
                 ",place_id = '" + placeId + '\'' +
                 ",permanently_closed = '" + permanentlyClosed + '\'' +
                 "}";

@@ -1,7 +1,9 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE;
 
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -31,7 +33,7 @@ public class MapRepository {
                 public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
                     NearbySearchResponse nearbySearchResponse = response.body();
 //
-                    for (ResultsItem result : nearbySearchResponse.getResults()) {
+                    for (RestaurantResponse result : nearbySearchResponse.getResults()) {
                         googleMap.addMarker(
                             new MarkerOptions()
                                 .position(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))

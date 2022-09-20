@@ -1,5 +1,6 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places;
 
+import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

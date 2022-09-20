@@ -1,8 +1,8 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class PlusCode{
+public class PlusCodeResponse {
 
     @SerializedName("compound_code")
     private String compoundCode;
@@ -10,11 +10,11 @@ public class PlusCode{
     @SerializedName("global_code")
     private String globalCode;
 
-    public String getCompoundCode(){
+    public String getCompoundCode() {
         return compoundCode;
     }
 
-    public String getGlobalCode(){
+    public String getGlobalCode() {
         return globalCode;
     }
 

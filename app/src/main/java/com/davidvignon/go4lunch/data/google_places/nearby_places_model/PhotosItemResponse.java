@@ -1,9 +1,10 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class PhotosItem{
+import java.util.List;
+
+public class PhotosItemResponse {
 
     @SerializedName("photo_reference")
     private String photoReference;
@@ -17,19 +18,19 @@ public class PhotosItem{
     @SerializedName("height")
     private int height;
 
-    public String getPhotoReference(){
+    public String getPhotoReference() {
         return photoReference;
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return width;
     }
 
-    public List<String> getHtmlAttributions(){
+    public List<String> getHtmlAttributions() {
         return htmlAttributions;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
 
