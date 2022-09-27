@@ -14,11 +14,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
+import androidx.arch.core.util.Function;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
+import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.davidvignon.go4lunch.data.google_places.RetrofitService;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
-import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -28,10 +32,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.CancellationToken;
-import com.google.android.gms.tasks.OnTokenCanceledListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,11 +43,7 @@ import retrofit2.Response;
 
 public class MapFragment extends SupportMapFragment {
 
-    //        LatLng latLng = (new LatLng(45.7282, 4.8307));
     FusedLocationProviderClient fusedLocationProviderClient;
-    //        LatLng latLng = (new LatLng(45.5180288, 6.1407232));
-    LatLng latLng;
-    Location currentLocation;
 
     double lat;
     double lon;
@@ -102,64 +102,94 @@ public class MapFragment extends SupportMapFragment {
             @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
-
-                fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, new CancellationToken() {
-                    @NonNull
+                LiveData<Location> locationLiveData = getLocationLiveData();
+                LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(locationLiveData, new Function<Location, LiveData<NearbySearchResponse>>() {
                     @Override
-                    public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
-                        return null;
+                    public LiveData<NearbySearchResponse> apply(Location location) {
+                        return getNearbySearchResponse(location.getLatitude(), location.getLongitude());
                     }
-
-                    @Override
-                    public boolean isCancellationRequested() {
-                        return false;
-                    }
-                }).addOnSuccessListener(location -> {
-                    currentLocation = location;
-                    lat = currentLocation.getLatitude();
-                    lon = currentLocation.getLongitude();
-                    Log.d("Dvgn", "onSuccessListener() called with: location = [" + location + "]");
-                    latLng = new LatLng(lat, lon);
-                    Log.d("Dvgn", "onMapReady() called with: googleMap = [" + lat + "]");
-
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                    googleMap.addMarker(
-                        new MarkerOptions()
-                            .position(latLng)
-                            .title("Ninka Lyon Gerland")
-                            .alpha(0.8f)
-                    );
-
-                    PlacesApi placesApi = RetrofitService.getPlacesApi();
-
-                    placesApi.getNearbySearchResponse(location.getLongitude() + "," + location.getLatitude(),
-                        "1500",
-                        "restaurant",
-                        "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8").enqueue(new Callback<NearbySearchResponse>() {
-
-                        @Override
-                        public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                            NearbySearchResponse nearbySearchResponse = response.body();
-//
-                            for (RestaurantResponse result : nearbySearchResponse.getResults()) {
-                                Marker responseMarker = googleMap.addMarker(
-                                    new MarkerOptions()
-                                        .position(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))
-                                        .title(result.getName())
-                                        .alpha(0.8f)
-                                        .icon(BitmapDescriptorFactory.defaultMarker(HUE_ROSE))
-                                );
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
-
-                        }
-                    });
                 });
+                LiveData<List<MapPoiViewState>> mapPois = Transformations.map(nearbySearchResponseLiveData, new Function<NearbySearchResponse, List<MapPoiViewState>>() {
+                    @Override
+                    public List<MapPoiViewState> apply(NearbySearchResponse response) {
+                        Log.d("Dvgn", "Transformations.map called with: response = [" + response + "]");
+                        List<MapPoiViewState> viewStates = new ArrayList<>();
+                        viewStates.add(new MapPoiViewState(
+                            "aezaeaze",
+                            "Ninkazi Gerland",
+                            45.7281729,
+                            4.8307208
+                        ));
+
+                        for (RestaurantResponse result : response.getResults()) {
+                            // TODO DAVID
+                        }
+
+                        return viewStates;
+                    }
+                });
+
+                mapPois.observe(getViewLifecycleOwner(), new Observer<List<MapPoiViewState>>() {
+                    @Override
+                    public void onChanged(List<MapPoiViewState> pois) {
+                        Log.d("Dvgn", "mapPois.onChanged() called with: pois = [" + pois + "]");
+                        for (MapPoiViewState mapPoiViewState : pois) {
+
+                            googleMap.addMarker(
+                                new MarkerOptions()
+                                    .position(new LatLng(mapPoiViewState.getLatitude(), mapPoiViewState.getLongitude()))
+                                    .title(mapPoiViewState.getTitle())
+                                    .alpha(0.8f)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(HUE_ROSE))
+                            );
+                        }
+                    }
+                });
+
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            }
+        });
+    }
+
+    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
+    private LiveData<Location> getLocationLiveData() {
+        MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
+        Log.d("Dvgn", "getLocationLiveData() called");
+
+        fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener(location -> {
+            Log.d("Dvgn", "getLocationLiveData().addOnSuccessListener() called with location = " + location);
+            locationMutableLiveData.setValue(location);
+        });
+
+        return locationMutableLiveData;
+    }
+
+
+    private LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
+        MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
+        Log.d("Dvgn", "getNearbySearchResponse() called with: latitude = [" + latitude + "], longitude = [" + longitude + "]");
+
+        PlacesApi placesApi = RetrofitService.getPlacesApi();
+
+        placesApi.getNearbySearchResponse(
+            latitude + "," + longitude,
+            "1500",
+            "restaurant",
+            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"
+        ).enqueue(new Callback<NearbySearchResponse>() {
+
+            @Override
+            public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
+                Log.d("Dvgn", "getNearbySearchResponse().onResponse() called with: result number = " + response.body().getResults().size());
+                nearbySearchResponseMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
 
             }
         });
+
+        return nearbySearchResponseMutableLiveData;
     }
 }
