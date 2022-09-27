@@ -6,6 +6,7 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE
 import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -13,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
+import androidx.lifecycle.Transformations;
 
 import com.davidvignon.go4lunch.data.google_places.RetrofitService;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
@@ -56,23 +58,24 @@ public class MapFragment extends SupportMapFragment {
         super.onViewCreated(view, savedInstanceState);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, new CancellationToken() {
-            @NonNull
-            @Override
-            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
-                return null;
-            }
-
-            @Override
-            public boolean isCancellationRequested() {
-                return false;
-            }
-        }).addOnSuccessListener(location -> {
-            currentLocation = location;
-            lat = currentLocation.getLatitude();
-            lon = currentLocation.getLongitude();
-
-        });
+//        fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+//            @NonNull
+//            @Override
+//            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+//                return null;
+//            }
+//
+//            @Override
+//            public boolean isCancellationRequested() {
+//                return false;
+//            }
+//        }).addOnSuccessListener(location -> {
+//            currentLocation = location;
+//            lat = currentLocation.getLatitude();
+//            lon = currentLocation.getLongitude();
+//            Log.d("Dvgn", "onSuccessListener() called with: location = [" + location + "]");
+//
+//        });
 
         ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
@@ -96,45 +99,66 @@ public class MapFragment extends SupportMapFragment {
         });
 
         getMapAsync(new OnMapReadyCallback() {
+            @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
-                latLng = new LatLng(lat, lon);
 
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                googleMap.addMarker(
-                    new MarkerOptions()
-                        .position(latLng)
-                        .title("Ninka Lyon Gerland")
-                        .alpha(0.8f)
-                );
-
-                PlacesApi placesApi = RetrofitService.getPlacesApi();
-
-                placesApi.getNearbySearchResponse("45.7282,4.8307",
-                    "1500",
-                    "restaurant",
-                    "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8").enqueue(new Callback<NearbySearchResponse>() {
+                fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+                    @NonNull
+                    @Override
+                    public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                        return null;
+                    }
 
                     @Override
-                    public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                        NearbySearchResponse nearbySearchResponse = response.body();
+                    public boolean isCancellationRequested() {
+                        return false;
+                    }
+                }).addOnSuccessListener(location -> {
+                    currentLocation = location;
+                    lat = currentLocation.getLatitude();
+                    lon = currentLocation.getLongitude();
+                    Log.d("Dvgn", "onSuccessListener() called with: location = [" + location + "]");
+                    latLng = new LatLng(lat, lon);
+                    Log.d("Dvgn", "onMapReady() called with: googleMap = [" + lat + "]");
+
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    googleMap.addMarker(
+                        new MarkerOptions()
+                            .position(latLng)
+                            .title("Ninka Lyon Gerland")
+                            .alpha(0.8f)
+                    );
+
+                    PlacesApi placesApi = RetrofitService.getPlacesApi();
+
+                    placesApi.getNearbySearchResponse(location.getLongitude() + "," + location.getLatitude(),
+                        "1500",
+                        "restaurant",
+                        "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8").enqueue(new Callback<NearbySearchResponse>() {
+
+                        @Override
+                        public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
+                            NearbySearchResponse nearbySearchResponse = response.body();
 //
-                        for (RestaurantResponse result : nearbySearchResponse.getResults()) {
-                            Marker responseMarker = googleMap.addMarker(
-                                new MarkerOptions()
-                                    .position(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))
-                                    .title(result.getName())
-                                    .alpha(0.8f)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(HUE_ROSE))
-                            );
+                            for (RestaurantResponse result : nearbySearchResponse.getResults()) {
+                                Marker responseMarker = googleMap.addMarker(
+                                    new MarkerOptions()
+                                        .position(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))
+                                        .title(result.getName())
+                                        .alpha(0.8f)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(HUE_ROSE))
+                                );
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
+                        @Override
+                        public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
 
-                    }
+                        }
+                    });
                 });
+
             }
         });
     }
