@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class RestaurantResponse {
 
     @SerializedName("types")
@@ -60,14 +62,17 @@ public class RestaurantResponse {
     @SerializedName("permanently_closed")
     private boolean permanentlyClosed;
 
+    @Nullable
     public List<String> getTypes() {
         return types;
     }
 
+    @Nullable
     public String getBusinessStatus() {
         return businessStatus;
     }
 
+    @Nullable
     public String getIcon() {
         return icon;
     }
@@ -76,14 +81,17 @@ public class RestaurantResponse {
         return rating;
     }
 
+    @Nullable
     public String getIconBackgroundColor() {
         return iconBackgroundColor;
     }
 
+    @Nullable
     public List<PhotosItemResponse> getPhotos() {
         return photos;
     }
 
+    @Nullable
     public String getReference() {
         return reference;
     }
@@ -96,34 +104,42 @@ public class RestaurantResponse {
         return priceLevel;
     }
 
+    @Nullable
     public String getScope() {
         return scope;
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
 
+    @Nullable
     public OpeningHoursResponse getOpeningHours() {
         return openingHoursResponse;
     }
 
+    @Nullable
     public GeometryResponse getGeometry() {
         return geometryResponse;
     }
 
+    @Nullable
     public String getIconMaskBaseUri() {
         return iconMaskBaseUri;
     }
 
+    @Nullable
     public String getVicinity() {
         return vicinity;
     }
 
+    @Nullable
     public PlusCodeResponse getPlusCode() {
         return plusCodeResponse;
     }
 
+    @Nullable
     public String getPlaceId() {
         return placeId;
     }

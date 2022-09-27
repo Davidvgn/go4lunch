@@ -1,16 +1,25 @@
 package com.davidvignon.go4lunch.ui.map;
 
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE;
 
+import android.Manifest;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 
+import com.davidvignon.go4lunch.data.google_places.RetrofitService;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,52 +28,88 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.android.gms.tasks.CancellationToken;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapFragment extends SupportMapFragment {
 
-    LatLng latLng = (new LatLng(45.7282, 4.8307));
+    //        LatLng latLng = (new LatLng(45.7282, 4.8307));
+    FusedLocationProviderClient fusedLocationProviderClient;
+    //        LatLng latLng = (new LatLng(45.5180288, 6.1407232));
+    LatLng latLng;
+    Location currentLocation;
 
-    private static final Gson gson = new GsonBuilder().setLenient().create();
-    private static final OkHttpClient httpClient = new OkHttpClient.Builder()
-        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-    private static final String BASE_URL = "https://maps.googleapis.com/";
-    private static final Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(httpClient)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build();
+    double lat;
+    double lon;
 
     public static MapFragment newInstance() {
         return new MapFragment();
     }
 
+    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
+
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
+        }).addOnSuccessListener(location -> {
+            currentLocation = location;
+            lat = currentLocation.getLatitude();
+            lon = currentLocation.getLongitude();
+
+        });
+
+        ActivityResultLauncher<String[]> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                    .RequestMultiplePermissions(), result -> {
+                    Boolean fineLocationGranted = result.getOrDefault(
+                        Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    Boolean coarseLocationGranted = result.getOrDefault(
+                        Manifest.permission.ACCESS_COARSE_LOCATION, false);
+                    if (fineLocationGranted != null && fineLocationGranted) {
+                        // Precise location access granted.
+                    } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                        // Only approximate location access granted.
+                    } else {
+                        // No location access granted.
+                    }
+                }
+            );
+        locationPermissionRequest.launch(new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        });
 
         getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
+                latLng = new LatLng(lat, lon);
+
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                Marker marker = googleMap.addMarker(
+                googleMap.addMarker(
                     new MarkerOptions()
-                        .position(new LatLng(45.7282, 4.8307))
+                        .position(latLng)
                         .title("Ninka Lyon Gerland")
                         .alpha(0.8f)
                 );
 
-                PlacesApi placesApi = retrofit.create(PlacesApi.class);
-//
+                PlacesApi placesApi = RetrofitService.getPlacesApi();
+
                 placesApi.getNearbySearchResponse("45.7282,4.8307",
                     "1500",
                     "restaurant",

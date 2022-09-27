@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class NearbySearchResponse {
 
     @SerializedName("next_page_token")
@@ -18,18 +20,22 @@ public class NearbySearchResponse {
     @SerializedName("status")
     private String status;
 
+    @Nullable
     public String getNextPageToken() {
         return nextPageToken;
     }
 
+    @Nullable
     public List<Object> getHtmlAttributions() {
         return htmlAttributions;
     }
 
+    @Nullable
     public List<RestaurantResponse> getResults() {
         return results;
     }
 
+    @Nullable
     public String getStatus() {
         return status;
     }

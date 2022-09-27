@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class PhotosItemResponse {
 
     @SerializedName("photo_reference")
@@ -18,18 +20,22 @@ public class PhotosItemResponse {
     @SerializedName("height")
     private int height;
 
+    @Nullable
     public String getPhotoReference() {
         return photoReference;
     }
 
+    @Nullable
     public int getWidth() {
         return width;
     }
 
+    @Nullable
     public List<String> getHtmlAttributions() {
         return htmlAttributions;
     }
 
+    @Nullable
     public int getHeight() {
         return height;
     }

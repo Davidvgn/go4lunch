@@ -2,6 +2,8 @@ package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 public class ViewportResponse {
 
     @SerializedName("southwest")
@@ -10,10 +12,12 @@ public class ViewportResponse {
     @SerializedName("northeast")
     private NortheastResponse northeastResponse;
 
+    @Nullable
     public SouthwestResponse getSouthwest() {
         return southwestResponse;
     }
 
+    @Nullable
     public NortheastResponse getNortheast() {
         return northeastResponse;
     }
