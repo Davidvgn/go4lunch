@@ -7,10 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.ui.main.MainActivity;
-import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 
-import com.davidvignon.go4lunch.ui.ViewModelFactory;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DispatcherActivity extends AppCompatActivity {
 
     @Override
@@ -19,7 +20,8 @@ public class DispatcherActivity extends AppCompatActivity {
 
         // No "setContentView(int)" to have a fully transparent and performant Activity
 
-        DispatcherViewModel viewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(DispatcherViewModel.class);
+        DispatcherViewModel viewModel = new ViewModelProvider(this).get(DispatcherViewModel.class);
+//        DispatcherViewModel viewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(DispatcherViewModel.class);
 
         viewModel.getViewActionSingleLiveEvent().observe(this, dispatcherViewAction -> {
             switch (dispatcherViewAction) {
