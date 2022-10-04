@@ -3,13 +3,10 @@ package com.davidvignon.go4lunch.ui.map;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ROSE;
 
-import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
@@ -19,12 +16,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
-import com.davidvignon.go4lunch.data.google_places.MapFragmentRepository;
+import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.davidvignon.go4lunch.data.google_places.RetrofitService;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +43,8 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class MapFragment extends SupportMapFragment {
 
-    MapFragmentRepository mapFragmentRepository;
+    @Inject
+    LocationRepository locationRepository;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -54,22 +54,13 @@ public class MapFragment extends SupportMapFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mapFragmentRepository = new MapFragmentRepository(LocationServices.getFusedLocationProviderClient(getActivity()));
-        mapFragmentRepository.getPermission(MapFragment.this);
+        locationRepository.getPermission();
 
         getMapAsync(new OnMapReadyCallback() {
             @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) { //todo david à dynamiser dans une liveData
-                LiveData<Location> locationLiveData = mapFragmentRepository.getLocationLiveData();
-
-                LiveData<GoogleMap> cameraFocusLiveData = Transformations.switchMap(locationLiveData, new Function<Location, LiveData<GoogleMap>>() {
-                    @Override
-                    public LiveData<GoogleMap> apply(Location input) {
-                        LatLng latLng = new LatLng(input.getLatitude(), input.getLongitude());
-                        return getFocusOnPosition(googleMap, latLng);
-                    }
-                });
+                LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
 
                 LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(locationLiveData, new Function<Location, LiveData<NearbySearchResponse>>() {
                     @Override
@@ -110,32 +101,25 @@ public class MapFragment extends SupportMapFragment {
                     }
                 });
 
-                cameraFocusLiveData.observe(getViewLifecycleOwner(), new Observer<GoogleMap>() {
+                LiveData<CameraUpdate> cameraFocusLiveData = Transformations.map(locationLiveData, new Function<Location, CameraUpdate>() {
                     @Override
-                    public void onChanged(GoogleMap googleMap) {
-                        googleMap.addMarker(
-                            new MarkerOptions()
-                                .position(new LatLng(locationLiveData.getValue().getLatitude(), locationLiveData.getValue().getLongitude()))
-                                .title("You are Here !")
-                                .alpha(0.8f)
-                                .icon(BitmapDescriptorFactory.defaultMarker(HUE_RED)));
+                    public CameraUpdate apply(Location location) {
+                        return CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(location.getLatitude(), location.getLongitude()),
+                            15
+                        );
+                    }
+                });
+
+                cameraFocusLiveData.observe(getViewLifecycleOwner(), new Observer<CameraUpdate>() {
+                    @Override
+                    public void onChanged(CameraUpdate cameraUpdate) {
+                        googleMap.animateCamera(cameraUpdate);
                     }
                 });
             }
         });
     }
-
-    private LiveData<GoogleMap> getFocusOnPosition(GoogleMap googleMap, LatLng latLng) {
-
-        MutableLiveData<GoogleMap> cameraMutableLiveData = new MutableLiveData<>();
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-
-        cameraMutableLiveData.setValue(googleMap);
-
-        return cameraMutableLiveData;
-    }
-
 
     private LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
         MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();

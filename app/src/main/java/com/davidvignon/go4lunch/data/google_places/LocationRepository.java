@@ -6,6 +6,7 @@ import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 
 import android.Manifest;
 import android.app.Application;
+import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
 import android.util.Log;
@@ -26,27 +27,40 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.Priority;
 
-public class MapFragmentRepository {
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+@Singleton
+public class LocationRepository {
+
+    private static final int LOCATION_REQUEST_INTERVAL_MS = 10_000;
+    private static final float SMALLEST_DISPLACEMENT_THRESHOLD_METER = 25;
 
     @NonNull
     private final FusedLocationProviderClient fusedLocationProviderClient;
 
-    private final Application application = MainApplication.getInstance();
+    @NonNull
+    private final Context context;
 
     @NonNull
-    MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
 
-    private static final int LOCATION_REQUEST_INTERVAL_MS = 10_000;
-    private static final float SMALLEST_DISPLACEMENT_THRESHOLD_METER = 25;
     private LocationCallback callback;
 
-
-    public MapFragmentRepository(@NonNull FusedLocationProviderClient fusedLocationProviderClient) {
+    @Inject
+    public LocationRepository(
+        @NonNull FusedLocationProviderClient fusedLocationProviderClient,
+        @NonNull @ApplicationContext Context context
+    ) {
         this.fusedLocationProviderClient = fusedLocationProviderClient;
+        this.context = context;
     }
 
+    // TODO NINO PermissionRepository maybe ?
     public boolean hasLocationPermission() {
-        return ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
     }
 
     @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
@@ -79,28 +93,12 @@ public class MapFragmentRepository {
         return locationMutableLiveData;
     }
 
-    public void getPermission(Fragment fragment) {
+    // TODO Utiliser la technique du onResume dans le MainViewModel pour peupler un PermissionRepository
+    public void getPermission() {
 
-        ActivityResultLauncher<String[]> locationPermissionRequest =
-
-            fragment.registerForActivityResult(new ActivityResultContracts
-                    .RequestMultiplePermissions(), result -> {
-                    Boolean fineLocationGranted = result.getOrDefault(
-                        Manifest.permission.ACCESS_FINE_LOCATION, false);
-                    Boolean coarseLocationGranted = result.getOrDefault(
-                        Manifest.permission.ACCESS_COARSE_LOCATION, false);
-                    if (fineLocationGranted != null && fineLocationGranted) {
-                        // Precise location access granted.
-                    } else if (coarseLocationGranted != null && coarseLocationGranted) {
-                        // Only approximate location access granted.
-                    } else {
-                        // No location access granted.
-                    }
-                }
-            );
-        locationPermissionRequest.launch(new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        });
+//        locationPermissionRequest.launch(new String[]{
+//            Manifest.permission.ACCESS_FINE_LOCATION,
+//            Manifest.permission.ACCESS_COARSE_LOCATION
+//        });
     }
 }

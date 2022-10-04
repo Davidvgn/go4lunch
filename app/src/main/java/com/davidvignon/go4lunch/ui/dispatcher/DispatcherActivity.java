@@ -21,7 +21,6 @@ public class DispatcherActivity extends AppCompatActivity {
         // No "setContentView(int)" to have a fully transparent and performant Activity
 
         DispatcherViewModel viewModel = new ViewModelProvider(this).get(DispatcherViewModel.class);
-//        DispatcherViewModel viewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(DispatcherViewModel.class);
 
         viewModel.getViewActionSingleLiveEvent().observe(this, dispatcherViewAction -> {
             switch (dispatcherViewAction) {
