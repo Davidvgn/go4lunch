@@ -8,28 +8,13 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import javax.inject.Inject;
 
-import dagger.Module;
-import dagger.Provides;
-import dagger.hilt.InstallIn;
-import dagger.hilt.android.components.ViewModelComponent;
-import dagger.hilt.android.scopes.ViewModelScoped;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
-@Module
-@InstallIn(ViewModelComponent.class)
+@HiltViewModel
 public class DispatcherViewModel extends ViewModel {
 
-    private FirebaseAuth firebaseAuth;
-
-    @Provides
-    @ViewModelScoped
-    public FirebaseAuth provideFirebaseAuth(){
-        firebaseAuth = FirebaseAuth.getInstance();
-        return firebaseAuth;
-    }
-
     @Inject
-    public DispatcherViewModel() {
-        provideFirebaseAuth();
+    public DispatcherViewModel(@NonNull FirebaseAuth firebaseAuth) {
         if (firebaseAuth.getCurrentUser() == null) {
             viewActionSingleLiveEvent.setValue(DispatcherViewAction.GO_TO_CONNECT_SCREEN);
         } else {
@@ -39,18 +24,6 @@ public class DispatcherViewModel extends ViewModel {
 
     @NonNull
     private final SingleLiveEvent<DispatcherViewAction> viewActionSingleLiveEvent = new SingleLiveEvent<>();
-
-//    @Inject
-//    public DispatcherViewModel(@NonNull FirebaseAuth firebaseAuth) {
-////
-////        provideFirebaseAuth();
-//        // User not connected
-//        if (firebaseAuth.getCurrentUser() == null) {
-//            viewActionSingleLiveEvent.setValue(DispatcherViewAction.GO_TO_CONNECT_SCREEN);
-//        } else {
-//            viewActionSingleLiveEvent.setValue(DispatcherViewAction.GO_TO_MAIN_SCREEN);
-//        }
-//    }
 
     @NonNull
     public SingleLiveEvent<DispatcherViewAction> getViewActionSingleLiveEvent() {
