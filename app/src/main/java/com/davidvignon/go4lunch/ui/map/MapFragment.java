@@ -58,7 +58,6 @@ public class MapFragment extends SupportMapFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
-//        locationRepository.getPermission();
 
         ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
@@ -104,12 +103,17 @@ public class MapFragment extends SupportMapFragment {
                     @Override
                     public void onChanged(CameraUpdate cameraUpdate) {
                         googleMap.animateCamera(cameraUpdate);
-
-
                     }
                 });
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        viewModel.refresh();
     }
 }

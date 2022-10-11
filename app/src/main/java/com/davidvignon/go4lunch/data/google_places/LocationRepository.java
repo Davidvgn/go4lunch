@@ -58,46 +58,39 @@ public class LocationRepository {
         this.context = context;
     }
 
-//    // TODO NINO PermissionRepository maybe ?
-//    public boolean hasLocationPermission() {
-//        return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
-//    }
-
     @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public LiveData<Location> getLocationLiveData() {
-//        if (hasLocationPermission()) {
-            if (callback == null) {
-                callback = new LocationCallback() {
-                    @Override
-                    public void onLocationResult(@NonNull LocationResult locationResult) {
-                        Location location = locationResult.getLastLocation();
-
-                        locationMutableLiveData.setValue(location);
-                    }
-                };
-            }
-
-            fusedLocationProviderClient.removeLocationUpdates(callback);
-
-
-            fusedLocationProviderClient.requestLocationUpdates(
-                LocationRequest.create()
-                    .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                    .setSmallestDisplacement(SMALLEST_DISPLACEMENT_THRESHOLD_METER)
-                    .setInterval(LOCATION_REQUEST_INTERVAL_MS),
-                callback,
-                Looper.getMainLooper()
-            );
-
         return locationMutableLiveData;
     }
 
-    // TODO Utiliser la technique du onResume dans le MainViewModel pour peupler un PermissionRepository
-    public void getPermission() {
+    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
+    public void startLocationRequest() {
+        if (callback == null) {
+            callback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
 
-//        locationPermissionRequest.launch(new String[]{
-//            Manifest.permission.ACCESS_FINE_LOCATION,
-//            Manifest.permission.ACCESS_COARSE_LOCATION
-//        });
+                    locationMutableLiveData.setValue(location);
+                }
+            };
+        }
+
+        fusedLocationProviderClient.removeLocationUpdates(callback);
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            LocationRequest.create()
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(SMALLEST_DISPLACEMENT_THRESHOLD_METER)
+                .setInterval(LOCATION_REQUEST_INTERVAL_MS),
+            callback,
+            Looper.getMainLooper()
+        );
+    }
+
+    public void stopLocationRequest() {
+        if (callback != null) {
+            fusedLocationProviderClient.removeLocationUpdates(callback);
+        }
     }
 }
