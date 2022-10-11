@@ -58,14 +58,14 @@ public class LocationRepository {
         this.context = context;
     }
 
-    // TODO NINO PermissionRepository maybe ?
-    public boolean hasLocationPermission() {
-        return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
-    }
+//    // TODO NINO PermissionRepository maybe ?
+//    public boolean hasLocationPermission() {
+//        return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+//    }
 
     @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public LiveData<Location> getLocationLiveData() {
-        if (hasLocationPermission()) {
+//        if (hasLocationPermission()) {
             if (callback == null) {
                 callback = new LocationCallback() {
                     @Override
@@ -89,7 +89,6 @@ public class LocationRepository {
                 Looper.getMainLooper()
             );
 
-        }
         return locationMutableLiveData;
     }
 
