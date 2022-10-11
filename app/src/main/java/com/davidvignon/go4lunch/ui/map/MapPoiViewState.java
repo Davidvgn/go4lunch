@@ -5,22 +5,29 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 public class MapPoiViewState {
+    @NonNull
     private final String placeId;
+
+    @NonNull
     private final String title;
+
     private final double latitude;
+
     private final double longitude;
 
-    public MapPoiViewState(String placeId, String title, double latitude, double longitude) {
+    public MapPoiViewState(@NonNull String placeId, @NonNull String title, double latitude, double longitude) {
         this.placeId = placeId;
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
+    @NonNull
     public String getPlaceId() {
         return placeId;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }

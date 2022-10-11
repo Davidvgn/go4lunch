@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.ui;
+package com.davidvignon.go4lunch.data.permission;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -25,7 +25,7 @@ public class PermissionRepository {
         this.context = context;
     }
 
-    public boolean hasLocationPermission() {
+    public boolean isLocationPermissionGranted() {
         return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
     }
 }

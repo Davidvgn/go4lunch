@@ -7,18 +7,18 @@ import javax.annotation.Nullable;
 public class LocationResponse {
 
     @SerializedName("lng")
-    private double lng;
+    private Double lng;
 
     @SerializedName("lat")
-    private double lat;
+    private Double lat;
 
     @Nullable
-    public double getLng() {
+    public Double getLng() {
         return lng;
     }
 
     @Nullable
-    public double getLat() {
+    public Double getLat() {
         return lat;
     }
 

@@ -1,12 +1,11 @@
 package com.davidvignon.go4lunch.ui.map;
 
-import android.annotation.SuppressLint;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -16,7 +15,6 @@ import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.davidvignon.go4lunch.data.google_places.RetrofitService;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
-import com.davidvignon.go4lunch.ui.PermissionRepository;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -31,72 +29,71 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 @HiltViewModel
 public class MapFragmentViewModel extends ViewModel {
 
     @NonNull
     private final LocationRepository locationRepository;
 
-    @NonNull
-    private final PermissionRepository permissionRepository;
-
-    private final MutableLiveData<Boolean> hasGpsPermissionLiveData = new MutableLiveData<>();
-
-
     @Inject
-    public MapFragmentViewModel(@NonNull LocationRepository locationRepository, @NonNull PermissionRepository permissionRepository) {
+    public MapFragmentViewModel(@NonNull LocationRepository locationRepository) {
         this.locationRepository = locationRepository;
-        this.permissionRepository = permissionRepository;
     }
 
-    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public LiveData<List<MapPoiViewState>> getMapPoiViewStateLiveData() {
-        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(getLocationLiveData(locationRepository.getLocationLiveData()), new Function<Location, LiveData<NearbySearchResponse>>() {
-            @Override
-            public LiveData<NearbySearchResponse> apply(Location location) {
-                return getNearbySearchResponse(location.getLatitude(), location.getLongitude());
-            }
-        });
+        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
+            locationRepository.getLocationLiveData(),
+            location -> getNearbySearchResponse(location.getLatitude(), location.getLongitude())
+        );
 
-        LiveData<List<MapPoiViewState>> mapPois = Transformations.map(nearbySearchResponseLiveData, new Function<NearbySearchResponse, List<MapPoiViewState>>() {
-            @Override
-            public List<MapPoiViewState> apply(NearbySearchResponse response) {
-                List<MapPoiViewState> viewStates = new ArrayList<>();
+        return Transformations.map(nearbySearchResponseLiveData, response -> {
+            List<MapPoiViewState> viewStates = new ArrayList<>();
 
-                if (response.getResults() != null) {
-                    for (RestaurantResponse result : response.getResults()) {
-                        viewStates.add(new MapPoiViewState(
-                            result.getPlaceId(),
-                            result.getName(),
-                            result.getGeometry().getLocation().getLat(),
-                            result.getGeometry().getLocation().getLng()
-                        ));
+            if (response.getResults() != null) {
+                for (RestaurantResponse result : response.getResults()) {
+                    if (
+                        result != null
+                            && result.getPlaceId() != null
+                            && result.getGeometry() != null
+                            && result.getGeometry().getLocation() != null
+                            && result.getGeometry().getLocation().getLat() != null
+                    ) {
+                        viewStates.add(
+                            new MapPoiViewState(
+                                result.getPlaceId(),
+                                result.getName(),
+                                result.getGeometry().getLocation().getLat(),
+                                result.getGeometry().getLocation().getLng()
+                            )
+                        );
                     }
                 }
-                return viewStates;
             }
+            return viewStates;
         });
-        return mapPois;
     }
 
-
-    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public LiveData<CameraUpdate> getFocusOnUser() {
-        LiveData<CameraUpdate> cameraFocusLiveData = Transformations.map(getLocationLiveData(locationRepository.getLocationLiveData()), new Function<Location, CameraUpdate>() {
-            @Override
-            public CameraUpdate apply(Location location) {
-                return CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(location.getLatitude(), location.getLongitude()), 15
+        MediatorLiveData<CameraUpdate> mediatorLiveData = new MediatorLiveData<>();
+        LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
+
+        mediatorLiveData.addSource(locationLiveData, location -> {
+            if (location != null) {
+                mediatorLiveData.removeSource(locationLiveData);
+                mediatorLiveData.setValue(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(location.getLatitude(), location.getLongitude()), 15
+                    )
                 );
             }
         });
-        return cameraFocusLiveData;
+
+        return mediatorLiveData;
     }
 
+    // TODO DAVID To repository
     private LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
         MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
-        PlacesApi placesApi = RetrofitService.getPlacesApi();
+        PlacesApi placesApi = RetrofitService.getPlacesApi(); // TODO DAVID Hilt @Provide
 
         placesApi.getNearbySearchResponse(
             latitude + "," + longitude,
@@ -116,24 +113,6 @@ public class MapFragmentViewModel extends ViewModel {
             }
         });
         return nearbySearchResponseMutableLiveData;
-    }
-
-    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
-    private LiveData<Location> getLocationLiveData(LiveData<Location> location) {
-        return location;
-
-    }
-    @SuppressLint("MissingPermission")
-    public void refresh() {
-
-        boolean getLocationPermission = permissionRepository.hasLocationPermission();
-        hasGpsPermissionLiveData.setValue(getLocationPermission);
-
-        if (getLocationPermission) {
-            locationRepository.startLocationRequest();
-        } else {
-            locationRepository.stopLocationRequest();
-        }
     }
 }
 

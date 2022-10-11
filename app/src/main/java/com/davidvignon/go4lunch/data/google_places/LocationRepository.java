@@ -58,7 +58,6 @@ public class LocationRepository {
         this.context = context;
     }
 
-    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public LiveData<Location> getLocationLiveData() {
         return locationMutableLiveData;
     }

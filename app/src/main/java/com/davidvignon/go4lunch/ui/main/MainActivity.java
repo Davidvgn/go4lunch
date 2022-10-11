@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.main;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,10 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.data.google_places.LocationRepository;
+import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
@@ -21,35 +23,39 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
-    public ActionBarDrawerToggle actionBarDrawerToggle;
-    MainActivityBinding binding;
+    @Inject
+    LocationRepository locationRepository;
+
+    @Inject
+    PermissionRepository permissionRepository;
+
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = MainActivityBinding.inflate(getLayoutInflater());
+        MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.mainToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_FrameLayout_fragment_container, MapFragment.newInstance())
+                .replace(R.id.main_FrameLayout_fragment_container, MapFragment.newInstance())
                 .commit();
         }
-
 
         binding.mainBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -102,5 +108,17 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (permissionRepository.isLocationPermissionGranted()) {
+            locationRepository.startLocationRequest();
+        } else {
+            locationRepository.stopLocationRequest();
+        }
     }
 }
