@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.data.google_places.GetNearByRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.davidvignon.go4lunch.data.google_places.RetrofitService;
@@ -34,16 +35,20 @@ public class MapFragmentViewModel extends ViewModel {
 
     @NonNull
     private final LocationRepository locationRepository;
+    @NonNull
+    private final GetNearByRepository getNearbyRepository;
 
     @Inject
-    public MapFragmentViewModel(@NonNull LocationRepository locationRepository) {
+    public MapFragmentViewModel(@NonNull LocationRepository locationRepository, @NonNull GetNearByRepository getNearbyRepository) {
         this.locationRepository = locationRepository;
+        this.getNearbyRepository = getNearbyRepository;
     }
+
 
     public LiveData<List<MapPoiViewState>> getMapPoiViewStateLiveData() {
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
             locationRepository.getLocationLiveData(),
-            location -> getNearbySearchResponse(location.getLatitude(), location.getLongitude())
+            location -> getNearbyRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
         );
 
         return Transformations.map(nearbySearchResponseLiveData, response -> {
@@ -88,31 +93,6 @@ public class MapFragmentViewModel extends ViewModel {
         });
 
         return mediatorLiveData;
-    }
-
-    // TODO DAVID To repository
-    private LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
-        MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
-        PlacesApi placesApi = RetrofitService.getPlacesApi(); // TODO DAVID Hilt @Provide
-
-        placesApi.getNearbySearchResponse(
-            latitude + "," + longitude,
-            "1500",
-            "restaurant",
-            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"
-        ).enqueue(new Callback<NearbySearchResponse>() {
-
-            @Override
-            public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                nearbySearchResponseMutableLiveData.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
-
-            }
-        });
-        return nearbySearchResponseMutableLiveData;
     }
 }
 

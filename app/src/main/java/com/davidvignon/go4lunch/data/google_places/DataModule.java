@@ -29,4 +29,5 @@ public class DataModule {
     public FirebaseAuth provideFirebaseAuth() {
         return FirebaseAuth.getInstance();
     }
+
 }
