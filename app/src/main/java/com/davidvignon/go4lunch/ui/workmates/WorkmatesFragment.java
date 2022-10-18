@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
 
 public class WorkmatesFragment extends Fragment {

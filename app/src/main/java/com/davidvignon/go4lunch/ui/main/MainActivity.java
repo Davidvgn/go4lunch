@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     @Override
-    public void onResume() {
+    public void onResume() { //todo David faire un MainViewModel
         super.onResume();
 
         if (permissionRepository.isLocationPermissionGranted()) {

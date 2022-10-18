@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.data.permission;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
-import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;

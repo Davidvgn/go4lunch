@@ -14,13 +14,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
-public class GetNearByRepository {
+public class NearBySearchRepository {
 
     @NonNull
     private final PlacesApi placesApi;
 
     @Inject
-    public GetNearByRepository(@NonNull PlacesApi placesApi) {
+    public NearBySearchRepository(@NonNull PlacesApi placesApi) {
         this.placesApi = placesApi;
     }
 

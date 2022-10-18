@@ -3,17 +3,13 @@ package com.davidvignon.go4lunch.ui.map;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresPermission;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.data.google_places.GetNearByRepository;
+import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
-import com.davidvignon.go4lunch.data.google_places.PlacesApi;
-import com.davidvignon.go4lunch.data.google_places.RetrofitService;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.google.android.gms.maps.CameraUpdate;
@@ -26,9 +22,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 @HiltViewModel
 public class MapFragmentViewModel extends ViewModel {
@@ -36,19 +29,19 @@ public class MapFragmentViewModel extends ViewModel {
     @NonNull
     private final LocationRepository locationRepository;
     @NonNull
-    private final GetNearByRepository getNearbyRepository;
+    private final NearBySearchRepository nearBySearchRepository;
 
     @Inject
-    public MapFragmentViewModel(@NonNull LocationRepository locationRepository, @NonNull GetNearByRepository getNearbyRepository) {
+    public MapFragmentViewModel(@NonNull LocationRepository locationRepository, @NonNull NearBySearchRepository nearBySearchRepository) {
         this.locationRepository = locationRepository;
-        this.getNearbyRepository = getNearbyRepository;
+        this.nearBySearchRepository = nearBySearchRepository;
     }
 
 
     public LiveData<List<MapPoiViewState>> getMapPoiViewStateLiveData() {
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
             locationRepository.getLocationLiveData(),
-            location -> getNearbyRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
+            location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
         );
 
         return Transformations.map(nearbySearchResponseLiveData, response -> {
@@ -58,10 +51,12 @@ public class MapFragmentViewModel extends ViewModel {
                 for (RestaurantResponse result : response.getResults()) {
                     if (
                         result != null
+                            && result.getName() != null
                             && result.getPlaceId() != null
                             && result.getGeometry() != null
                             && result.getGeometry().getLocation() != null
                             && result.getGeometry().getLocation().getLat() != null
+                            && result.getGeometry().getLocation().getLng() != null
                     ) {
                         viewStates.add(
                             new MapPoiViewState(
