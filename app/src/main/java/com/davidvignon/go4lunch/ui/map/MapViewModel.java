@@ -12,6 +12,7 @@ import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
+import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,7 +25,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
-public class MapFragmentViewModel extends ViewModel {
+public class MapViewModel extends ViewModel {
 
     @NonNull
     private final LocationRepository locationRepository;
@@ -32,11 +33,10 @@ public class MapFragmentViewModel extends ViewModel {
     private final NearBySearchRepository nearBySearchRepository;
 
     @Inject
-    public MapFragmentViewModel(@NonNull LocationRepository locationRepository, @NonNull NearBySearchRepository nearBySearchRepository) {
+    public MapViewModel(@NonNull LocationRepository locationRepository, @NonNull NearBySearchRepository nearBySearchRepository) {
         this.locationRepository = locationRepository;
         this.nearBySearchRepository = nearBySearchRepository;
     }
-
 
     public LiveData<List<MapPoiViewState>> getMapPoiViewStateLiveData() {
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
@@ -73,8 +73,8 @@ public class MapFragmentViewModel extends ViewModel {
         });
     }
 
-    public LiveData<CameraUpdate> getFocusOnUser() {
-        MediatorLiveData<CameraUpdate> mediatorLiveData = new MediatorLiveData<>();
+    public SingleLiveEvent<CameraUpdate> getFocusOnUser() {
+        SingleLiveEvent<CameraUpdate> mediatorLiveData = new SingleLiveEvent<>();
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
 
         mediatorLiveData.addSource(locationLiveData, location -> {

@@ -5,6 +5,8 @@ import android.content.Context;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.inject.Singleton;
 
@@ -13,6 +15,9 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -30,4 +35,19 @@ public class DataModule {
         return FirebaseAuth.getInstance();
     }
 
+    @Singleton
+    @Provides
+    public PlacesApi providePlacesApi() {
+        Gson gson = new GsonBuilder().setLenient().create();
+        OkHttpClient httpClient = new OkHttpClient.Builder().build();
+        String baseUrl = "https://maps.googleapis.com/";
+
+        Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build();
+
+        return retrofit.create(PlacesApi.class);
+    }
 }

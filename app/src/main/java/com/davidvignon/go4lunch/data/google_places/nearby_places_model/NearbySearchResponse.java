@@ -3,6 +3,7 @@ package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -19,6 +20,13 @@ public class NearbySearchResponse {
 
     @SerializedName("status")
     private String status;
+
+    public NearbySearchResponse(String nextPageToken, List<Object> htmlAttributions, List<RestaurantResponse> results, String status) {
+        this.nextPageToken = nextPageToken;
+        this.htmlAttributions = htmlAttributions;
+        this.results = results;
+        this.status = status;
+    }
 
     @Nullable
     public String getNextPageToken() {
@@ -38,6 +46,19 @@ public class NearbySearchResponse {
     @Nullable
     public String getStatus() {
         return status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NearbySearchResponse that = (NearbySearchResponse) o;
+        return Objects.equals(nextPageToken, that.nextPageToken) && Objects.equals(htmlAttributions, that.htmlAttributions) && Objects.equals(results, that.results) && Objects.equals(status, that.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nextPageToken, htmlAttributions, results, status);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -8,59 +10,117 @@ import javax.annotation.Nullable;
 
 public class RestaurantResponse {
 
+    @Nullable
     @SerializedName("types")
     private List<String> types;
 
+    @Nullable
     @SerializedName("business_status")
     private String businessStatus;
 
+    @Nullable
     @SerializedName("icon")
     private String icon;
 
+    @Nullable
     @SerializedName("rating")
-    private double rating;
+    private Double rating;
 
+    @Nullable
     @SerializedName("icon_background_color")
     private String iconBackgroundColor;
 
+    @Nullable
     @SerializedName("photos")
     private List<PhotosItemResponse> photos;
 
+    @Nullable
     @SerializedName("reference")
     private String reference;
 
+    @Nullable
     @SerializedName("user_ratings_total")
-    private int userRatingsTotal;
+    private Integer userRatingsTotal;
 
+    @Nullable
     @SerializedName("price_level")
-    private int priceLevel;
+    private Integer priceLevel;
 
+    @Nullable
     @SerializedName("scope")
     private String scope;
 
+    @Nullable
     @SerializedName("name")
     private String name;
 
+    @Nullable
     @SerializedName("opening_hours")
     private OpeningHoursResponse openingHoursResponse;
 
+    @Nullable
     @SerializedName("geometry")
     private GeometryResponse geometryResponse;
 
+    @Nullable
     @SerializedName("icon_mask_base_uri")
     private String iconMaskBaseUri;
 
+    @Nullable
     @SerializedName("vicinity")
     private String vicinity;
 
+    @Nullable
     @SerializedName("plus_code")
     private PlusCodeResponse plusCodeResponse;
 
+    @Nullable
     @SerializedName("place_id")
     private String placeId;
 
+    @Nullable
     @SerializedName("permanently_closed")
-    private boolean permanentlyClosed;
+    private Boolean permanentlyClosed;
+
+    public RestaurantResponse(
+        @Nullable List<String> types,
+        @Nullable String businessStatus,
+        @Nullable String icon,
+        @Nullable Double rating,
+        @Nullable String iconBackgroundColor,
+        @Nullable List<PhotosItemResponse> photos,
+        @Nullable String reference,
+        @Nullable Integer userRatingsTotal,
+        @Nullable Integer priceLevel,
+        @Nullable String scope,
+        @Nullable String name,
+        @Nullable OpeningHoursResponse openingHoursResponse,
+        @Nullable GeometryResponse geometryResponse,
+        @Nullable String iconMaskBaseUri,
+        @Nullable String vicinity,
+        @Nullable PlusCodeResponse plusCodeResponse,
+        @Nullable String placeId,
+        @Nullable Boolean permanentlyClosed
+    ) {
+        this.types = types;
+        this.businessStatus = businessStatus;
+        this.icon = icon;
+        this.rating = rating;
+        this.iconBackgroundColor = iconBackgroundColor;
+        this.photos = photos;
+        this.reference = reference;
+        this.userRatingsTotal = userRatingsTotal;
+        this.priceLevel = priceLevel;
+        this.scope = scope;
+        this.name = name;
+        this.openingHoursResponse = openingHoursResponse;
+        this.geometryResponse = geometryResponse;
+        this.iconMaskBaseUri = iconMaskBaseUri;
+        this.vicinity = vicinity;
+        this.plusCodeResponse = plusCodeResponse;
+        this.placeId = placeId;
+        this.permanentlyClosed = permanentlyClosed;
+    }
 
     @Nullable
     public List<String> getTypes() {
@@ -77,7 +137,8 @@ public class RestaurantResponse {
         return icon;
     }
 
-    public double getRating() {
+    @Nullable
+    public Double getRating() {
         return rating;
     }
 
@@ -96,11 +157,13 @@ public class RestaurantResponse {
         return reference;
     }
 
-    public int getUserRatingsTotal() {
+    @Nullable
+    public Integer getUserRatingsTotal() {
         return userRatingsTotal;
     }
 
-    public int getPriceLevel() {
+    @Nullable
+    public Integer getPriceLevel() {
         return priceLevel;
     }
 
@@ -144,10 +207,11 @@ public class RestaurantResponse {
         return placeId;
     }
 
-    public boolean isPermanentlyClosed() {
+    public Boolean isPermanentlyClosed() {
         return permanentlyClosed;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return

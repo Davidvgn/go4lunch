@@ -27,7 +27,7 @@ public class MapFragment extends SupportMapFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MapFragmentViewModel viewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
+        MapViewModel viewModel = new ViewModelProvider(this).get(MapViewModel.class);
 
         requestPermissions(
             new String[]{
