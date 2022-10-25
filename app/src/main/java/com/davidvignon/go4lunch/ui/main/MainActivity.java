@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.main;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,12 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
+import com.davidvignon.go4lunch.ui.map.MapViewModel;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.google.android.material.navigation.NavigationBarView;
@@ -38,11 +39,15 @@ public class MainActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
+    private MainViewModel viewModel;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         setSupportActionBar(binding.mainToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,12 +55,6 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_FrameLayout_fragment_container, MapFragment.newInstance())
-                .commit();
-        }
 
         binding.mainBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.search_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setQueryHint("Tapez votre recherche");
+        searchView.setQueryHint(getString(R.string.type_your_search));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -110,15 +109,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressLint("MissingPermission")
     @Override
-    public void onResume() { //todo David faire un MainViewModel
+    public void onResume() {
         super.onResume();
-
-        if (permissionRepository.isLocationPermissionGranted()) {
-            locationRepository.startLocationRequest();
-        } else {
-            locationRepository.stopLocationRequest();
-        }
+        viewModel.refresh();
     }
 }

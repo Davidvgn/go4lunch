@@ -13,4 +13,10 @@
 
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+
+    <string name="type_your_search">Type your search...</string>
+    <string name="Restaurant_picture">Restaurant Picture</string>
+    <string name="upperscore">-</string>
+    <string name="people_icon">People icon</string>
+
 </resources>

@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.ui.map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import android.location.Location;
 
@@ -68,6 +69,18 @@ public class MapViewModelTest {
         );
     }
 
+    @Test
+    public void if_all_or_one_element_is_null_it_returns_no_response() {
+        //Given
+        nearbySearchResponseMutableLiveData.setValue(getNearbySearchResponseWithElementMissing());
+
+        // When
+        List<MapPoiViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getMapPoiViewStateLiveData());
+
+        // Then
+        assertTrue(viewStates.isEmpty());
+    }
+
     // region IN
     private NearbySearchResponse getDefaultNearbySearchResponse() {
         List<RestaurantResponse> results = new ArrayList<>();
@@ -115,10 +128,118 @@ public class MapViewModelTest {
         );
     }
 
+
+    private NearbySearchResponse getNearbySearchResponseWithElementMissing() {
+        List<RestaurantResponse> results = new ArrayList<>();
+
+        //all elements are null
+        results.add(
+            new RestaurantResponse(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        //name is null
+        results.add(
+            new RestaurantResponse(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                getGeometryResponse(1),
+                null,
+                null,
+                null,
+                DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + 1,
+                null
+            )
+        );
+
+
+        //geometryResponse is null
+        results.add(
+            new RestaurantResponse(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_RESTAURANT_RESPONSE_NAME + 2,
+                null,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + 2,
+                null
+            )
+        );
+
+        //placeId is null
+        results.add(
+            new RestaurantResponse(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_RESTAURANT_RESPONSE_NAME + 3,
+                null,
+                getGeometryResponse(3),
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        return new NearbySearchResponse(
+            null,
+            null,
+            results,
+            null
+        );
+    }
     // endregion IN
 
     // region OUT
-    private  List<MapPoiViewState> getDefaultMapPoiViewStates() {
+    private List<MapPoiViewState> getDefaultMapPoiViewStates() {
         List<MapPoiViewState> result = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
@@ -126,8 +247,9 @@ public class MapViewModelTest {
                 new MapPoiViewState(
                     DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
                     DEFAULT_RESTAURANT_RESPONSE_NAME + i,
-                    DEFAULT_LONGITUDE_OFFSET + i,
-                    (double) i
+                    (double) i,
+                    DEFAULT_LONGITUDE_OFFSET + i
+
                 )
             );
         }

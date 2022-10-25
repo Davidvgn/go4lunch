@@ -1,24 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.recyclerview.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/restaurants_ConstraintLayout_root"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/restaurant_Rv"
     android:layout_width="match_parent"
-    android:background="#FFFFFFFF"
     android:layout_height="match_parent"
-    >
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    tools:listitem="@layout/restaurants_itemview" />
 
-    <TextView
-        android:id="@+id/restaurants_TextView_hello"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="64dp"
-        android:gravity="center"
-        android:text="Hello, I'm restaurant fragment !"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-</androidx.constraintlayout.widget.ConstraintLayout>

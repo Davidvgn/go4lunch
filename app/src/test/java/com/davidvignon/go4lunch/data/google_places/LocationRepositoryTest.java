@@ -1,43 +1,48 @@
 package com.davidvignon.go4lunch.data.google_places;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
 
 import android.content.Context;
 import android.location.Location;
 
-import androidx.lifecycle.LiveData;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
-import com.facebook.internal.Mutable;
+import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
 
 import org.junit.Before;
+import org.junit.Rule;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
 public class LocationRepositoryTest {
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private final FusedLocationProviderClient fusedLocationProviderClient = Mockito.mock(FusedLocationProviderClient.class);
 
-    @Mock
-    private Context context;
+    private final Context context = Mockito.mock(Context.class);
 
-    @Mock
+    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
+
+
     private LocationRepository locationRepository;
-    private  MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
 
     @Before
-    public void setUp(){
+    public void setUp() {
         locationRepository = new LocationRepository(fusedLocationProviderClient, context);
+
     }
 
+
     @Test
-    public void test_getLocationLiveData(){
+    public void test1(){
+
     }
 }
+
+
