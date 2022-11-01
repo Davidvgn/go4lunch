@@ -1,12 +1,10 @@
 package com.davidvignon.go4lunch.data.google_places;
 
-import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -19,8 +17,6 @@ import com.google.android.gms.location.Priority;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import dagger.hilt.android.qualifiers.ApplicationContext;
-
 @Singleton
 public class LocationRepository {
 
@@ -31,7 +27,7 @@ public class LocationRepository {
     private final FusedLocationProviderClient fusedLocationProviderClient;
 
     @NonNull
-    private final Context context;
+    private final Looper looper;
 
     @NonNull
     private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
@@ -41,10 +37,10 @@ public class LocationRepository {
     @Inject
     public LocationRepository(
         @NonNull FusedLocationProviderClient fusedLocationProviderClient,
-        @NonNull @ApplicationContext Context context
+        @NonNull Looper looper
     ) {
         this.fusedLocationProviderClient = fusedLocationProviderClient;
-        this.context = context;
+        this.looper = looper;
     }
 
     public LiveData<Location> getLocationLiveData() {
@@ -72,13 +68,14 @@ public class LocationRepository {
                 .setSmallestDisplacement(SMALLEST_DISPLACEMENT_THRESHOLD_METER)
                 .setInterval(LOCATION_REQUEST_INTERVAL_MS),
             callback,
-            Looper.getMainLooper()
+            looper
         );
     }
 
     public void stopLocationRequest() {
         if (callback != null) {
             fusedLocationProviderClient.removeLocationUpdates(callback);
+            callback = null;
         }
     }
 }

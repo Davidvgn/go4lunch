@@ -1,7 +1,9 @@
-package com.davidvignon.go4lunch.data.google_places;
+package com.davidvignon.go4lunch.data;
 
 import android.content.Context;
+import android.os.Looper;
 
+import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,5 +51,10 @@ public class DataModule {
             .build();
 
         return retrofit.create(PlacesApi.class);
+    }
+
+    @Provides
+    public Looper provideLooper() {
+        return Looper.getMainLooper();
     }
 }

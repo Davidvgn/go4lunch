@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 
 import androidx.lifecycle.LiveData;
 
-import androidx.lifecycle.MutableLiveData;
-
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -32,45 +30,39 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class MapViewModel extends ViewModel {
 
     @NonNull
-    private final LocationRepository locationRepository;
-    @NonNull
     private final NearBySearchRepository nearBySearchRepository;
 
-    SingleLiveEvent<LatLng> mediatorLiveData = new SingleLiveEvent<>();
-    MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-
+    private final LiveData< List<MapPoiViewState>> mapPoiViewStatesLiveData;
+    private final SingleLiveEvent<LatLng> cameraUpdateSingleLiveEvent = new SingleLiveEvent<>();
 
     @Inject
-    public MapViewModel(@NonNull LocationRepository locationRepository, @NonNull NearBySearchRepository nearBySearchRepository
+    public MapViewModel(
+        @NonNull LocationRepository locationRepository,
+        @NonNull NearBySearchRepository nearBySearchRepository
     ) {
-        this.locationRepository = locationRepository;
         this.nearBySearchRepository = nearBySearchRepository;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        locationMutableLiveData.setValue(locationLiveData.getValue());
-
-        mediatorLiveData.addSource(locationLiveData, location -> {
-            if (location != null) {
-                mediatorLiveData.removeSource(locationLiveData);
-                mediatorLiveData.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
-            }
-        });
+        bindCameraUpdate(locationLiveData);
+        mapPoiViewStatesLiveData = bindViewState(locationLiveData);
     }
 
+    @NonNull
     public LiveData<List<MapPoiViewState>> getMapPoiViewStateLiveData() {
+        return mapPoiViewStatesLiveData;
+    }
 
-//        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
-//            locationRepository.getLocationLiveData(),
-//            new Function<Location, LiveData<NearbySearchResponse>>() {
-//                @Override
-//                public LiveData<NearbySearchResponse> apply(Location location) {
-//                    return nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude());
-//                }
-//            }
-//        );
-        //todo Nino est ce la solution ? :
-        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(locationMutableLiveData,
-            location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude()));
+    @NonNull
+    public SingleLiveEvent<LatLng> getFocusOnUser() {
+        return cameraUpdateSingleLiveEvent;
+    }
+
+    @NonNull
+    private LiveData<List<MapPoiViewState>> bindViewState(LiveData<Location> locationLiveData) {
+        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
+            locationLiveData,
+            location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
+        );
 
         return Transformations.map(nearbySearchResponseLiveData, response -> {
             List<MapPoiViewState> viewStates = new ArrayList<>();
@@ -101,7 +93,12 @@ public class MapViewModel extends ViewModel {
         });
     }
 
-    public SingleLiveEvent<LatLng> getFocusOnUser() {
-        return mediatorLiveData;
+    private void bindCameraUpdate(LiveData<Location> locationLiveData) {
+        cameraUpdateSingleLiveEvent.addSource(locationLiveData, location -> {
+            if (location != null) {
+                cameraUpdateSingleLiveEvent.removeSource(locationLiveData);
+                cameraUpdateSingleLiveEvent.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
+            }
+        });
     }
 }

@@ -1,58 +1,78 @@
 package com.davidvignon.go4lunch.data.google_places;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
-import android.content.Context;
-import android.location.Location;
+import android.os.Looper;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 
 import org.junit.Before;
 import org.junit.Rule;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class LocationRepositoryTest {
 
-    private static final double DEFAULT_LATITUDE = 45.757830302;
-    private static final double DEFAULT_LONGITUDE = 4.823496706;
-
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
+    private final FusedLocationProviderClient fusedLocationProviderClient = Mockito.mock(FusedLocationProviderClient.class);
 
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-
-   private final Location location = Mockito.mock(Location.class);
-
+    private LocationRepository locationRepository;
 
     @Before
     public void setUp() {
-        Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-        Mockito.doReturn(DEFAULT_LATITUDE).when(location).getLatitude();
-        Mockito.doReturn(DEFAULT_LONGITUDE).when(location).getLongitude();
-        locationMutableLiveData.setValue(location);
+        locationRepository = Mockito.spy(new LocationRepository(fusedLocationProviderClient, Mockito.mock(Looper.class)));
+    }
 
+//    @Test
+//    public void nominal_case_getLocationLiveData(){
+//        // When
+//        Location locationTest = LiveDataTestUtils.getValueForTesting(locationRepository.getLocationLiveData());
+//
+//        // Then
+//        assertEquals(locationTest, location);
+//    }
+
+    @Test
+    public void verify_stopLocationRequest() {
+        // Given
+        locationRepository.startLocationRequest();
+
+        // When
+        locationRepository.stopLocationRequest();
+
+        // Then
+        Mockito.verify(fusedLocationProviderClient, Mockito.times(2)).removeLocationUpdates(any(LocationCallback.class));
+        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), any(LocationCallback.class), any());
+        Mockito.verifyNoMoreInteractions(fusedLocationProviderClient);
     }
 
     @Test
-    public void nominal_case_getLocationLiveData(){
+    public void verify_stopLocationRequest_without_start_should_not_do_anything() {
         // When
-        Location locationTest = LiveDataTestUtils.getValueForTesting(locationRepository.getLocationLiveData());
+        locationRepository.stopLocationRequest();
 
         // Then
-        assertEquals(locationTest, location);
+        Mockito.verifyNoMoreInteractions(fusedLocationProviderClient);
+    }
+
+    @Test
+    public void verify_stopLocationRequest_twice() {
+        // Given
+        locationRepository.startLocationRequest();
+        locationRepository.stopLocationRequest();
+
+        // When
+        locationRepository.stopLocationRequest();
+
+        // Then
+        Mockito.verify(fusedLocationProviderClient, Mockito.times(2)).removeLocationUpdates(any(LocationCallback.class));
+        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), any(LocationCallback.class), any());
+        Mockito.verifyNoMoreInteractions(fusedLocationProviderClient);
     }
 }
 
