@@ -43,7 +43,7 @@
         android:contentDescription="@string/Restaurant_picture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/backgrounds/scenic"
+        tools:src="@tools:sample/avatars"
         />
 
     <TextView
@@ -110,7 +110,6 @@
         app:layout_constraintTop_toBottomOf="@id/restaurant_item_tv_food_type"
         tools:text="Open until 7pm"
         />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

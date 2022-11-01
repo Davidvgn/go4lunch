@@ -15,6 +15,7 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.LocationR
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,8 +30,8 @@ public class MapViewModelTest {
     private static final String DEFAULT_RESTAURANT_RESPONSE_NAME = "DEFAULT_RESTAURANT_RESPONSE_NAME";
     private static final String DEFAULT_RESTAURANT_RESPONSE_PLACE_ID = "DEFAULT_RESTAURANT_RESPONSE_PLACE_ID";
     private static final double DEFAULT_LONGITUDE_OFFSET = 46.0;
-    private static final double DEFAULT_LATITUDE = 47.4055044477;
-    private static final double DEFAULT_LONGITUDE = 0.698770997973;
+    private static final double DEFAULT_LATITUDE = 45.757830302;
+    private static final double DEFAULT_LONGITUDE = 4.823496706;
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -81,7 +82,18 @@ public class MapViewModelTest {
         assertTrue(viewStates.isEmpty());
     }
 
+    @Test
+    public void nomical_case_getFocusOnUser(){
+        // When
+        LatLng latLng = LiveDataTestUtils.getValueForTesting(viewModel.getFocusOnUser());
+
+        // Then
+        assertEquals(new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),latLng);
+
+    }
+
     // region IN
+
     private NearbySearchResponse getDefaultNearbySearchResponse() {
         List<RestaurantResponse> results = new ArrayList<>();
 

@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.databinding.RestaurantsItemviewBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 
@@ -56,6 +58,9 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
         public void bind(RestaurantViewState item, OnRestaurantClickedListener listener) {
             binding.restaurantItemTvName.setText(item.getName());
             binding.restaurantItemTvAdress.setText(item.getVicinity());
+//            Glide.with(binding.restaurantItemIvPicture.getContext())
+//                .load(item.getPhotos())
+//                .into(binding.restaurantItemIvPicture);
 
         }
 

@@ -56,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_FrameLayout_fragment_container, MapFragment.newInstance())
+                .commit();
+        }
+
         binding.mainBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {

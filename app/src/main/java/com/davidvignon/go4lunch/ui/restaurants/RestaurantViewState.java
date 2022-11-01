@@ -2,6 +2,9 @@ package com.davidvignon.go4lunch.ui.restaurants;
 
 import androidx.annotation.NonNull;
 
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
+
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -12,9 +15,6 @@ public class RestaurantViewState {
     private final String placeId;
 
     @NonNull
-    private final Boolean permanentlyClosed;
-
-    @NonNull
     private final String name;
 
     @NonNull
@@ -22,11 +22,10 @@ public class RestaurantViewState {
 
 
     public RestaurantViewState(@NonNull String placeId,
-        @NonNull Boolean permanentlyClosed,
         @NonNull String name,
-        @NonNull String vincinity) {
+        @NonNull String vincinity
+    ) {
         this.placeId = placeId;
-        this.permanentlyClosed = permanentlyClosed;
         this.name = name;
         this.vicinity = vincinity;
     }
@@ -34,11 +33,6 @@ public class RestaurantViewState {
     @NonNull
     public String getPlaceId() {
         return placeId;
-    }
-
-    @NonNull
-    public Boolean getPermanentlyClosed() {
-        return permanentlyClosed;
     }
 
     @NonNull
@@ -58,7 +52,6 @@ public class RestaurantViewState {
         RestaurantViewState that = (RestaurantViewState) o;
         return placeId.equals(that.getPlaceId())
             && name.equals((that.getName()))
-            && permanentlyClosed.equals(that.getPermanentlyClosed())
             && vicinity.equals(that.getVicinity());
     }
 

@@ -31,7 +31,7 @@ public class NearBySearchRepository {
             latitude + "," + longitude,
             "1500",
             "restaurant",
-            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"
+            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8" //todo Nino on ne doit pas laisser la clé visible je suppose
         ).enqueue(new Callback<NearbySearchResponse>() {
 
             @Override

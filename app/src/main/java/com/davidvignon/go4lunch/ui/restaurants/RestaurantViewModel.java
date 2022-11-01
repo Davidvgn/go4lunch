@@ -47,12 +47,11 @@ public class RestaurantViewModel extends ViewModel {
                             && result.getPlaceId() != null
                             && result.getName() != null
                             && result.getVicinity() != null
-                            && !result.isPermanentlyClosed()
+                        && result.getPhotos() != null
                     ) {
                         viewStates.add(
                             new RestaurantViewState(
                                 result.getPlaceId(),
-                                result.isPermanentlyClosed(),
                                 result.getName(),
                                 result.getVicinity()
                             )

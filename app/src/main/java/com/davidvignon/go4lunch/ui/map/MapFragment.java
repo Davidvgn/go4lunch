@@ -1,13 +1,17 @@
 package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,6 +33,7 @@ public class MapFragment extends SupportMapFragment {
 
         MapViewModel viewModel = new ViewModelProvider(this).get(MapViewModel.class);
 
+
         requestPermissions(
             new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -49,10 +54,12 @@ public class MapFragment extends SupportMapFragment {
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 }
             });
-
-            viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), cameraUpdate -> {
-                //noinspection Convert2MethodRef
-                googleMap.animateCamera(cameraUpdate);
+            viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), new Observer<LatLng>() {
+                @Override
+                public void onChanged(LatLng latLng) {
+                    //noinspection Convert2MethodRef
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                }
             });
         });
     }
