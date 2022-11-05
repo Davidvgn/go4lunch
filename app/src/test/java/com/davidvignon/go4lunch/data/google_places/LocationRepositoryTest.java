@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 import android.os.Looper;
@@ -8,10 +10,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 public class LocationRepositoryTest {
@@ -22,20 +26,34 @@ public class LocationRepositoryTest {
     private final FusedLocationProviderClient fusedLocationProviderClient = Mockito.mock(FusedLocationProviderClient.class);
 
     private LocationRepository locationRepository;
+    private ArgumentCaptor<LocationCallback> callback = ArgumentCaptor.forClass(LocationCallback.class);
+
+
 
     @Before
     public void setUp() {
         locationRepository = Mockito.spy(new LocationRepository(fusedLocationProviderClient, Mockito.mock(Looper.class)));
     }
 
-//    @Test
-//    public void nominal_case_getLocationLiveData(){
-//        // When
-//        Location locationTest = LiveDataTestUtils.getValueForTesting(locationRepository.getLocationLiveData());
-//
-//        // Then
-//        assertEquals(locationTest, location);
-//    }
+    @Test
+    public void verify_startLocationRequest(){
+        // Given
+        locationRepository.stopLocationRequest();
+
+        // When
+        locationRepository.startLocationRequest();
+
+        // Then
+        assertNotNull(callback);
+        Mockito.verify(fusedLocationProviderClient).removeLocationUpdates(callback.capture());
+        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), any(LocationCallback.class), any());
+    }
+
+    @Test
+    public void test() {
+        LocationCallback loc = callback.getValue();
+
+    }
 
     @Test
     public void verify_stopLocationRequest() {

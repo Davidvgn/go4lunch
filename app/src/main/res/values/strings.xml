@@ -18,5 +18,12 @@
     <string name="Restaurant_picture">Restaurant Picture</string>
     <string name="upperscore">-</string>
     <string name="people_icon">People icon</string>
+    <string name="test">test</string>
+    <string name="restaurantViewTitle">I\'m Hungry!</string>
+    <string name="workermatesViewTitle">Available workmates</string>
+    <string name="restaurant_dtls_iv_header_descrip">Restaurant photo</string>
+    <string name="call_restaurant">CALL</string>
+    <string name="like_restaurant">LIKE</string>
+    <string name="restaurant_website">WEBSITE</string>
 
 </resources>

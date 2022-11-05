@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -17,7 +18,6 @@ import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
-import com.davidvignon.go4lunch.ui.map.MapViewModel;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.google.android.material.navigation.NavigationBarView;
@@ -48,8 +48,10 @@ public class MainActivity extends AppCompatActivity {
         MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        Toolbar toolbar = binding.mainToolBar;
+        toolbar.setTitle(R.string.restaurantViewTitle);
 
-        setSupportActionBar(binding.mainToolBar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
@@ -68,12 +70,16 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case (R.id.bottom_nav_map):
                         displayFragment(MapFragment.newInstance());
+                        toolbar.setTitle(R.string.restaurantViewTitle);
                         break;
                     case (R.id.bottom_nav_list):
                         displayFragment(RestaurantsFragment.newInstance());
+                        toolbar.setTitle(R.string.restaurantViewTitle);
+
                         break;
                     case (R.id.bottom_nav_workmates):
                         displayFragment(WorkmatesFragment.newInstance());
+                        toolbar.setTitle(R.string.workermatesViewTitle);
                         break;
                 }
                 return true;
@@ -85,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
             .replace(R.id.main_FrameLayout_fragment_container, fragment, null)
             .commitNow();
+
     }
 
     @Override

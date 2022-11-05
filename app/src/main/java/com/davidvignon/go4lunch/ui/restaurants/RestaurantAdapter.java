@@ -31,18 +31,15 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
         this.listener = listener;
     }
 
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(RestaurantsItemviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position), listener);
-
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -58,11 +55,12 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
         public void bind(RestaurantViewState item, OnRestaurantClickedListener listener) {
             binding.restaurantItemTvName.setText(item.getName());
             binding.restaurantItemTvAdress.setText(item.getVicinity());
-//            Glide.with(binding.restaurantItemIvPicture.getContext())
-//                .load(item.getPhotos())
-//                .into(binding.restaurantItemIvPicture);
+            Glide.with(binding.restaurantItemIvPicture.getContext())
+                .load("https://i.pravatar.cc/150?u=a042581f4e29026704d") //todo david
+                .into(binding.restaurantItemIvPicture);
 
         }
+
 
 
     }

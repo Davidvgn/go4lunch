@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.davidvignon.go4lunch"
-    >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.davidvignon.go4lunch">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".MainApplication"
@@ -15,21 +13,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Go4Lunch.NoActionBar"
-        >
+        android:theme="@style/Theme.Go4Lunch.NoActionBar">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"
-            />
+            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token"
-            />
+            android:value="@string/facebook_client_token" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}"
-            />
+            android:value="${MAPS_API_KEY}" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -38,12 +32,11 @@
         <activity
             android:name=".ui.dispatcher.DispatcherActivity"
             android:exported="true"
-            android:theme="@style/Theme.Go4Lunch.Transparent"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:theme="@style/Theme.Go4Lunch.Transparent">
+<!--                        <intent-filter>-->
+<!--                            <action android:name="android.intent.action.MAIN" />-->
+<!--                            <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                        </intent-filter>-->
         </activity>
 
         <activity android:name=".ui.main.MainActivity" />
@@ -51,12 +44,10 @@
 
         <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
         <activity
             android:name="com.facebook.CustomTabActivity"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -64,6 +55,16 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.details.RestaurantDetailsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Go4Lunch.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
