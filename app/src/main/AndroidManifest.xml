@@ -33,10 +33,10 @@
             android:name=".ui.dispatcher.DispatcherActivity"
             android:exported="true"
             android:theme="@style/Theme.Go4Lunch.Transparent">
-<!--                        <intent-filter>-->
-<!--                            <action android:name="android.intent.action.MAIN" />-->
-<!--                            <category android:name="android.intent.category.LAUNCHER" />-->
-<!--                        </intent-filter>-->
+                        <intent-filter>
+                            <action android:name="android.intent.action.MAIN" />
+                            <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
         </activity>
 
         <activity android:name=".ui.main.MainActivity" />
@@ -61,11 +61,7 @@
         <activity
             android:name=".ui.details.RestaurantDetailsActivity"
             android:exported="true"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:theme="@style/Theme.Details">
         </activity>
     </application>
 </manifest>

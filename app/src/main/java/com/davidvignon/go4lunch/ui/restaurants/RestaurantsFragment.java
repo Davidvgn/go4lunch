@@ -48,24 +48,23 @@ public class RestaurantsFragment extends Fragment {
         RestaurantViewModel viewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
         RestaurantAdapter adapter = new RestaurantAdapter(new OnRestaurantClickedListener() {
             @Override
-            public void onItemClick(String placeId) {
-                viewModel.onItemViewModelClicked(placeId);
-                Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
-                startActivity(intent);
+            public void onItemClick(String PlaceId) {
 
             }
         });
         binding.restaurantRv.setAdapter(adapter);
 
-
         viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantViewState>>() {
             @Override
             public void onChanged(List<RestaurantViewState> restaurantViewStates) {
                 adapter.submitList(restaurantViewStates);
-
             }
         });
-
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

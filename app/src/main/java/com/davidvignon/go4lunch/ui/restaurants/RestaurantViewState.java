@@ -2,6 +2,7 @@ package com.davidvignon.go4lunch.ui.restaurants;
 
 import androidx.annotation.NonNull;
 
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.OpeningHoursResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
 
 import java.util.List;
@@ -20,14 +21,24 @@ public class RestaurantViewState {
     @NonNull
     private final String vicinity;
 
+    @NonNull
+    private final OpeningHoursResponse openingHours;
+
+    @NonNull
+    private final String photosItemResponse;
+
 
     public RestaurantViewState(@NonNull String placeId,
         @NonNull String name,
-        @NonNull String vincinity
+        @NonNull String vincinity,
+        @NonNull OpeningHoursResponse openingHours,
+        @NonNull String photosItemResponse
     ) {
         this.placeId = placeId;
         this.name = name;
         this.vicinity = vincinity;
+        this.openingHours = openingHours;
+        this.photosItemResponse = photosItemResponse;
     }
 
     @NonNull
@@ -43,6 +54,16 @@ public class RestaurantViewState {
     @NonNull
     public String getVicinity() {
         return vicinity;
+    }
+
+    @NonNull
+    public OpeningHoursResponse getOpeningHours() {
+        return openingHours;
+    }
+
+    @NonNull
+    public String getPhotosItemResponse() {
+        return photosItemResponse;
     }
 
     @Override

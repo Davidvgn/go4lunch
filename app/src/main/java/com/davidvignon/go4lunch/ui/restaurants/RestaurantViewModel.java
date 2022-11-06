@@ -4,6 +4,9 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -23,11 +26,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class RestaurantViewModel extends ViewModel {
 
-
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
 
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
+    private final MediatorLiveData<List<RestaurantViewState>> mediatorLiveData= new MediatorLiveData<>();
+    private final MutableLiveData<String> hour = new MutableLiveData<>();
 
 
     @Inject
@@ -37,6 +41,12 @@ public class RestaurantViewModel extends ViewModel {
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = bindViewState(locationLiveData);
 
+        mediatorLiveData.addSource(hour, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+
+            }
+        });
     }
 
     @NonNull
@@ -56,18 +66,23 @@ public class RestaurantViewModel extends ViewModel {
 
             if (response.getResults() != null) {
                 for (RestaurantResponse result : response.getResults()) {
-                    if (
-                        result != null
+                    if (result != null
                             && result.getPlaceId() != null
                             && result.getName() != null
                             && result.getVicinity() != null
                             && result.getPhotos() != null
+                        && result.getOpeningHours() !=null
+                        && result.getPhotos() != null
+                        && result.getPhotos().get(0) != null
+                        && result.getPhotos().get(0).getPhotoReference() != null
                     ) {
                         viewStates.add(
                             new RestaurantViewState(
                                 result.getPlaceId(),
                                 result.getName(),
-                                result.getVicinity()
+                                result.getVicinity(),
+                                result.getOpeningHours(),
+                                result.getPhotos().get(0).getPhotoReference()
                             )
                         );
                     }
@@ -79,5 +94,9 @@ public class RestaurantViewModel extends ViewModel {
 
     public void onItemViewModelClicked(String placeId) {
 
+    }
+
+    public LiveData<String>isClosed(){
+        return hour;
     }
 }

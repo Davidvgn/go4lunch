@@ -11,23 +11,25 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:itemBackground">@color/itemBackgroundColor</item>
+        <!--        <item name="android:itemBackground">@color/itemBackgroundColor</item>-->
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Go4Lunch.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.Go4Lunch.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="Theme.Details" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <item name="colorPrimary">@color/dominantRed</item>
-        <item name="colorPrimaryVariant">@color/darkRed</item>
-        <item name="colorOnPrimary">@color/white</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:colorAccent">@android:color/white</item>
 
         <item name="colorSecondary">@color/white</item>
-
     </style>
 
     <style name="Theme.Go4Lunch.Transparent">
