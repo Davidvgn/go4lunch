@@ -14,7 +14,6 @@ import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
-import com.davidvignon.go4lunch.ui.map.MapPoiViewState;
 
 import java.util.ArrayList;
 import java.util.List;

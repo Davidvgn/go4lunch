@@ -1,7 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import android.os.Looper;
@@ -10,7 +10,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,9 +25,8 @@ public class LocationRepositoryTest {
     private final FusedLocationProviderClient fusedLocationProviderClient = Mockito.mock(FusedLocationProviderClient.class);
 
     private LocationRepository locationRepository;
+
     private ArgumentCaptor<LocationCallback> callback = ArgumentCaptor.forClass(LocationCallback.class);
-
-
 
     @Before
     public void setUp() {
@@ -36,24 +34,53 @@ public class LocationRepositoryTest {
     }
 
     @Test
-    public void verify_startLocationRequest(){
-        // Given
-        locationRepository.stopLocationRequest();
-
+    public void verify_startLocationRequest() {
         // When
         locationRepository.startLocationRequest();
 
         // Then
-        assertNotNull(callback);
         Mockito.verify(fusedLocationProviderClient).removeLocationUpdates(callback.capture());
-        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), any(LocationCallback.class), any());
+        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), callback.capture(), any());
+        Mockito.verifyNoMoreInteractions(fusedLocationProviderClient);
     }
 
     @Test
-    public void test() {
-        LocationCallback loc = callback.getValue();
+    public void verify_if_callBack_is_null_new_LocationCallback_is_called() {
+        // Given
+        locationRepository.startLocationRequest();
+        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), callback.capture(), any());
+        LocationCallback firstLocation = callback.getValue();
 
+        // When
+        locationRepository.stopLocationRequest();
+        Mockito.verify(fusedLocationProviderClient, Mockito.times(2)).removeLocationUpdates(callback.capture());
+        LocationCallback removedLocation = callback.getValue();
+
+        locationRepository.startLocationRequest();
+        Mockito.verify(fusedLocationProviderClient, Mockito.times(2)).requestLocationUpdates(any(), callback.capture(), any());
+        LocationCallback secondLocation = callback.getValue();
+
+        // Then
+        assertEquals(firstLocation, removedLocation);
+        assertNotEquals(firstLocation, secondLocation);
     }
+
+    @Test
+    public void verify_if_callBack_is_notNull_same_callback_is_used() {
+        // Given
+        locationRepository.startLocationRequest();
+        Mockito.verify(fusedLocationProviderClient).requestLocationUpdates(any(), callback.capture(), any());
+        LocationCallback firstLocation = callback.getValue();
+
+        // When
+        locationRepository.startLocationRequest();
+        Mockito.verify(fusedLocationProviderClient, Mockito.times(2)).requestLocationUpdates(any(), callback.capture(), any());
+        LocationCallback secondLocation = callback.getValue();
+
+        // Then
+        assertEquals(firstLocation, secondLocation);
+    }
+
 
     @Test
     public void verify_stopLocationRequest() {
