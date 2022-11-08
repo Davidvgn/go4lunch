@@ -29,7 +29,7 @@ public class RestaurantViewModel extends ViewModel {
     private final NearBySearchRepository nearBySearchRepository;
 
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
-    private final MediatorLiveData<List<RestaurantViewState>> mediatorLiveData= new MediatorLiveData<>();
+    private final MediatorLiveData<List<RestaurantViewState>> mediatorLiveData = new MediatorLiveData<>();
     private final MutableLiveData<String> hour = new MutableLiveData<>();
 
 
@@ -66,11 +66,11 @@ public class RestaurantViewModel extends ViewModel {
             if (response.getResults() != null) {
                 for (RestaurantResponse result : response.getResults()) {
                     if (result != null
-                            && result.getPlaceId() != null
-                            && result.getName() != null
-                            && result.getVicinity() != null
-                            && result.getPhotos() != null
-                        && result.getOpeningHours() !=null
+                        && result.getPlaceId() != null
+                        && result.getName() != null
+                        && result.getVicinity() != null
+                        && result.getPhotos() != null
+                        && result.getOpeningHours() != null
                         && result.getPhotos() != null
                         && result.getPhotos().get(0) != null
                         && result.getPhotos().get(0).getPhotoReference() != null
@@ -89,13 +89,5 @@ public class RestaurantViewModel extends ViewModel {
             }
             return viewStates;
         });
-    }
-
-    public void onItemViewModelClicked(String placeId) {
-
-    }
-
-    public LiveData<String>isClosed(){
-        return hour;
     }
 }

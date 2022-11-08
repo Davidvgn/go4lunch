@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.ui.main.MainActivity;
+import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 
 
 import dagger.hilt.android.AndroidEntryPoint;
