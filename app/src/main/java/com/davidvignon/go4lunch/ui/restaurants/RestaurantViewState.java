@@ -22,23 +22,27 @@ public class RestaurantViewState {
     private final String vicinity;
 
     @NonNull
-    private final OpeningHoursResponse openingHours;
+    private final String photosItemResponse;
 
     @NonNull
-    private final String photosItemResponse;
+    private final String openOrClose;
+    private float rating;
+
 
 
     public RestaurantViewState(@NonNull String placeId,
         @NonNull String name,
         @NonNull String vincinity,
-        @NonNull OpeningHoursResponse openingHours,
-        @NonNull String photosItemResponse
+        @NonNull String photosItemResponse,
+        @NonNull String openOrClose,
+        float rating
     ) {
         this.placeId = placeId;
         this.name = name;
         this.vicinity = vincinity;
-        this.openingHours = openingHours;
         this.photosItemResponse = photosItemResponse;
+        this.openOrClose = openOrClose;
+        this.rating = rating;
     }
 
     @NonNull
@@ -57,13 +61,18 @@ public class RestaurantViewState {
     }
 
     @NonNull
-    public OpeningHoursResponse getOpeningHours() {
-        return openingHours;
+    public String getPhotosItemResponse() {
+        return photosItemResponse;
     }
 
     @NonNull
-    public String getPhotosItemResponse() {
-        return photosItemResponse;
+    public String getOpenOrClose() {
+        return openOrClose;
+    }
+
+    @NonNull
+    public float getRating() {
+        return rating;
     }
 
     @Override

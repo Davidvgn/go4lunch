@@ -20,6 +20,10 @@ public class PhotosItemResponse {
     @SerializedName("height")
     private int height;
 
+    public PhotosItemResponse(String photoReference) {
+        this.photoReference = photoReference;
+    }
+
     @Nullable
     public String getPhotoReference() {
         return photoReference;

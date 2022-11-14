@@ -69,16 +69,20 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
 
         public void bind(RestaurantViewState item, OnRestaurantClickedListener listener) {
             String photoReference = item.getPhotosItemResponse();
-            String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8";
+            String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
             String restaurantPicture =  "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
                  +photoReference +
                 "&key="+API_KEY;
 
             binding.restaurantItemTvName.setText(item.getName());
             binding.restaurantItemTvAdress.setText(item.getVicinity());
+            binding.restaurantItemTvClosureHour.setText(item.getOpenOrClose());
+            binding.restaurantItemRb.setRating(item.getRating());
+
             Glide.with(binding.restaurantItemIvPicture.getContext())
                 .load(restaurantPicture)
                 .into(binding.restaurantItemIvPicture);
+
 
         }
     }

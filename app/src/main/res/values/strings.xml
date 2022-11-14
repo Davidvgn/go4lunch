@@ -25,5 +25,7 @@
     <string name="call_restaurant">CALL</string>
     <string name="like_restaurant">LIKE</string>
     <string name="restaurant_website">WEBSITE</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
 
 </resources>

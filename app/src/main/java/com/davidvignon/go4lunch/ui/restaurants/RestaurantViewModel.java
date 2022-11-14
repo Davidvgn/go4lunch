@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
@@ -29,8 +30,7 @@ public class RestaurantViewModel extends ViewModel {
     private final NearBySearchRepository nearBySearchRepository;
 
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
-    private final MediatorLiveData<List<RestaurantViewState>> mediatorLiveData = new MediatorLiveData<>();
-    private final MutableLiveData<String> hour = new MutableLiveData<>();
+
 
 
     @Inject
@@ -39,13 +39,6 @@ public class RestaurantViewModel extends ViewModel {
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = bindViewState(locationLiveData);
-
-        mediatorLiveData.addSource(hour, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-
-            }
-        });
     }
 
     @NonNull
@@ -61,6 +54,7 @@ public class RestaurantViewModel extends ViewModel {
         );
 
         return Transformations.map(nearbySearchResponseLiveData, response -> {
+            String openOrClosed = "";
             List<RestaurantViewState> viewStates = new ArrayList<>();
 
             if (response.getResults() != null) {
@@ -70,24 +64,39 @@ public class RestaurantViewModel extends ViewModel {
                         && result.getName() != null
                         && result.getVicinity() != null
                         && result.getPhotos() != null
-                        && result.getOpeningHours() != null
-                        && result.getPhotos() != null
                         && result.getPhotos().get(0) != null
                         && result.getPhotos().get(0).getPhotoReference() != null
+                        && result.getOpeningHours() != null
+                        && result.getRating() != null
                     ) {
+
+                        boolean open = result.getOpeningHours().isOpenNow();
+                            if (open) {
+                                openOrClosed = "Ouvert";
+                            } else {
+                                openOrClosed = "Fermé";
+                            }
+
+                        Double initialRating = result.getRating();
+                       float test = (float) (initialRating * 3 / 5);
+
                         viewStates.add(
                             new RestaurantViewState(
                                 result.getPlaceId(),
                                 result.getName(),
                                 result.getVicinity(),
-                                result.getOpeningHours(),
-                                result.getPhotos().get(0).getPhotoReference()
+                                result.getPhotos().get(0).getPhotoReference(),
+                                openOrClosed,
+                                test
                             )
                         );
+
                     }
                 }
             }
             return viewStates;
         });
     }
+
+
 }
