@@ -4,9 +4,6 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -31,8 +28,6 @@ public class RestaurantViewModel extends ViewModel {
 
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
 
-
-
     @Inject
     public RestaurantViewModel(@NonNull LocationRepository locationRepository, @NonNull NearBySearchRepository nearBySearchRepository) {
         this.nearBySearchRepository = nearBySearchRepository;
@@ -54,7 +49,6 @@ public class RestaurantViewModel extends ViewModel {
         );
 
         return Transformations.map(nearbySearchResponseLiveData, response -> {
-            String openOrClosed = "";
             List<RestaurantViewState> viewStates = new ArrayList<>();
 
             if (response.getResults() != null) {
@@ -69,17 +63,16 @@ public class RestaurantViewModel extends ViewModel {
                         && result.getOpeningHours() != null
                         && result.getRating() != null
                     ) {
-
-                        boolean open = result.getOpeningHours().isOpenNow();
-                            if (open) {
-                                openOrClosed = "Ouvert";
-                            } else {
-                                openOrClosed = "Fermé";
-                            }
+                        final int openOrClosed;
+                        if (result.getOpeningHours().isOpenNow()) {
+                            openOrClosed = R.string.open;
+                        } else {
+                            openOrClosed = R.string.closed;
+                        }
 
                         Double initialRating = result.getRating();
-                       float test = (float) (initialRating * 3 / 5);
 
+                        //noinspection ConstantConditions wtf java
                         viewStates.add(
                             new RestaurantViewState(
                                 result.getPlaceId(),
@@ -87,7 +80,7 @@ public class RestaurantViewModel extends ViewModel {
                                 result.getVicinity(),
                                 result.getPhotos().get(0).getPhotoReference(),
                                 openOrClosed,
-                                test
+                                (float) (initialRating * 3 / 5)
                             )
                         );
 

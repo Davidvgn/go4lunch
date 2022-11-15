@@ -1,11 +1,8 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
-import com.davidvignon.go4lunch.data.google_places.nearby_places_model.OpeningHoursResponse;
-import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
-
-import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -24,17 +21,17 @@ public class RestaurantViewState {
     @NonNull
     private final String photosItemResponse;
 
-    @NonNull
-    private final String openOrClose;
-    private float rating;
+    @StringRes
+    private final int openOrClose;
 
+    private final float rating;
 
-
-    public RestaurantViewState(@NonNull String placeId,
+    public RestaurantViewState(
+        @NonNull String placeId,
         @NonNull String name,
         @NonNull String vincinity,
         @NonNull String photosItemResponse,
-        @NonNull String openOrClose,
+        @StringRes int openOrClose,
         float rating
     ) {
         this.placeId = placeId;
@@ -65,38 +62,37 @@ public class RestaurantViewState {
         return photosItemResponse;
     }
 
-    @NonNull
-    public String getOpenOrClose() {
+    @StringRes
+    public int getOpenOrClose() {
         return openOrClose;
     }
 
-    @NonNull
     public float getRating() {
         return rating;
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantViewState that = (RestaurantViewState) o;
-        return placeId.equals(that.getPlaceId())
-            && name.equals((that.getName()))
-            && vicinity.equals(that.getVicinity());
+        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(placeId, name);
+        return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating);
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "RestaurantViewState{" +
-            "placeId=" + placeId +
+            "placeId='" + placeId + '\'' +
             ", name='" + name + '\'' +
             ", vicinity='" + vicinity + '\'' +
+            ", photosItemResponse='" + photosItemResponse + '\'' +
+            ", openOrClose=" + openOrClose +
+            ", rating=" + rating +
             '}';
     }
 }
