@@ -62,6 +62,10 @@ public class RestaurantViewModel extends ViewModel {
                         && result.getPhotos().get(0).getPhotoReference() != null
                         && result.getOpeningHours() != null
                         && result.getRating() != null
+                        && result.getGeometry() != null
+                        && result.getGeometry().getLocation() != null
+                        && result.getGeometry().getLocation().getLat() != null
+                        && result.getGeometry().getLocation().getLng() != null
                     ) {
                         final int openOrClosed;
                         if (result.getOpeningHours().isOpenNow()) {
@@ -72,7 +76,19 @@ public class RestaurantViewModel extends ViewModel {
 
                         Double initialRating = result.getRating();
 
-                        //noinspection ConstantConditions wtf java
+                        Location location = locationLiveData.getValue();
+
+                        Location responseLocation = new Location("");
+                        double responseLat = result.getGeometry().getLocation().getLat();
+                        double responseLng = result.getGeometry().getLocation().getLng();
+
+                        responseLocation.setLongitude(responseLng);
+                        responseLocation.setLatitude(responseLat);
+
+                        float distance = location.distanceTo(responseLocation);
+                        int distanceInt = (int) distance;
+
+                        //noinspection ConstantConditions
                         viewStates.add(
                             new RestaurantViewState(
                                 result.getPlaceId(),
@@ -80,7 +96,8 @@ public class RestaurantViewModel extends ViewModel {
                                 result.getVicinity(),
                                 result.getPhotos().get(0).getPhotoReference(),
                                 openOrClosed,
-                                (float) (initialRating * 3 / 5)
+                                (float) (initialRating * 3 / 5),
+                                distanceInt + "m"
                             )
                         );
 

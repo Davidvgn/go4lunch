@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,9 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
+
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;

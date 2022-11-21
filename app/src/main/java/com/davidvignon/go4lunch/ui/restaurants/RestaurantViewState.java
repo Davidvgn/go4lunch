@@ -26,13 +26,17 @@ public class RestaurantViewState {
 
     private final float rating;
 
+    @NonNull
+    private final String distance;
+
     public RestaurantViewState(
         @NonNull String placeId,
         @NonNull String name,
         @NonNull String vincinity,
         @NonNull String photosItemResponse,
         @StringRes int openOrClose,
-        float rating
+        float rating,
+        @NonNull String distance
     ) {
         this.placeId = placeId;
         this.name = name;
@@ -40,6 +44,7 @@ public class RestaurantViewState {
         this.photosItemResponse = photosItemResponse;
         this.openOrClose = openOrClose;
         this.rating = rating;
+        this.distance = distance;
     }
 
     @NonNull
@@ -69,6 +74,11 @@ public class RestaurantViewState {
 
     public float getRating() {
         return rating;
+    }
+
+    @NonNull
+    public String getDistance() {
+        return distance;
     }
 
     @Override
