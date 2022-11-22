@@ -17,6 +17,8 @@ import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
+import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
+import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
@@ -127,4 +129,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         viewModel.refresh();
     }
+//
+//    @Override
+//    public void onItemClick(String placeId) {
+//        startActivity(RestaurantDetailsActivity.navigate(this, placeId));
+//    }
 }

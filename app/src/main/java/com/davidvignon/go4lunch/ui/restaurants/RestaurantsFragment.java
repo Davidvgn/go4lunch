@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.databinding.RestaurantsFragmentBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
+import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 
 import java.util.List;
 
@@ -28,12 +30,20 @@ public class RestaurantsFragment extends Fragment {
 
     private RestaurantsFragmentBinding binding;
 
+    private OnRestaurantClickedListener onRestaurantClickedListener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        onRestaurantClickedListener = (OnRestaurantClickedListener) context;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = RestaurantsFragmentBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     @Override
@@ -41,12 +51,7 @@ public class RestaurantsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RestaurantViewModel viewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
-        RestaurantAdapter adapter = new RestaurantAdapter(new OnRestaurantClickedListener() {
-            @Override
-            public void onItemClick(String PlaceId) {
-
-            }
-        });
+        RestaurantAdapter adapter = new RestaurantAdapter(onRestaurantClickedListener);
         binding.restaurantRv.setAdapter(adapter);
 
         viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantViewState>>() {

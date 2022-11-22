@@ -12,6 +12,7 @@ import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
+import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +27,19 @@ public class RestaurantViewModel extends ViewModel {
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
 
+    @NonNull
+    private final DistanceCalculator distanceCalculator;
+
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
 
     @Inject
-    public RestaurantViewModel(@NonNull LocationRepository locationRepository, @NonNull NearBySearchRepository nearBySearchRepository) {
+    public RestaurantViewModel(
+        @NonNull LocationRepository locationRepository,
+        @NonNull NearBySearchRepository nearBySearchRepository,
+        @NonNull DistanceCalculator distanceCalculator
+    ) {
         this.nearBySearchRepository = nearBySearchRepository;
+        this.distanceCalculator = distanceCalculator;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = bindViewState(locationLiveData);
@@ -76,11 +85,22 @@ public class RestaurantViewModel extends ViewModel {
 
                         Double initialRating = result.getRating();
 
-                        Location responseLocation = new Location("");
-                        responseLocation.setLatitude(result.getGeometry().getLocation().getLat());
-                        responseLocation.setLongitude(result.getGeometry().getLocation().getLng());
+                        Location userLocation = locationLiveData.getValue();
 
-                        int distanceInt = (int) (locationLiveData.getValue()).distanceTo(responseLocation);
+                        final String distanceText;
+
+                        if (userLocation != null) {
+                            int distanceInt = distanceCalculator.distanceBetween(
+                                result.getGeometry().getLocation().getLat(),
+                                result.getGeometry().getLocation().getLng(),
+                                userLocation.getLatitude(),
+                                userLocation.getLongitude()
+                            );
+
+                            distanceText = distanceInt + "m"; // TODO David à extraire dans une resource string
+                        } else {
+                            distanceText = null;
+                        }
 
                         //noinspection ConstantConditions
                         viewStates.add(
@@ -91,7 +111,7 @@ public class RestaurantViewModel extends ViewModel {
                                 result.getPhotos().get(0).getPhotoReference(),
                                 openOrClosed,
                                 (float) (initialRating * 3 / 5),
-                                distanceInt + "m"
+                                distanceText
                             )
                         );
 
