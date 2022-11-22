@@ -32,7 +32,7 @@ public class RestaurantViewState {
     public RestaurantViewState(
         @NonNull String placeId,
         @NonNull String name,
-        @NonNull String vincinity,
+        @NonNull String vicinity,
         @NonNull String photosItemResponse,
         @StringRes int openOrClose,
         float rating,
@@ -40,7 +40,7 @@ public class RestaurantViewState {
     ) {
         this.placeId = placeId;
         this.name = name;
-        this.vicinity = vincinity;
+        this.vicinity = vicinity;
         this.photosItemResponse = photosItemResponse;
         this.openOrClose = openOrClose;
         this.rating = rating;
@@ -86,12 +86,18 @@ public class RestaurantViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantViewState that = (RestaurantViewState) o;
-        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse);
+        return openOrClose == that.openOrClose
+            && Float.compare(that.rating, rating) == 0
+            && placeId.equals(that.placeId)
+            && name.equals(that.name)
+            && vicinity.equals(that.vicinity)
+            && photosItemResponse.equals(that.photosItemResponse)
+            && distance.equals(that.distance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating);
+        return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating, distance);
     }
 
     @Override
@@ -103,6 +109,7 @@ public class RestaurantViewState {
             ", photosItemResponse='" + photosItemResponse + '\'' +
             ", openOrClose=" + openOrClose +
             ", rating=" + rating +
+            ", distance='" + distance + '\'' +
             '}';
     }
 }

@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.RestaurantsFragmentBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
-import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
-import com.davidvignon.go4lunch.ui.map.MapPoiViewState;
-import com.davidvignon.go4lunch.ui.map.MapViewModel;
 
 import java.util.List;
 

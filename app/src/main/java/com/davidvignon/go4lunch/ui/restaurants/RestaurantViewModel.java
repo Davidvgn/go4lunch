@@ -76,17 +76,11 @@ public class RestaurantViewModel extends ViewModel {
 
                         Double initialRating = result.getRating();
 
-                        Location location = locationLiveData.getValue();
-
                         Location responseLocation = new Location("");
-                        double responseLat = result.getGeometry().getLocation().getLat();
-                        double responseLng = result.getGeometry().getLocation().getLng();
+                        responseLocation.setLatitude(result.getGeometry().getLocation().getLat());
+                        responseLocation.setLongitude(result.getGeometry().getLocation().getLng());
 
-                        responseLocation.setLongitude(responseLng);
-                        responseLocation.setLatitude(responseLat);
-
-                        float distance = location.distanceTo(responseLocation);
-                        int distanceInt = (int) distance;
+                        int distanceInt = (int) (locationLiveData.getValue()).distanceTo(responseLocation);
 
                         //noinspection ConstantConditions
                         viewStates.add(

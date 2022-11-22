@@ -12,6 +12,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.GeometryResponse;
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.LocationResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.OpeningHoursResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
@@ -34,10 +36,13 @@ public class RestaurantsViewModelTest {
     private static final String DEFAULT_RESTAURANT_RESPONSE_PLACE_ID = "DEFAULT_RESTAURANT_RESPONSE_PLACE_ID";
     private static final String DEFAULT_VICINITY = "DEFAULT_VICINITY";
     private static final String DEFAULT_PHOTO_REFERENCE = "DEFAULT_PHOTO_REFERENCE";
+    private static final String DEFAULT_DISTANCE = "DEFAULT_DISTANCE";
     private static final double DEFAULT_RATING = 3.4;
 
     private static final double DEFAULT_LATITUDE = 45.757830302;
     private static final double DEFAULT_LONGITUDE = 4.823496706;
+    private static final double DEFAULT_LONGITUDE_OFFSET = 46.0;
+
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -56,6 +61,7 @@ public class RestaurantsViewModelTest {
         Location location = Mockito.mock(Location.class);
         Mockito.doReturn(DEFAULT_LATITUDE).when(location).getLatitude();
         Mockito.doReturn(DEFAULT_LONGITUDE).when(location).getLongitude();
+
         locationMutableLiveData.setValue(location);
 
         Mockito.doReturn(nearbySearchResponseMutableLiveData).when(nearBySearchRepository).getNearbySearchResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
@@ -218,12 +224,23 @@ public class RestaurantsViewModelTest {
             null,
             name,
             openingHoursResponse,
-            null,
+            getGeometryResponse(0),
             null,
             vicinity,
             null,
             placeId,
             null
+        );
+    }
+
+
+    private GeometryResponse getGeometryResponse(int i) {
+        return new GeometryResponse(
+            null,
+            new LocationResponse(
+                DEFAULT_LONGITUDE_OFFSET + i,
+                (double) i
+            )
         );
     }
 
@@ -241,7 +258,9 @@ public class RestaurantsViewModelTest {
                     DEFAULT_VICINITY + i,
                     DEFAULT_PHOTO_REFERENCE + i,
                     i == 1 ? R.string.open : R.string.closed,
-                    2.04F
+                    2.04F,
+                    DEFAULT_DISTANCE
+
                 )
             );
         }
