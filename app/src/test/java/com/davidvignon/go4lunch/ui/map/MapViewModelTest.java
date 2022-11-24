@@ -29,7 +29,7 @@ public class MapViewModelTest {
 
     private static final String DEFAULT_RESTAURANT_RESPONSE_NAME = "DEFAULT_RESTAURANT_RESPONSE_NAME";
     private static final String DEFAULT_RESTAURANT_RESPONSE_PLACE_ID = "DEFAULT_RESTAURANT_RESPONSE_PLACE_ID";
-    private static final double DEFAULT_LONGITUDE_OFFSET = 46.0;
+    private static final double DEFAULT_LONGITUDE_OFFSET = 5.0;
     private static final double DEFAULT_LATITUDE = 45.757830302;
     private static final double DEFAULT_LONGITUDE = 4.823496706;
 

@@ -3,6 +3,7 @@ package com.davidvignon.go4lunch.ui.restaurants;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -54,7 +55,12 @@ public class RestaurantViewModel extends ViewModel {
     private LiveData<List<RestaurantViewState>> bindViewState(LiveData<Location> locationLiveData) {
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
             locationLiveData,
-            location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
+            new Function<Location, LiveData<NearbySearchResponse>>() {
+                @Override
+                public LiveData<NearbySearchResponse> apply(Location location) {
+                    return nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude());
+                }
+            }
         );
 
         return Transformations.map(nearbySearchResponseLiveData, response -> {

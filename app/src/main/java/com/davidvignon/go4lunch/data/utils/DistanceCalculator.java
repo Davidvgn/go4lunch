@@ -21,6 +21,6 @@ public class DistanceCalculator {
         location2.setLatitude(lat2);
         location2.setLongitude(long2);
 
-        return (int) (location2).distanceTo(location2);
+        return (int) (location1).distanceTo(location2);
     }
 }

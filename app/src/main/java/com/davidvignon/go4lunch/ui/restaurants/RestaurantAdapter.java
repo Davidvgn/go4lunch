@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.davidvignon.go4lunch.databinding.RestaurantsItemviewBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
-import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 
 public class RestaurantAdapter extends ListAdapter<RestaurantViewState, RestaurantAdapter.ViewHolder> {
 
@@ -62,6 +59,13 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
             Glide.with(binding.restaurantItemIvPicture.getContext())
                 .load(restaurantPicture)
                 .into(binding.restaurantItemIvPicture);
+
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    listener.onItemClick(item.getName(), item.getVicinity(), item.getPhotosItemResponse(), item.getRating());
+//                }
+//            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

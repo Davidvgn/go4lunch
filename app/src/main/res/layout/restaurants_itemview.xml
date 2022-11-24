@@ -48,17 +48,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <!--    <TextView-->
-        <!--        android:id="@+id/restaurant_item_tv_food_type"-->
-        <!--        android:layout_width="0dp"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:layout_marginStart="8dp"-->
-        <!--        android:layout_marginTop="4dp"-->
-        <!--        android:textSize="16sp"-->
-        <!--        app:layout_constraintStart_toStartOf="parent"-->
-        <!--        app:layout_constraintTop_toBottomOf="@id/restaurant_item_tv_name"-->
-        <!--        tools:text="French"/>-->
-
         <TextView
             android:id="@+id/restaurant_item_tv_adress"
             android:layout_width="0dp"
@@ -113,8 +102,6 @@
             android:numStars="3"
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp"
-            android:rotation="180"
-            android:scaleY="-1"
             android:progressTint="#FFDE17"
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_iv_picture"
             app:layout_constraintTop_toBottomOf="@id/restaurant_item_iv_person_icon"

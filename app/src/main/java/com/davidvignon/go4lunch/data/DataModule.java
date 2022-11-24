@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Looper;
 
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
+import com.davidvignon.go4lunch.data.google_places.PlaceDetailsApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,7 +18,9 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -51,6 +54,22 @@ public class DataModule {
             .build();
 
         return retrofit.create(PlacesApi.class);
+    }
+
+    @Singleton
+    @Provides
+    public PlaceDetailsApi providePlaceDetailsApi() {
+        Gson gson = new GsonBuilder().setLenient().create();
+        OkHttpClient httpClient = new OkHttpClient.Builder().build();
+        String baseUrl = "https://maps.googleapis.com/";
+
+        Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build();
+
+        return retrofit.create(PlaceDetailsApi.class);
     }
 
     @Provides

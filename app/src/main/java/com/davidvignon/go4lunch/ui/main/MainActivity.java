@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener{
 
     @Inject
     LocationRepository locationRepository;
@@ -131,7 +131,11 @@ public class MainActivity extends AppCompatActivity {
     }
 //
 //    @Override
-//    public void onItemClick(String placeId) {
-//        startActivity(RestaurantDetailsActivity.navigate(this, placeId));
+//    public void onItemClick(String name, String address, String photo, float rating) {
+//        startActivity(RestaurantDetailsActivity.navigate(this, name, address,photo, rating));
 //    }
+    @Override
+    public void onItemClick(String placeId) {
+        startActivity(RestaurantDetailsActivity.navigate(this, placeId));
+    }
 }
