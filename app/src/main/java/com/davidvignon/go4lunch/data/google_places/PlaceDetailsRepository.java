@@ -34,8 +34,6 @@ public class PlaceDetailsRepository {
             @Override
             public void onResponse(@NonNull Call<DetailsResponse> call, @NonNull Response<DetailsResponse> response) {
                 detailsResponseMutableLiveData.setValue(response.body());
-                Log.i("Dvgn", "onResponse: " + detailsResponseMutableLiveData.getValue());
-
             }
 
             @Override

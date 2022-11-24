@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/o_auth_background"
+    android:background="@drawable/restaurant_image"
     tools:context=".ui.oauth.OAuthActivity">
-
 
     <ImageView
         android:id="@+id/auth_iv_food_icon"
@@ -17,7 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_ramen_dining_24" />
-
 
     <TextView
         android:id="@+id/auth_tv_title"
@@ -38,12 +36,12 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:gravity="center"
         android:text="@string/auth_text"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="italic"
-        android:gravity="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/auth_tv_title" />
@@ -53,8 +51,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="64dp"
-        android:layout_marginRight="64dp"
         android:layout_marginTop="128dp"
+        android:layout_marginRight="64dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/auth_tv_text" />
@@ -64,8 +62,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="64dp"
-        android:layout_marginRight="64dp"
         android:layout_marginTop="32dp"
+        android:layout_marginRight="64dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/auth_Facebook_LoginButton" />

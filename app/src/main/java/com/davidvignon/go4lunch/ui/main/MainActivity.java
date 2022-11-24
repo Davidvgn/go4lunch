@@ -129,11 +129,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         super.onResume();
         viewModel.refresh();
     }
-//
-//    @Override
-//    public void onItemClick(String name, String address, String photo, float rating) {
-//        startActivity(RestaurantDetailsActivity.navigate(this, name, address,photo, rating));
-//    }
+
     @Override
     public void onItemClick(String placeId) {
         startActivity(RestaurantDetailsActivity.navigate(this, placeId));

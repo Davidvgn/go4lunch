@@ -21,7 +21,6 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final PlaceDetailsRepository placeDetailsRepository;
 
     LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
-    LiveData<String> phoneNunber;
 
     MutableLiveData<String> placeIdMutableliveData = new MutableLiveData<>();
 

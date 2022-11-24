@@ -25,7 +25,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
 
+    @NonNull
     private String phoneNumber;
+
+    @NonNull
+    private String website;
 
     public static Intent navigate(
         @NonNull Context context,
@@ -53,8 +57,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 binding.restaurantDetailsTvName.setText(restaurantDetailsViewState.getName());
                 binding.restaurantDetailsTvAddress.setText(restaurantDetailsViewState.getVicinity());
                 binding.restaurantDetailsRb.setRating(restaurantDetailsViewState.getRating());
-//          binding.restaurantDetailsBtCall.setText(restaurantDetailsViewState.getPhoneNumber());
-//                 binding.restaurantDetailsBtWebsite.setText(restaurantDetailsViewState.getWebsite());
+                phoneNumber = restaurantDetailsViewState.getPhoneNumber();
+                website = restaurantDetailsViewState.getWebsite();
 
                 String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
                 String restaurantPicture = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
@@ -71,9 +75,21 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding.restaurantDetailsBtCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentDial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "123456789"));
+                Intent intentDial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
                 startActivity(intentDial);
             }
         });
+
+        binding.restaurantDetailsBtWebsite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = website;
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
+
+
     }
 }

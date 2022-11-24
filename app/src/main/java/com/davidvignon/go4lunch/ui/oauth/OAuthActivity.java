@@ -5,6 +5,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.AuthActivityBinding;
+import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
+import com.davidvignon.go4lunch.ui.main.MainActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -19,6 +22,7 @@ import com.facebook.FacebookException;
 import com.facebook.LoginStatusCallback;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -26,8 +30,13 @@ import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -38,6 +47,7 @@ public class OAuthActivity extends AppCompatActivity {
     AuthActivityBinding binding;
 
     private static final int REQ_ONE_TAP = 2;
+    private static final String EMAIL = "email";
     private boolean showOneTapUI = true;
 
 
@@ -60,6 +70,10 @@ public class OAuthActivity extends AppCompatActivity {
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
 
+        LoginButton loginButton = binding.authFacebookLoginButton;
+        loginButton.setReadPermissions(EMAIL, "public_profile");
+
+
         callbackManager = CallbackManager.Factory.create();
 
         binding.authFacebookLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -77,10 +91,12 @@ public class OAuthActivity extends AppCompatActivity {
                 // If this callback is called, a popup notification appears that says
                 // "Logged in as <User Name>"
             }
+
             @Override
             public void onFailure() {
                 // No access token could be retrieved for the user
             }
+
             @Override
             public void onError(Exception exception) {
                 // An error occurred
@@ -88,19 +104,18 @@ public class OAuthActivity extends AppCompatActivity {
         });
 
 
-
         LoginManager.getInstance().registerCallback(callbackManager,
             new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    // App code
-                }
+                    handleFacebookAccessToken(loginResult.getAccessToken());
+                    startActivity(new Intent(OAuthActivity.this, MainActivity.class));
 
+                }
                 @Override
                 public void onCancel() {
                     // App code
                 }
-
                 @Override
                 public void onError(FacebookException exception) {
                     // App code
@@ -145,6 +160,7 @@ public class OAuthActivity extends AppCompatActivity {
                         startIntentSenderForResult(
                             result.getPendingIntent().getIntentSender(), REQ_ONE_TAP,
                             null, 0, 0, 0);
+
                     } catch (IntentSender.SendIntentException e) {
                         Log.e("DavidVgn", "Couldn't start One Tap UI: " + e.getLocalizedMessage());
                     }
@@ -172,7 +188,7 @@ public class OAuthActivity extends AppCompatActivity {
                     String idToken = credential.getGoogleIdToken();
                     String username = credential.getId();
                     String password = credential.getPassword();
-                    if (idToken !=  null) {
+                    if (idToken != null) {
                         // Got an ID token from Google. Use it to authenticate
                         // with your backend.
                         Log.d("DavidVgn", "Got ID token.");
@@ -202,14 +218,42 @@ public class OAuthActivity extends AppCompatActivity {
         }
     }
 
-        @Override
-        public void onStart () {
-            super.onStart();
-            // Check if user is signed in (non-null) and update UI accordingly.
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            //todo david check cette méthode
-//        updateUI(currentUser);
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(OAuthActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                        updateUI(null);
+                    }
+                }
+            });
+    }
+
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
+
+        } else {
+
         }
+    }
 
 
 //
@@ -232,4 +276,4 @@ public class OAuthActivity extends AppCompatActivity {
 //        }
 //    });
 
-    }
+}
