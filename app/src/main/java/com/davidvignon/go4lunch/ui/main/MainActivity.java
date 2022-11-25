@@ -1,8 +1,10 @@
 package com.davidvignon.go4lunch.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -20,9 +22,13 @@ import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
+import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
+import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +37,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener{
+public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener {
 
     @Inject
     LocationRepository locationRepository;
@@ -49,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         super.onCreate(savedInstanceState);
         MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         Toolbar toolbar = binding.mainToolBar;
         toolbar.setTitle(R.string.restaurantViewTitle);
 
@@ -59,6 +67,31 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.mainDrawerLayout.open();
+            }
+        });
+
+        binding.mainNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case (R.id.nav_lunch):
+                        return true;
+                    case (R.id.nav_settings):
+                        return true;
+                    case (R.id.nav_logout):
+                        LoginManager.getInstance().logOut();
+                        startActivity(new Intent(MainActivity.this, OAuthActivity.class));
+                        return true;
+                }
+                binding.mainDrawerLayout.close();
+                return true;
+            }
+        });
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -77,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     case (R.id.bottom_nav_list):
                         displayFragment(RestaurantsFragment.newInstance());
                         toolbar.setTitle(R.string.restaurantViewTitle);
-
                         break;
                     case (R.id.bottom_nav_workmates):
                         displayFragment(WorkmatesFragment.newInstance());
@@ -116,13 +148,15 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//
+//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+//            Log.i("Dvgn", "onOptionsItemSelected: ");
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onResume() {
@@ -134,4 +168,13 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     public void onItemClick(String placeId) {
         startActivity(RestaurantDetailsActivity.navigate(this, placeId));
     }
+
+//    @Override
+//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+//        drawer.closeDrawer(GravityCompat.START);
+//
+//        return true;
+//    }
+
 }
