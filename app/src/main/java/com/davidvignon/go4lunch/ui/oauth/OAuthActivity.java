@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,40 +15,40 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class OAuthActivity extends AppCompatActivity {
 
     AuthActivityBinding binding;
 
     private static final int REQ_ONE_TAP = 2;
-//    private static final int RC_SIGN_IN = 9001;
+    private static final int RC_SIGN_IN = 3;
     private boolean showOneTapUI = true;
 
     private FirebaseAuth mAuth;
     CallbackManager callbackManager;
 
     private SignInClient oneTapClient;
+    private GoogleSignInClient mGoogleSignInClient;
 
-//    private BeginSignInRequest signUpRequest;
-//    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,28 @@ public class OAuthActivity extends AppCompatActivity {
         binding = AuthActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //GOOGLE
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
+        // Set the dimensions of the sign-in button.
+        SignInButton gooleSignInButton = binding.authGoogleLoginButton;
+        gooleSignInButton.setSize(SignInButton.SIZE_STANDARD);
+
+        gooleSignInButton.setOnClickListener(view -> {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
+
+
+        //FACEBOOK
         LoginButton facebookButton = binding.authFacebookLoginButton;
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -71,18 +92,13 @@ public class OAuthActivity extends AppCompatActivity {
 
         GraphRequest request = GraphRequest.newMeRequest(
             accessToken,
-            new GraphRequest.GraphJSONObjectCallback() {
-                @Override
-                public void onCompleted(
-                    JSONObject object,
-                    GraphResponse response) {
-                    // Application code
-                    try {
-                        String fullName = object.getString("name");
-                        String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            (object, response) -> {
+                // Application code
+                try {
+                    String fullName = object.getString("name");
+                    String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
         Bundle parameters = new Bundle();
@@ -99,12 +115,14 @@ public class OAuthActivity extends AppCompatActivity {
                     startActivity(new Intent(OAuthActivity.this, MainActivity.class));
 
                 }
+
                 @Override
                 public void onCancel() {
                     Log.d("DavidVgn", "onCancel: ");
 
                     // App code
                 }
+
                 @Override
                 public void onError(FacebookException exception) {
                     Log.d("DavidVgn", "onError: " + exception);
@@ -112,91 +130,7 @@ public class OAuthActivity extends AppCompatActivity {
                     // App code
                 }
             });
-
-
-        //--------GOOGLE-----------------
-
-//        // Configure sign-in to request the user's ID, email address, and basic
-//        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestEmail()
-//            .build();
-//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-//        // Check for existing Google Sign In account, if the user is already signed in
-//        // the GoogleSignInAccount will be non-null.
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        updateUIGoogle(account);
-
-//        binding.signInButton.setSize(SignInButton.SIZE_STANDARD);
-//
-//        binding.signInButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-//                startActivityForResult(signInIntent, RC_SIGN_IN);
-//            }
-//        });
-
-
-
-
-//        BeginSignInRequest signInRequest = BeginSignInRequest.builder()
-//            .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
-//                .setSupported(true)
-//                .build())
-//            .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-//                .setSupported(true)
-//                // Your server's client ID, not your Android client ID.
-//                .setServerClientId(getString(R.string.default_web_client_id))
-//                // Only show accounts previously used to sign in.
-//                .setFilterByAuthorizedAccounts(true)
-//                .build())
-//            // Automatically sign in when exactly one credential is retrieved.
-//            .setAutoSelectEnabled(true)
-//            .build();
-//        private void updateUIGoogle(GoogleSignInAccount account) {
-//        }
-
-//        private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-//        SignInCredential googleCredential = oneTapClient.getSignInCredentialFromIntent(data);
-//        String idTokenGoogle = googleCredential.getGoogleIdToken();
-//        if (idTokenGoogle !=  null) {
-//            // Got an ID token from Google. Use it to authenticate
-//            // with Firebase.
-//            AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idTokenGoogle, null);
-//            mAuth.signInWithCredential(firebaseCredential)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()) {
-//                            // Sign in success, update UI with the signed-in user's information
-//                            Log.d("DavidVgn", "signInWithCredential:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            updateUI(user);
-//                        } else {
-//                            // If sign in fails, display a message to the user.
-//                            Log.w("DavidVgn", "signInWithCredential:failure", task.getException());
-//                            updateUI(null);
-//                        }
-//                    }
-//                });
-//            break;
-//            try {
-//                GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//
-//                // Signed in successfully, show authenticated UI.
-//                updateUIGoogle(account);
-//            } catch (ApiException e) {
-//                // The ApiException status code indicates the detailed failure reason.
-//                // Please refer to the GoogleSignInStatusCodes class reference for more information.
-//                Log.w("DavidVgn", "signInResult:failed code=" + e.getStatusCode());
-//                updateUIGoogle(null);
-//            }
-//        }
-        //--------GOOGLE-----------------
     }
-
-
 
 
     @Override
@@ -206,36 +140,19 @@ public class OAuthActivity extends AppCompatActivity {
 
         switch (requestCode) {
 
-            //_______________-GOOGLE--------------------
-//            // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-//            case RC_SIGN_IN :
-//                // The Task returned from this call is always completed, no need to attach
-//                // a listener.
-//
-//                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//                handleSignInResult(task);
-//                try {
-//                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
-//                    String idToken = credential.getGoogleIdToken();
-//                    if (idToken !=  null) {
-//                        // Got an ID token from Google. Use it to authenticate
-//                        // with Firebase.
-//                        Log.d("DavidVgn", "Got ID token.");
-//                    }
-//                } catch (ApiException e) {
-//                    // ...
-//                }
-//                break;
-
-
-
-            //_______________-GOOGLE--------------------
-
+                //GOOGLE
+                // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+            case RC_SIGN_IN:
+                // The Task returned from this call is always completed, no need to attach
+                // a listener.
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                handleSignInResult(task);
+                break;
+                //FACEBOOK
             case REQ_ONE_TAP:
                 try {
                     SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
                     String idToken = credential.getGoogleIdToken();
-                    String username = credential.getId();
                     String password = credential.getPassword();
 
                     if (idToken != null) {
@@ -271,64 +188,57 @@ public class OAuthActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        //-----FACEBOOK
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         facebookUpdateUI(currentUser);
+
+        //------GOOGLE
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        googleUpdateUI(account);
+
     }
 
-
-
-
     private void handleFacebookAccessToken(AccessToken token) {
-        Log.d("DavidVgn", "handleFacebookAccessToken: " + token);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Log.d("DavidVgn", "onComplete: " + task);
-                        // Sign in success, update UI with the signed-in user's information
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        facebookUpdateUI(user);
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(OAuthActivity.this, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show();
-                        facebookUpdateUI(null);
-                    }
+            .addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    Log.d("DavidVgn", "onComplete: " + task);
+                    // Sign in success, update UI with the signed-in user's information
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    facebookUpdateUI(user);
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Toast.makeText(OAuthActivity.this, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show();
+                    facebookUpdateUI(null);
                 }
             });
     }
 
-
-
-    private void facebookUpdateUI(FirebaseUser user) {
-        if (user != null) {
-
-        } else {
-
+    //GOOGLE
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            startActivity(new Intent(OAuthActivity.this, MainActivity.class));
+            // Signed in successfully, show authenticated UI.
+            googleUpdateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w("DavidVgn", "signInResult:failed code=" + e.getStatusCode());
+            googleUpdateUI(null);
         }
     }
 
-//  mAuth.signInWithCustomToken(mCustomToken)
-//        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//        @Override
-//        public void onComplete(@NonNull Task<AuthResult> task) {
-//            if (task.isSuccessful()) {
-//                // Sign in success, update UI with the signed-in user's information
-//                Log.d(TAG, "signInWithCustomToken:success");
-//                FirebaseUser user = mAuth.getCurrentUser();
-//                updateUI(user);
-//            } else {
-//                // If sign in fails, display a message to the user.
-//                Log.w(TAG, "signInWithCustomToken:failure", task.getException());
-//                Toast.makeText(CustomAuthActivity.this, "Authentication failed.",
-//                    Toast.LENGTH_SHORT).show();
-//                updateUI(null);
-//            }
-//        }
-//    });
 
+    private void facebookUpdateUI(FirebaseUser user) {
+    }
+
+    private void googleUpdateUI(GoogleSignInAccount account) {
+    }
 
 }
