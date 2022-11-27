@@ -7,19 +7,18 @@ import java.util.Objects;
 public class WorkmatesViewStates {
 
     @NonNull
-   private final String email;
+    private final String name;
 
     @NonNull
-   private final String name;
+    private final String picturePath;
 
-    public WorkmatesViewStates(@NonNull String email, @NonNull String name) {
-        this.email = email;
+    @NonNull
+    private final String email;
+
+    public WorkmatesViewStates(int workmatesId, @NonNull String name, @NonNull String picturePath, @NonNull String email) {
         this.name = name;
-    }
-
-    @NonNull
-    public String getEmail() {
-        return email;
+        this.picturePath = picturePath;
+        this.email = email;
     }
 
     @NonNull
@@ -27,24 +26,38 @@ public class WorkmatesViewStates {
         return name;
     }
 
+    @NonNull
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    @NonNull
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkmatesViewStates that = (WorkmatesViewStates) o;
-        return email.equals(that.email) && name.equals(that.name);
+        return name.equals(that.name) && picturePath.equals(that.picturePath) && email.equals(that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, name);
+        return Objects.hash(name, picturePath, email);
     }
 
     @Override
     public String toString() {
         return "WorkmatesViewStates{" +
-            "email='" + email + '\'' +
             ", name='" + name + '\'' +
+            ", picturePath='" + picturePath + '\'' +
+            ", email='" + email + '\'' +
             '}';
     }
 }
+
+
+

@@ -41,6 +41,7 @@ public class MapFragment extends SupportMapFragment {
             0
         );
 
+        //todo Nino = est ce que la fiche doit afficher plus d'élément que le titre ?
         getMapAsync(googleMap -> {
             viewModel.getMapPoiViewStateLiveData().observe(getViewLifecycleOwner(), mapPoiViewStates -> {
 

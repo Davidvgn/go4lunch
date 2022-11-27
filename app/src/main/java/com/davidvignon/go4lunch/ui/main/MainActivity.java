@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.main;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +25,6 @@ import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
-import com.davidvignon.go4lunch.ui.dispatcher.DispatcherViewAction;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
@@ -37,11 +34,8 @@ import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import javax.inject.Inject;
@@ -51,13 +45,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener {
 
+    //Dans menu navigation
+    //todo Nino : comment changer la couleur du background du menu pour le mettre en orange ?
+    //todo Nino : espace entre 1er element du menu et le header ?
+
     @Inject
     LocationRepository locationRepository;
 
     @Inject
     PermissionRepository permissionRepository;
-
-    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private MainViewModel viewModel;
 
@@ -65,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -85,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
@@ -100,13 +95,12 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                 try {
                     String fullName = object.getString("name");
                     String email = object.getString("email");
+                    String picturePath = object.getJSONObject("picture").getJSONObject("data").getString("url");
 
-                    String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                    Log.i("DavidVgn", "onCreate: "+url);
                     navUsername.setText(fullName);
                     navUseremail.setText(email);
                     Glide.with(MainActivity.this)
-                        .load(url)
+                        .load(picturePath)
                         .apply(RequestOptions.circleCropTransform())
                         .into(navUserImage);
 
@@ -124,43 +118,37 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         if (acct != null) {
             String personName = acct.getDisplayName();
             String personEmail = acct.getEmail();
-            Uri personPhoto = acct.getPhotoUrl();
+            Uri picturePath = acct.getPhotoUrl();
 
             navUsername.setText(personName);
             navUseremail.setText(personEmail);
             Glide.with(MainActivity.this)
-                .load(personPhoto)
+                .load(picturePath)
                 .apply(RequestOptions.circleCropTransform())
                 .into(navUserImage);
         }
 
+        toolbar.setNavigationOnClickListener(view -> binding.mainDrawerLayout.open());
 
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                binding.mainDrawerLayout.open();
+        binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case (R.id.nav_lunch):
+                    return true;
+                case (R.id.nav_settings):
+                    Intent intent = new Intent();
+                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+                    startActivity(intent);
+                    return true;
+                case (R.id.nav_logout):
+                    LoginManager.getInstance().logOut();
+                    //TODO NINO : Si : logout -> fermeture de l'app -> relancement de l'app -> je ne reviens pas sur l'écran de connection (gérer le dispatcher)
+                    startActivity(new Intent(MainActivity.this, OAuthActivity.class));
+                    return true;
             }
-        });
-
-
-        binding.mainNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case (R.id.nav_lunch):
-                        return true;
-                    case (R.id.nav_settings):
-                        return true;
-                    case (R.id.nav_logout):
-                        LoginManager.getInstance().logOut();
-                        //TODO NINO : Si : logout -> fermeture de l'app -> relancement de l'app -> je ne reviens pas sur l'écran de connection (gérer le dispatcher)
-                        startActivity(new Intent(MainActivity.this, OAuthActivity.class));
-                        return true;
-                }
-                binding.mainDrawerLayout.close();
-                return true;
-            }
+            binding.mainDrawerLayout.close();
+            return true;
         });
 
         if (savedInstanceState == null) {
@@ -169,25 +157,22 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                 .commit();
         }
 
-        binding.mainBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case (R.id.bottom_nav_map):
-                        displayFragment(MapFragment.newInstance());
-                        toolbar.setTitle(R.string.restaurantViewTitle);
-                        break;
-                    case (R.id.bottom_nav_list):
-                        displayFragment(RestaurantsFragment.newInstance());
-                        toolbar.setTitle(R.string.restaurantViewTitle);
-                        break;
-                    case (R.id.bottom_nav_workmates):
-                        displayFragment(WorkmatesFragment.newInstance());
-                        toolbar.setTitle(R.string.workermatesViewTitle);
-                        break;
-                }
-                return true;
+        binding.mainBottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case (R.id.bottom_nav_map):
+                    displayFragment(MapFragment.newInstance());
+                    toolbar.setTitle(R.string.restaurantViewTitle);
+                    break;
+                case (R.id.bottom_nav_list):
+                    displayFragment(RestaurantsFragment.newInstance());
+                    toolbar.setTitle(R.string.restaurantViewTitle);
+                    break;
+                case (R.id.bottom_nav_workmates):
+                    displayFragment(WorkmatesFragment.newInstance());
+                    toolbar.setTitle(R.string.workermatesViewTitle);
+                    break;
             }
+            return true;
         });
     }
 
@@ -195,7 +180,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         getSupportFragmentManager().beginTransaction()
             .replace(R.id.main_FrameLayout_fragment_container, fragment, null)
             .commitNow();
-
     }
 
     @Override

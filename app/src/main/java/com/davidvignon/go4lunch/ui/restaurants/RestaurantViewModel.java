@@ -63,68 +63,71 @@ public class RestaurantViewModel extends ViewModel {
             }
         );
 
-        return Transformations.map(nearbySearchResponseLiveData, response -> {
-            List<RestaurantViewState> viewStates = new ArrayList<>();
+        return Transformations.map(nearbySearchResponseLiveData, new Function<NearbySearchResponse, List<RestaurantViewState>>() {
+            @Override
+            public List<RestaurantViewState> apply(NearbySearchResponse response) {
+                List<RestaurantViewState> viewStates = new ArrayList<>();
 
-            if (response.getResults() != null) {
-                for (RestaurantResponse result : response.getResults()) {
-                    if (result != null
-                        && result.getPlaceId() != null
-                        && result.getName() != null
-                        && result.getVicinity() != null
-                        && result.getPhotos() != null
-                        && result.getPhotos().get(0) != null
-                        && result.getPhotos().get(0).getPhotoReference() != null
-                        && result.getOpeningHours() != null
-                        && result.getRating() != null
-                        && result.getGeometry() != null
-                        && result.getGeometry().getLocation() != null
-                        && result.getGeometry().getLocation().getLat() != null
-                        && result.getGeometry().getLocation().getLng() != null
-                    ) {
-                        final int openOrClosed;
-                        if (result.getOpeningHours().isOpenNow()) {
-                            openOrClosed = R.string.open;
-                        } else {
-                            openOrClosed = R.string.closed;
-                        }
+                if (response.getResults() != null) {
+                    for (RestaurantResponse result : response.getResults()) {
+                        if (result != null
+                            && result.getPlaceId() != null
+                            && result.getName() != null
+                            && result.getVicinity() != null
+                            && result.getPhotos() != null
+                            && result.getPhotos().get(0) != null
+                            && result.getPhotos().get(0).getPhotoReference() != null
+                            && result.getOpeningHours() != null
+                            && result.getRating() != null
+                            && result.getGeometry() != null
+                            && result.getGeometry().getLocation() != null
+                            && result.getGeometry().getLocation().getLat() != null
+                            && result.getGeometry().getLocation().getLng() != null
+                        ) {
+                            final int openOrClosed;
+                            if (result.getOpeningHours().isOpenNow()) {
+                                openOrClosed = R.string.open;
+                            } else {
+                                openOrClosed = R.string.closed;
+                            }
 
-                        Double initialRating = result.getRating();
+                            Double initialRating = result.getRating();
 
-                        Location userLocation = locationLiveData.getValue();
+                            Location userLocation = locationLiveData.getValue();
 
-                        final String distanceText;
+                            final String distanceText;
 
-                        if (userLocation != null) {
-                            int distanceInt = distanceCalculator.distanceBetween(
-                                result.getGeometry().getLocation().getLat(),
-                                result.getGeometry().getLocation().getLng(),
-                                userLocation.getLatitude(),
-                                userLocation.getLongitude()
+                            if (userLocation != null) {
+                                int distanceInt = distanceCalculator.distanceBetween(
+                                    result.getGeometry().getLocation().getLat(),
+                                    result.getGeometry().getLocation().getLng(),
+                                    userLocation.getLatitude(),
+                                    userLocation.getLongitude()
+                                );
+
+                                distanceText = distanceInt + "m"; // TODO David à extraire dans une resource string
+                            } else {
+                                distanceText = null;
+                            }
+
+                            //noinspection ConstantConditions
+                            viewStates.add(
+                                new RestaurantViewState(
+                                    result.getPlaceId(),
+                                    result.getName(),
+                                    result.getVicinity(),
+                                    result.getPhotos().get(0).getPhotoReference(),
+                                    openOrClosed,
+                                    (float) (initialRating * 3 / 5),
+                                    distanceText
+                                )
                             );
 
-                            distanceText = distanceInt + "m"; // TODO David à extraire dans une resource string
-                        } else {
-                            distanceText = null;
                         }
-
-                        //noinspection ConstantConditions
-                        viewStates.add(
-                            new RestaurantViewState(
-                                result.getPlaceId(),
-                                result.getName(),
-                                result.getVicinity(),
-                                result.getPhotos().get(0).getPhotoReference(),
-                                openOrClosed,
-                                (float) (initialRating * 3 / 5),
-                                distanceText
-                            )
-                        );
-
                     }
                 }
+                return viewStates;
             }
-            return viewStates;
         });
     }
 

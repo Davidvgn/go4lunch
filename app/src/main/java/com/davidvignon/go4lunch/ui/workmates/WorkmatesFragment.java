@@ -41,12 +41,6 @@ public class WorkmatesFragment extends Fragment {
         WorkmatesAdapter adapter = new WorkmatesAdapter();
         binding.workmatesRv.setAdapter(adapter);
 
-//        viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesViewStates>>() {
-//            @Override
-//            public void onChanged(List<WorkmatesViewStates> workmatesViewStates) {
-//                adapter.submitList(workmatesViewStates);
-//            }
-//        });
     }
 
 
