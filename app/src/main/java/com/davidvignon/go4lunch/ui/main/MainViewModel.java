@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
+import com.google.firebase.auth.FirebaseAuth;
 
 import javax.inject.Inject;
 
@@ -23,7 +24,8 @@ public class MainViewModel extends ViewModel {
 
 
     @Inject
-    public MainViewModel(@NonNull PermissionRepository permissionRepository, @NonNull LocationRepository locationRepository) {
+    public MainViewModel(@NonNull PermissionRepository permissionRepository,
+        @NonNull LocationRepository locationRepository) {
         this.permissionRepository = permissionRepository;
         this.locationRepository = locationRepository;
     }
@@ -36,4 +38,5 @@ public class MainViewModel extends ViewModel {
             locationRepository.stopLocationRequest();
         }
     }
+
 }

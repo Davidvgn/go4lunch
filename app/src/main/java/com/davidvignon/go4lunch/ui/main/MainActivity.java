@@ -1,11 +1,15 @@
 package com.davidvignon.go4lunch.ui.main;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,22 +19,30 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
+import com.davidvignon.go4lunch.ui.dispatcher.DispatcherViewAction;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
-import com.facebook.login.LoginBehavior;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 
 import javax.inject.Inject;
 
@@ -53,10 +65,19 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.main_navigation_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.header_user_name);
+        ImageView navUserImage = (ImageView) headerView.findViewById(R.id.header_iv);
+        TextView navUseremail = (TextView) headerView.findViewById(R.id.header_user_email);
+
 
         Toolbar toolbar = binding.mainToolBar;
         toolbar.setTitle(R.string.restaurantViewTitle);
@@ -68,12 +89,60 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
+
+        //FACEBOOK
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+
+        GraphRequest request = GraphRequest.newMeRequest(
+        accessToken,
+            (object, response) -> {
+                // Application code
+                try {
+                    String fullName = object.getString("name");
+                    String email = object.getString("email");
+
+                    String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                    Log.i("DavidVgn", "onCreate: "+url);
+                    navUsername.setText(fullName);
+                    navUseremail.setText(email);
+                    Glide.with(MainActivity.this)
+                        .load(url)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(navUserImage);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name, email,link,picture.type(large)");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+        //GOOGLE
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personEmail = acct.getEmail();
+            Uri personPhoto = acct.getPhotoUrl();
+
+            navUsername.setText(personName);
+            navUseremail.setText(personEmail);
+            Glide.with(MainActivity.this)
+                .load(personPhoto)
+                .apply(RequestOptions.circleCropTransform())
+                .into(navUserImage);
+        }
+
+
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 binding.mainDrawerLayout.open();
             }
         });
+
 
         binding.mainNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -85,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                         return true;
                     case (R.id.nav_logout):
                         LoginManager.getInstance().logOut();
+                        //TODO NINO : Si : logout -> fermeture de l'app -> relancement de l'app -> je ne reviens pas sur l'écran de connection (gérer le dispatcher)
                         startActivity(new Intent(MainActivity.this, OAuthActivity.class));
                         return true;
                 }
@@ -148,16 +218,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         return super.onCreateOptionsMenu(menu);
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//
-//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-//            Log.i("Dvgn", "onOptionsItemSelected: ");
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -168,13 +228,5 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     public void onItemClick(String placeId) {
         startActivity(RestaurantDetailsActivity.navigate(this, placeId));
     }
-
-//    @Override
-//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-//        drawer.closeDrawer(GravityCompat.START);
-//
-//        return true;
-//    }
 
 }

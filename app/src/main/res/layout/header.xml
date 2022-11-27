@@ -10,6 +10,7 @@
 
 
     <ImageView
+        android:id="@+id/header_background"
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:background = "@drawable/restaurant_image"
@@ -18,16 +19,61 @@
         />
 
     <TextView
+        android:id="@+id/header_app_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:layout_marginTop="32dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="32dp"
+        android:paddingBottom="16dp"
         android:textSize="32sp"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
+
+    <ImageView
+        android:id="@+id/header_iv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_app_name"
+        tools:src="@tools:sample/avatars" />
+
+
+    <TextView
+        android:id="@+id/header_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:paddingTop="8dp"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/header_iv"
+        app:layout_constraintTop_toBottomOf="@id/header_app_name"
+        tools:text="John Doe"
+        />
+
+    <TextView
+        android:id="@+id/header_user_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:maxLines="1"
+        android:maxLength="25"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/header_iv"
+        app:layout_constraintTop_toBottomOf="@id/header_user_name"
+        tools:text="mail@mail.com mail@mail.com mail@mail.com mail@mail.com"
+        />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

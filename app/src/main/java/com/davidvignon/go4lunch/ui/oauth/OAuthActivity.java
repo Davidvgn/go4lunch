@@ -14,7 +14,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -28,12 +27,11 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.json.JSONException;
 
 public class OAuthActivity extends AppCompatActivity {
 
@@ -68,19 +66,15 @@ public class OAuthActivity extends AppCompatActivity {
 
 
         // Set the dimensions of the sign-in button.
-        SignInButton gooleSignInButton = binding.authGoogleLoginButton;
-        gooleSignInButton.setSize(SignInButton.SIZE_STANDARD);
+        MaterialButton gooleSignInButton = binding.authGoogleLoginButton;
 
         gooleSignInButton.setOnClickListener(view -> {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
         });
 
-
         //FACEBOOK
         LoginButton facebookButton = binding.authFacebookLoginButton;
-
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -89,22 +83,6 @@ public class OAuthActivity extends AppCompatActivity {
         oneTapClient = Identity.getSignInClient(this);
 
         facebookButton.setReadPermissions("email", "public_profile", "user_photos");
-
-        GraphRequest request = GraphRequest.newMeRequest(
-            accessToken,
-            (object, response) -> {
-                // Application code
-                try {
-                    String fullName = object.getString("name");
-                    String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,link,picture.type(large)");
-        request.setParameters(parameters);
-        request.executeAsync();
 
         facebookButton.registerCallback(callbackManager,
             new FacebookCallback<LoginResult>() {
@@ -119,15 +97,11 @@ public class OAuthActivity extends AppCompatActivity {
                 @Override
                 public void onCancel() {
                     Log.d("DavidVgn", "onCancel: ");
-
-                    // App code
                 }
 
                 @Override
                 public void onError(FacebookException exception) {
                     Log.d("DavidVgn", "onError: " + exception);
-
-                    // App code
                 }
             });
     }
@@ -141,10 +115,7 @@ public class OAuthActivity extends AppCompatActivity {
         switch (requestCode) {
 
                 //GOOGLE
-                // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
             case RC_SIGN_IN:
-                // The Task returned from this call is always completed, no need to attach
-                // a listener.
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                 handleSignInResult(task);
                 break;
