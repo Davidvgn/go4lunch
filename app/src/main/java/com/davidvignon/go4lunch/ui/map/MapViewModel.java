@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.map;
 
 import android.location.Location;
 
-
 import androidx.annotation.NonNull;
 
 import androidx.lifecycle.LiveData;
@@ -32,7 +31,7 @@ public class MapViewModel extends ViewModel {
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
 
-    private final LiveData< List<MapPoiViewState>> mapPoiViewStatesLiveData;
+    private final LiveData<List<MapPoiViewState>> mapPoiViewStatesLiveData;
     private final SingleLiveEvent<LatLng> cameraUpdateSingleLiveEvent = new SingleLiveEvent<>();
 
     @Inject

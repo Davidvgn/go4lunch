@@ -177,7 +177,7 @@ public class OAuthActivity extends AppCompatActivity {
                     user.put("name", fullName);
                     user.put("picturePath", picturePath);
                     user.put("email", email);
-                    user.put("authenfication source", "Facebook");
+                    user.put("auth source", "Facebook");
                     documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -223,7 +223,7 @@ public class OAuthActivity extends AppCompatActivity {
             user.put("name", personName);
             user.put("picturePath", picturePath);
             user.put("email", personEmail);
-            user.put("authenfication source", "Google");
+            user.put("auth source", "Google");
             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.databinding.WorkmatesItemviewBinding;
 
 public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, WorkmatesAdapter.ViewHolder> {
@@ -38,19 +39,19 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
         }
 
         public void bind(WorkmatesViewStates item) {
-            binding.itemListName.setText("");
+            binding.itemListName.setText(item.getName());
 
             Glide.with(binding.itemListAvatar.getContext())
-                .load("")
+                .load(item.getPicturePath())
+                .apply(RequestOptions.circleCropTransform())
                 .into(binding.itemListAvatar);
-
         }
     }
 
     private static class ListWorkmatesItemCallBack extends DiffUtil.ItemCallback<WorkmatesViewStates> {
         @Override
         public boolean areItemsTheSame(@NonNull WorkmatesViewStates oldItem, @NonNull WorkmatesViewStates newItem) {
-            return oldItem.getEmail().equals(newItem.getEmail());
+            return oldItem.getName().equals(newItem.getName());
         }
 
         @Override

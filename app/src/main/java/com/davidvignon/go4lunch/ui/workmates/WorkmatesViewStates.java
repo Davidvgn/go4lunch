@@ -12,13 +12,9 @@ public class WorkmatesViewStates {
     @NonNull
     private final String picturePath;
 
-    @NonNull
-    private final String email;
-
-    public WorkmatesViewStates(int workmatesId, @NonNull String name, @NonNull String picturePath, @NonNull String email) {
+    public WorkmatesViewStates(@NonNull String name, @NonNull String picturePath) {
         this.name = name;
         this.picturePath = picturePath;
-        this.email = email;
     }
 
     @NonNull
@@ -31,22 +27,17 @@ public class WorkmatesViewStates {
         return picturePath;
     }
 
-    @NonNull
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkmatesViewStates that = (WorkmatesViewStates) o;
-        return name.equals(that.name) && picturePath.equals(that.picturePath) && email.equals(that.email);
+        return name.equals(that.name) && picturePath.equals(that.picturePath);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, picturePath, email);
+        return Objects.hash(name, picturePath);
     }
 
     @Override
@@ -54,7 +45,6 @@ public class WorkmatesViewStates {
         return "WorkmatesViewStates{" +
             ", name='" + name + '\'' +
             ", picturePath='" + picturePath + '\'' +
-            ", email='" + email + '\'' +
             '}';
     }
 }

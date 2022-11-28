@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.davidvignon.go4lunch.FirestoreRepository;
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
 
-import java.util.List;
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -21,6 +21,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class WorkmatesFragment extends Fragment {
 
     private WorkmatesFragmentBinding binding;
+
+    @Inject
+    FirestoreRepository firestoreRepository;
 
     public static WorkmatesFragment newInstance() {
         return new WorkmatesFragment();
@@ -40,6 +43,8 @@ public class WorkmatesFragment extends Fragment {
         WorkmatesViewModel viewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
         WorkmatesAdapter adapter = new WorkmatesAdapter();
         binding.workmatesRv.setAdapter(adapter);
+
+        viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), workmatesViewStates -> adapter.submitList(workmatesViewStates));
 
     }
 
