@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.data.FirestoreRepository;
+import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class WorkmatesFragment extends Fragment {
     private WorkmatesFragmentBinding binding;
 
     @Inject
-    FirestoreRepository firestoreRepository;
+    UserRepository userRepository;
 
     public static WorkmatesFragment newInstance() {
         return new WorkmatesFragment();

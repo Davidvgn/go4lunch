@@ -90,13 +90,14 @@ public class RestaurantViewModel extends ViewModel {
                         final Integer distanceText;
 
                         if (userLocation != null) {
-                            int distanceInt = distanceCalculator.distanceBetween(
+                            Integer distanceInt = distanceCalculator.distanceBetween(
                                 result.getGeometry().getLocation().getLat(),
                                 result.getGeometry().getLocation().getLng(),
                                 userLocation.getLatitude(),
                                 userLocation.getLongitude()
                             );
-                            distanceText = (distanceInt + R.string.meters);
+                            distanceText = (distanceInt);
+
                         } else {
                             distanceText = null;
                         }

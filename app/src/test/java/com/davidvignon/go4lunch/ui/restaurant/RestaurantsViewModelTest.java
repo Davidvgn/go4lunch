@@ -39,7 +39,7 @@ public class RestaurantsViewModelTest {
     private static final String DEFAULT_RESTAURANT_RESPONSE_PLACE_ID = "DEFAULT_RESTAURANT_RESPONSE_PLACE_ID";
     private static final String DEFAULT_VICINITY = "DEFAULT_VICINITY";
     private static final String DEFAULT_PHOTO_REFERENCE = "DEFAULT_PHOTO_REFERENCE";
-    private static final String DEFAULT_DISTANCE = "50m";
+    private static final String DEFAULT_DISTANCE = "50";
     private static final double DEFAULT_RATING = 3.4;
 
     private static final double DEFAULT_LATITUDE = 45.757830302;
@@ -62,6 +62,7 @@ public class RestaurantsViewModelTest {
 
     @Before
     public void setUp() {
+        Mockito.doReturn(50).when(distanceCalculator).distanceBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble());
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
         Location location = Mockito.mock(Location.class);
         Mockito.doReturn(DEFAULT_LATITUDE).when(location).getLatitude();
@@ -72,7 +73,6 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn(nearbySearchResponseMutableLiveData).when(nearBySearchRepository).getNearbySearchResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
         nearbySearchResponseMutableLiveData.setValue(getDefaultNearbySearchResponse());
 
-        Mockito.doReturn(50).when(distanceCalculator).distanceBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble());
 
         viewModel = new RestaurantViewModel(locationRepository, nearBySearchRepository, distanceCalculator);
     }

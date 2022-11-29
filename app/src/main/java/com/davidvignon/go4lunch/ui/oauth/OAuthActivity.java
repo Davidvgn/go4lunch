@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.databinding.AuthActivityBinding;
 import com.davidvignon.go4lunch.ui.main.MainActivity;
 import com.facebook.AccessToken;
@@ -173,11 +174,13 @@ public class OAuthActivity extends AppCompatActivity {
                     String picturePath = object.getJSONObject("picture").getJSONObject("data").getString("url");
 
                     DocumentReference documentReference = firebaseFirestore.collection("users").document(fullName);
-                    Map<String, Object> user = new HashMap<>();
-                    user.put("name", fullName);
-                    user.put("picturePath", picturePath);
-                    user.put("email", email);
-                    user.put("auth source", "Facebook");
+
+                    User user = new User(
+                        fullName,
+                        picturePath,
+                        email,
+                        "Facebook"
+                    );
                     documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {

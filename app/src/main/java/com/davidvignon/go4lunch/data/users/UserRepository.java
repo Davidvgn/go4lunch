@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.users;
 
 import android.util.Log;
 
@@ -12,22 +12,24 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class FirestoreRepository {
+public class UserRepository {
 
     @NonNull
     private final FirebaseFirestore firebaseFirestore;
 
     @Inject
-    public FirestoreRepository(@NonNull FirebaseFirestore firebaseFirestore) {
+    public UserRepository(@NonNull FirebaseFirestore firebaseFirestore) {
         this.firebaseFirestore = firebaseFirestore;
     }
 
-    public LiveData<QuerySnapshot> getDataBaseUsers() {
-        MutableLiveData<QuerySnapshot> workmatesMutableLiveData = new MutableLiveData<>();
+    public LiveData<List<User>> getDataBaseUsers() {
+        MutableLiveData<List<User>> workmatesMutableLiveData = new MutableLiveData<>();
 
         firebaseFirestore.collection("users")
             .get().
@@ -35,12 +37,10 @@ public class FirestoreRepository {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d("DavidVgn", "task " + task.getResult());
-                            Log.d("DavidVgn", "FirebaseRepo " + document.getId() + " => " + document.getData().get("name"));
-                            workmatesMutableLiveData.setValue(task.getResult());
-                            Log.d("DavidVgn", "onCompleteMutableLivedata: " + workmatesMutableLiveData.getValue());
-                        }
+                        Log.i("DavidVgn", "BeforelivedataValueRepo: " +task.getResult());
+
+                        workmatesMutableLiveData.setValue(task.getResult().toObjects(User.class));
+                        Log.i("DavidVgn", "livedataValueRepo: " + workmatesMutableLiveData.getValue());
                     } else {
                         Log.d("DavidVgn", "Error getting documents: ", task.getException());
                     }
