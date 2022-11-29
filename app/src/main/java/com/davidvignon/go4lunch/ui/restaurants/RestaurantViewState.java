@@ -84,7 +84,13 @@ public class RestaurantViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantViewState that = (RestaurantViewState) o;
-        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance);
+        return openOrClose == that.openOrClose
+            && Float.compare(that.rating, rating) == 0
+            && placeId.equals(that.placeId)
+            && name.equals(that.name)
+            && vicinity.equals(that.vicinity)
+            && photosItemResponse.equals(that.photosItemResponse)
+            && distance.equals(that.distance);
     }
 
     @Override

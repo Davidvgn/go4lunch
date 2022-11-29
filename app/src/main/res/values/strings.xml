@@ -30,6 +30,8 @@
     <string name="your_lunch">YOUR LUNCH</string>
     <string name="settings">SETTINGS</string>
     <string name="logout">LOGOUT</string>
+    <string name="meters">m</string>
+
 
 
     <string name="googleLogin">Sign in With Google</string>

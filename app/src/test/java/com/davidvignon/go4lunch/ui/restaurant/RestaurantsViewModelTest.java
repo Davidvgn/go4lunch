@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.ui.restaurant;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
 
@@ -55,7 +56,7 @@ public class RestaurantsViewModelTest {
     private final NearBySearchRepository nearBySearchRepository = Mockito.mock(NearBySearchRepository.class);
     private final MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
 
-    private final  DistanceCalculator distanceCalculator = Mockito.mock(DistanceCalculator.class);
+    private final DistanceCalculator distanceCalculator = Mockito.mock(DistanceCalculator.class);
 
     private RestaurantViewModel viewModel;
 
@@ -144,6 +145,8 @@ public class RestaurantsViewModelTest {
         results.add(getDefaultRestaurantResponseWithNullPlaceId(2));
         results.add(getDefaultRestaurantResponseWithNullPhoto(4));
         results.add(getDefaultRestaurantResponseWithNullVicinity(5));
+        results.add(getDefaultRestaurantResponseWithNullOpeningHours(6));
+        results.add(getDefaultRestaurantResponseWithNullRating(7));
 
         return new NearbySearchResponse(
             null,
@@ -205,6 +208,28 @@ public class RestaurantsViewModelTest {
             null,
             getDefaultOpeningHoursResponse(i),
             DEFAULT_RATING
+        );
+    }
+
+    private RestaurantResponse getDefaultRestaurantResponseWithNullOpeningHours(int i) {
+        return getDefaultRestaurant(
+            DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
+            DEFAULT_RESTAURANT_RESPONSE_NAME + i,
+            getDefaultPhotos(i),
+            DEFAULT_VICINITY,
+            null,
+            DEFAULT_RATING
+        );
+    }
+
+    private RestaurantResponse getDefaultRestaurantResponseWithNullRating(int i) {
+        return getDefaultRestaurant(
+            DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
+            DEFAULT_RESTAURANT_RESPONSE_NAME + i,
+            getDefaultPhotos(i),
+            DEFAULT_VICINITY,
+            getDefaultOpeningHoursResponse(i),
+            null
         );
     }
 

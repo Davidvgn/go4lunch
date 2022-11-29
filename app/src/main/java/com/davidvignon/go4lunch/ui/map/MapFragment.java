@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MapFragment extends SupportMapFragment {
+    //todo david rendre fonctionnel button currentLocation + design
 
     @NonNull
     public static MapFragment newInstance() {

@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.FirestoreRepository;
+import com.davidvignon.go4lunch.data.FirestoreRepository;
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
 
 import javax.inject.Inject;

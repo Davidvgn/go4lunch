@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.data.google_places;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

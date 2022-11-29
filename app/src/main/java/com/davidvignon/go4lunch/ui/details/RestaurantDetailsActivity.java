@@ -17,6 +17,16 @@ import com.bumptech.glide.Glide;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.databinding.RestaurantDetailsActivityBinding;
 import com.davidvignon.go4lunch.ui.map.MapViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firestore.v1.WriteResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -30,6 +40,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     @NonNull
     private String website;
+
+    String restaurantName;
 
     public static Intent navigate(
         @NonNull Context context,
@@ -68,6 +80,21 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext())
                     .load(restaurantPicture)
                     .into(binding.restaurantDetailsIvHeader);
+
+                restaurantName = restaurantDetailsViewState.getName();
+            }
+        });
+
+        binding.restaurantDetailsFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
