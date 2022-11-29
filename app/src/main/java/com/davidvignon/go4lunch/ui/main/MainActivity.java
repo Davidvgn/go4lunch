@@ -58,15 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     //todo Nino : comment changer la couleur du background du menu pour le mettre en orange ?
     //todo Nino : espace entre 1er element du menu et le header ?
 
-
-    @Inject
-    LocationRepository locationRepository;
-
-    @Inject
-    PermissionRepository permissionRepository;
-
     private MainViewModel viewModel;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             public void onClick(View view) {
             }
         });
-
-
 
         //FACEBOOK
         AccessToken accessToken = AccessToken.getCurrentAccessToken();

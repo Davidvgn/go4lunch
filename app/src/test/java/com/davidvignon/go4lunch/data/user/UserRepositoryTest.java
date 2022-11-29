@@ -34,7 +34,7 @@ public class UserRepositoryTest {
     private final QuerySnapshot querySnapshot = Mockito.mock(QuerySnapshot.class);
     private final List users = Mockito.mock(List.class);
 
-    private UserRepository firestoreRepository;
+    private UserRepository userRepository;
 
     @Before
     public void setUp() {
@@ -42,7 +42,7 @@ public class UserRepositoryTest {
         Mockito.doReturn(task).when(collectionReference).get();
         Mockito.doNothing().when(task).addOnCompleteListener(any());
 
-        firestoreRepository = new UserRepository(firebaseFirestore);
+        userRepository = new UserRepository(firebaseFirestore);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class UserRepositoryTest {
         Mockito.doReturn(querySnapshot).when(task).getResult();
         Mockito.doReturn(users).when(querySnapshot).toObjects(User.class);
 
-        LiveData<List<User>> liveData = firestoreRepository.getDataBaseUsers();
+        LiveData<List<User>> liveData = userRepository.getDataBaseUsers();
         Mockito.verify(task).addOnCompleteListener(onCompleteListenerArgumentCaptor.capture());
 
         onCompleteListenerArgumentCaptor.getValue().onComplete(task);

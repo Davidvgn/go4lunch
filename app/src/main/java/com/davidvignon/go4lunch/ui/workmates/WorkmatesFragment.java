@@ -22,9 +22,6 @@ public class WorkmatesFragment extends Fragment {
 
     private WorkmatesFragmentBinding binding;
 
-    @Inject
-    UserRepository userRepository;
-
     public static WorkmatesFragment newInstance() {
         return new WorkmatesFragment();
     }
@@ -45,9 +42,7 @@ public class WorkmatesFragment extends Fragment {
         binding.workmatesRv.setAdapter(adapter);
 
         viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), workmatesViewStates -> adapter.submitList(workmatesViewStates));
-
     }
-
 
     @Override
     public void onDestroyView() {
