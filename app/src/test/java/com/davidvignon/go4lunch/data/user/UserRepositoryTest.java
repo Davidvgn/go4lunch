@@ -33,8 +33,6 @@ public class UserRepositoryTest {
     private final Task task = Mockito.mock(Task.class);
     private final QuerySnapshot querySnapshot = Mockito.mock(QuerySnapshot.class);
     private final List users = Mockito.mock(List.class);
-    ArgumentCaptor<OnCompleteListener> onCompleteListenerArgumentCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
-
 
     private UserRepository firestoreRepository;
 
@@ -50,7 +48,7 @@ public class UserRepositoryTest {
     @Test
     public void nominal_case() {
         // Given
-//        ArgumentCaptor<OnCompleteListener> onCompleteListenerArgumentCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
+        ArgumentCaptor<OnCompleteListener> onCompleteListenerArgumentCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
         Mockito.doReturn(true).when(task).isSuccessful();
         Mockito.doReturn(querySnapshot).when(task).getResult();
         Mockito.doReturn(users).when(querySnapshot).toObjects(User.class);
