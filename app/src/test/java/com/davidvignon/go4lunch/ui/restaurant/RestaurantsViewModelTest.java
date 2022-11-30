@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.ui.restaurant;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
 
@@ -122,7 +121,8 @@ public class RestaurantsViewModelTest {
             getDefaultPhotos(i),
             DEFAULT_VICINITY + i,
             getDefaultOpeningHoursResponse(i),
-            DEFAULT_RATING
+            DEFAULT_RATING,
+            getGeometryResponse(i)
         );
     }
 
@@ -143,6 +143,7 @@ public class RestaurantsViewModelTest {
         results.add(getDefaultRestaurantResponseWithEverythingNull());
         results.add(getDefaultRestaurantResponseWithNullName(1));
         results.add(getDefaultRestaurantResponseWithNullPlaceId(2));
+        results.add(getDefaultRestaurantResponseWithNullGeometry(3));
         results.add(getDefaultRestaurantResponseWithNullPhoto(4));
         results.add(getDefaultRestaurantResponseWithNullVicinity(5));
         results.add(getDefaultRestaurantResponseWithNullOpeningHours(6));
@@ -163,12 +164,14 @@ public class RestaurantsViewModelTest {
             getDefaultPhotos(i),
             DEFAULT_VICINITY + i,
             getDefaultOpeningHoursResponse(i),
-            DEFAULT_RATING
+            DEFAULT_RATING,
+            getGeometryResponse(i)
         );
     }
 
     private RestaurantResponse getDefaultRestaurantResponseWithEverythingNull() {
         return getDefaultRestaurant(
+            null,
             null,
             null,
             null,
@@ -185,7 +188,20 @@ public class RestaurantsViewModelTest {
             getDefaultPhotos(i),
             DEFAULT_VICINITY + i,
             getDefaultOpeningHoursResponse(i),
-            DEFAULT_RATING
+            DEFAULT_RATING,
+            getGeometryResponse(i)
+        );
+    }
+
+    private RestaurantResponse getDefaultRestaurantResponseWithNullGeometry(int i) {
+        return getDefaultRestaurant(
+            DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
+            DEFAULT_RESTAURANT_RESPONSE_NAME + i,
+            getDefaultPhotos(i),
+            DEFAULT_VICINITY + i,
+            getDefaultOpeningHoursResponse(i),
+            DEFAULT_RATING,
+            null
         );
     }
 
@@ -196,7 +212,8 @@ public class RestaurantsViewModelTest {
             null,
             DEFAULT_VICINITY + i,
             getDefaultOpeningHoursResponse(i),
-            DEFAULT_RATING
+            DEFAULT_RATING,
+            getGeometryResponse(i)
         );
     }
 
@@ -207,7 +224,8 @@ public class RestaurantsViewModelTest {
             getDefaultPhotos(i),
             null,
             getDefaultOpeningHoursResponse(i),
-            DEFAULT_RATING
+            DEFAULT_RATING,
+            getGeometryResponse(i)
         );
     }
 
@@ -218,7 +236,8 @@ public class RestaurantsViewModelTest {
             getDefaultPhotos(i),
             DEFAULT_VICINITY,
             null,
-            DEFAULT_RATING
+            DEFAULT_RATING,
+            getGeometryResponse(i)
         );
     }
 
@@ -229,7 +248,8 @@ public class RestaurantsViewModelTest {
             getDefaultPhotos(i),
             DEFAULT_VICINITY,
             getDefaultOpeningHoursResponse(i),
-            null
+            null,
+            getGeometryResponse(i)
         );
     }
 
@@ -239,7 +259,8 @@ public class RestaurantsViewModelTest {
         @Nullable List<PhotosItemResponse> photosItemResponse,
         @Nullable String vicinity,
         @Nullable OpeningHoursResponse openingHoursResponse,
-        @Nullable Double rating
+        @Nullable Double rating,
+        @Nullable GeometryResponse geometryResponse
     ) {
         return new RestaurantResponse(
             null,
@@ -254,7 +275,7 @@ public class RestaurantsViewModelTest {
             null,
             name,
             openingHoursResponse,
-            getGeometryResponse(0),
+            geometryResponse,
             null,
             vicinity,
             null,

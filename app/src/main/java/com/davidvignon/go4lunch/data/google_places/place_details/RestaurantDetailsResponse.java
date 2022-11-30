@@ -31,7 +31,7 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("rating")
-    private double rating;
+    private Double rating;
 
     @Nullable
     @SerializedName("icon_background_color")
@@ -167,7 +167,7 @@ public class RestaurantDetailsResponse {
        @Nullable boolean wheelchairAccessibleEntrance,
        @Nullable boolean reservable,
        @Nullable String icon,
-       @Nullable double rating,
+       @Nullable Double rating,
        @Nullable String iconBackgroundColor,
        @Nullable boolean takeout,
        @Nullable List<PhotosItem> photos,
@@ -267,7 +267,7 @@ public class RestaurantDetailsResponse {
     }
 
     @Nullable
-    public double getRating(){
+    public Double getRating(){
         return rating;
     }
 

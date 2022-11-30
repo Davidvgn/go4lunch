@@ -1,12 +1,13 @@
 package com.davidvignon.go4lunch.ui.details;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import androidx.annotation.Nullable;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
-import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.data.google_places.place_details.PhotosItem;
 import com.davidvignon.go4lunch.data.google_places.place_details.RestaurantDetailsResponse;
@@ -28,7 +29,7 @@ public class RestaurantDetailsViewModelTest {
     private static final String DEFAULT_NUMBER = "DEFAULT_NUMBER";
     private static final String DEFAULT_WEBSITE = "DEFAULT_WEBSITE";
     private static final String DEFAULT_PHOTO = "DEFAULT_PHOTO";
-    private static final float DEFAULT_RATING = 3.4F;
+    private static final double DEFAULT_RATING = 3.4;
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -59,8 +60,86 @@ public class RestaurantDetailsViewModelTest {
         assertEquals(getDefaultRestaurantViewState(), viewState);
     }
 
+    @Test
+    public void if_all_elements_are_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithAllElementsMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+    @Test
+    public void if_name_is_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithNameMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+    @Test
+    public void if_vicinity_is_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithVicinityMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+    @Test
+    public void if_phoneNumber_is_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithPhoneNumberMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+    @Test
+    public void if_website_is_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithWebsiteMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+    @Test
+    public void if_photo_is_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithPhotoMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+    @Test
+    public void if_rating_elements_are_null_it_returns_no_response() {
+        // Given
+        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponseWithRatingMissing());
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData(DEFAULT_PLACE_ID));
+
+        // Then
+        assertNull(viewStates);
+    }
+
     // region IN
-    private DetailsResponse getDefaultDetailsResponse(){
+    private DetailsResponse getDefaultDetailsResponse() {
         RestaurantDetailsResponse result = new RestaurantDetailsResponse(
             0,
             null,
@@ -109,17 +188,190 @@ public class RestaurantDetailsViewModelTest {
     }
 
     private List<PhotosItem> getDefaultPhotos() {
-        List<PhotosItem> photosItem= new ArrayList<>();
+        List<PhotosItem> photosItem = new ArrayList<>();
 
         photosItem.add(new PhotosItem(DEFAULT_PHOTO));
         return photosItem;
+    }
+
+    private DetailsResponse getDefaultDetailsResponseWithNameMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            null,
+            DEFAULT_VICINITY,
+            DEFAULT_NUMBER,
+            DEFAULT_WEBSITE,
+            getDefaultPhotos(),
+            DEFAULT_RATING
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+    private DetailsResponse getDefaultDetailsResponseWithVicinityMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            DEFAULT_NAME,
+            null,
+            DEFAULT_NUMBER,
+            DEFAULT_WEBSITE,
+            getDefaultPhotos(),
+            DEFAULT_RATING
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+    private DetailsResponse getDefaultDetailsResponseWithPhoneNumberMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            DEFAULT_NAME,
+            DEFAULT_VICINITY,
+            null,
+            DEFAULT_WEBSITE,
+            getDefaultPhotos(),
+            DEFAULT_RATING
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+    private DetailsResponse getDefaultDetailsResponseWithWebsiteMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            DEFAULT_NAME,
+            DEFAULT_VICINITY,
+            DEFAULT_NUMBER,
+            null,
+            getDefaultPhotos(),
+            DEFAULT_RATING
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+    private DetailsResponse getDefaultDetailsResponseWithPhotoMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            DEFAULT_NAME,
+            DEFAULT_VICINITY,
+            DEFAULT_NUMBER,
+            DEFAULT_WEBSITE,
+            null,
+            DEFAULT_RATING
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+    private DetailsResponse getDefaultDetailsResponseWithRatingMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            DEFAULT_NAME,
+            DEFAULT_VICINITY,
+            DEFAULT_NUMBER,
+            DEFAULT_WEBSITE,
+            getDefaultPhotos(),
+            null
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+    private DetailsResponse getDefaultDetailsResponseWithAllElementsMissing() {
+        RestaurantDetailsResponse result = getDefaultRestaurant(
+            DEFAULT_PLACE_ID,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        return new DetailsResponse(
+            result,
+            null,
+            null
+        );
+    }
+
+
+    private RestaurantDetailsResponse getDefaultRestaurant(
+        @Nullable String placeId,
+        @Nullable String name,
+        @Nullable String vicinity,
+        @Nullable String phoneNumber,
+        @Nullable String website,
+        @Nullable List<PhotosItem> photo,
+        @Nullable Double rating
+    ) {
+
+        return new RestaurantDetailsResponse(
+            0,
+            null,
+            true,
+            true,
+            null,
+            rating,
+            null,
+            true,
+            photo,
+            null,
+            null,
+            true,
+            null,
+            3,
+            null,
+            true,
+            null,
+            true,
+            true,
+            true,
+            null,
+            placeId,
+            true,
+            true,
+            null,
+            website,
+            null,
+            null,
+            null,
+            0,
+            name,
+            null,
+            null,
+            vicinity,
+            null,
+            null,
+            phoneNumber,
+            true
+        );
     }
     // endregion IN
 
 
     // region OUT
-    private RestaurantDetailsViewState getDefaultRestaurantViewState(){
-        RestaurantDetailsViewState result = new RestaurantDetailsViewState(
+    private RestaurantDetailsViewState getDefaultRestaurantViewState() {
+        return new RestaurantDetailsViewState(
             DEFAULT_NAME,
             DEFAULT_VICINITY,
             DEFAULT_NUMBER,
@@ -127,10 +379,6 @@ public class RestaurantDetailsViewModelTest {
             DEFAULT_PHOTO,
             2.04F
         );
-
-
-        return result;
     }
-
     // endregion OUT
 }

@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.ui.details;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -40,21 +39,22 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public LiveData<RestaurantDetailsViewState> bindingViewState(LiveData<String> place) {
         LiveData<DetailsResponse> detailsResponseLiveData = Transformations.switchMap(
-            place, new Function<String, LiveData<DetailsResponse>>() {
-                @Override
-                public LiveData<DetailsResponse> apply(String input) {
-                    return placeDetailsRepository.getDetailsResponse(input);
-                }
-            }
+            place, input -> placeDetailsRepository.getDetailsResponse(input)
         );
 
-        return Transformations.map(detailsResponseLiveData, new Function<DetailsResponse, RestaurantDetailsViewState>() {
-            @Override
-            public RestaurantDetailsViewState apply(DetailsResponse response) {
+        return Transformations.map(detailsResponseLiveData, response -> {
+            if (response.getResult() != null
+                && response.getResult().getName() != null
+                && response.getResult().getVicinity() != null
+                && response.getResult().getInternationalPhoneNumber() != null
+                && response.getResult().getWebsite() != null
+                && response.getResult().getPhotos() != null
+                && response.getResult().getPhotos().get(0).getPhotoReference() != null
+                && response.getResult().getRating() != null
+            ) {
+                Double initialRating = response.getResult().getRating();
 
-                double initialRating = response.getResult().getRating();
-
-                RestaurantDetailsViewState viewState = new RestaurantDetailsViewState(
+                return new RestaurantDetailsViewState(
                     response.getResult().getName(),
                     response.getResult().getVicinity(),
                     response.getResult().getInternationalPhoneNumber(),
@@ -62,8 +62,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                     response.getResult().getPhotos().get(0).getPhotoReference(),
                     (float) (initialRating * 3 / 5)
                 );
-                return viewState;
-            }
+            } else return null;
         });
     }
 }
