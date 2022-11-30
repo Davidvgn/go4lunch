@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class WorkmatesFragment extends Fragment {
+    //todo david don't show yourself in list
 
     private WorkmatesFragmentBinding binding;
 

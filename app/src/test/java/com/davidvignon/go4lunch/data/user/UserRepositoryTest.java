@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.data.user;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
@@ -23,6 +22,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class UserRepositoryTest {
 
     @Rule
@@ -40,7 +40,6 @@ public class UserRepositoryTest {
     public void setUp() {
         Mockito.doReturn(collectionReference).when(firebaseFirestore).collection("users");
         Mockito.doReturn(task).when(collectionReference).get();
-        Mockito.doNothing().when(task).addOnCompleteListener(any());
 
         userRepository = new UserRepository(firebaseFirestore);
     }
@@ -53,6 +52,7 @@ public class UserRepositoryTest {
         Mockito.doReturn(querySnapshot).when(task).getResult();
         Mockito.doReturn(users).when(querySnapshot).toObjects(User.class);
 
+        // When
         LiveData<List<User>> liveData = userRepository.getDataBaseUsers();
         Mockito.verify(task).addOnCompleteListener(onCompleteListenerArgumentCaptor.capture());
 
@@ -60,6 +60,7 @@ public class UserRepositoryTest {
 
         List<User> response = LiveDataTestUtils.getValueForTesting(liveData);
 
+        // Then
         assertEquals(response, users);
 
     }

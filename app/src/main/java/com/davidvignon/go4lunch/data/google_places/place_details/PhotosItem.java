@@ -17,6 +17,10 @@ public class PhotosItem{
     @SerializedName("height")
     private int height;
 
+    public PhotosItem(String photoReference) {
+        this.photoReference = photoReference;
+    }
+
     public String getPhotoReference(){
         return photoReference;
     }

@@ -28,7 +28,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     public RestaurantDetailsViewModel(@NonNull PlaceDetailsRepository placeDetailsRepository) {
         this.placeDetailsRepository = placeDetailsRepository;
 
-        restaurantDetailsViewStateLiveData = binding(placeIdMutableliveData);
+        restaurantDetailsViewStateLiveData = bindingViewState(placeIdMutableliveData);
 
     }
 
@@ -38,7 +38,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         return restaurantDetailsViewStateLiveData;
     }
 
-    public LiveData<RestaurantDetailsViewState> binding(LiveData<String> place) {
+    public LiveData<RestaurantDetailsViewState> bindingViewState(LiveData<String> place) {
         LiveData<DetailsResponse> detailsResponseLiveData = Transformations.switchMap(
             place, new Function<String, LiveData<DetailsResponse>>() {
                 @Override

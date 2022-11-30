@@ -296,5 +296,5 @@ public class RestaurantsViewModelTest {
 
         return result;
     }
-    // endregion
+    // endregion OUT
 }

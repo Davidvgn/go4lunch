@@ -37,12 +37,9 @@ public class UserRepository {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        Log.i("DavidVgn", "BeforelivedataValueRepo: " +task.getResult());
-
                         workmatesMutableLiveData.setValue(task.getResult().toObjects(User.class));
-                        Log.i("DavidVgn", "livedataValueRepo: " + workmatesMutableLiveData.getValue());
                     } else {
-                        Log.d("DavidVgn", "Error getting documents: ", task.getException());
+                        Log.d("DavidVgn", "Error getting documents: ");
                     }
                 }
             });
