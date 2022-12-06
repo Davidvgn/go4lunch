@@ -1,11 +1,16 @@
 package com.davidvignon.go4lunch.ui.details;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 
@@ -20,6 +25,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final PlaceDetailsRepository placeDetailsRepository;
 
     LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
+
+    MutableLiveData<Boolean> isSelectedMutableLiveData = new MutableLiveData<>();
 
     MutableLiveData<String> placeIdMutableliveData = new MutableLiveData<>();
 
@@ -65,4 +72,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
             } else return null;
         });
     }
+
+// (A faire : Si un resto est déjà choisi, penser à passer sa valeur à false si l'user en choisi un autre)
+
 }

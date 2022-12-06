@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class UserRepository {
     }
 
     public LiveData<List<User>> getDataBaseUsers() {
-        MutableLiveData<List<User>> workmatesMutableLiveData = new MutableLiveData<>();
+        MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
 
         firebaseFirestore.collection("users")
             .get().
@@ -37,14 +37,14 @@ public class UserRepository {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        workmatesMutableLiveData.setValue(task.getResult().toObjects(User.class));
+                        userMutableLiveData.setValue(task.getResult().toObjects(User.class));
                     } else {
                         Log.d("DavidVgn", "Error getting documents: ");
                     }
                 }
             });
 
-        return workmatesMutableLiveData;
+        return userMutableLiveData;
     }
 }
 

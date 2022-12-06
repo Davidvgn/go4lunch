@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.databinding.RestaurantDetailsActivityBinding;
 import com.davidvignon.go4lunch.ui.map.MapViewModel;
@@ -85,16 +86,17 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             }
         });
 
-        binding.restaurantDetailsFab.setOnClickListener(new View.OnClickListener() {
+            binding.restaurantDetailsFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+//                binding.restaurantDetailsFab.setImageResource(R.drawable.ic_baseline_check_circle_24);
             }
         });
 
         binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
             }
         });
 
@@ -116,7 +118,5 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-
     }
 }

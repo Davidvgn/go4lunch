@@ -27,7 +27,6 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position));
-
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

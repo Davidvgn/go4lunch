@@ -37,13 +37,17 @@ import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 
@@ -150,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     return true;
                 case (R.id.nav_logout):
                     LoginManager.getInstance().logOut();
-                    //TODO NINO : Si : logout -> fermeture de l'app -> relancement de l'app -> je ne reviens pas sur l'écran de connection (gérer le dispatcher)
+                          //TODO NINO : Si : logout -> fermeture de l'app -> relancement de l'app -> je ne reviens pas sur l'écran de connection (gérer le dispatcher)
                     startActivity(new Intent(MainActivity.this, OAuthActivity.class));
                     return true;
             }
