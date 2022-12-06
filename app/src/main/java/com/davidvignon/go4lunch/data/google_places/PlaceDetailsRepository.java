@@ -17,17 +17,17 @@ import retrofit2.Response;
 public class PlaceDetailsRepository {
 
     @NonNull
-    PlaceDetailsApi placeDetailsApi;
+    private final PlacesApi placesApi;
 
     @Inject
-    public PlaceDetailsRepository(@NonNull PlaceDetailsApi placeDetailsApi) {
-        this.placeDetailsApi = placeDetailsApi;
+    public PlaceDetailsRepository(@NonNull PlacesApi placesApi) {
+        this.placesApi = placesApi;
     }
 
-   public LiveData<DetailsResponse> getDetailsResponse(@NonNull String placeId) {
+   public LiveData<DetailsResponse> getDetailsResponseLiveData(@NonNull String placeId) {
         MutableLiveData<DetailsResponse> detailsResponseMutableLiveData = new MutableLiveData<>();
 
-        placeDetailsApi.getDetailsResponse(placeId,
+       placesApi.getDetailsResponse(placeId,
             "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8").enqueue(new Callback<DetailsResponse>() {
             @Override
             public void onResponse(@NonNull Call<DetailsResponse> call, @NonNull Response<DetailsResponse> response) {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Looper;
 
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
-import com.davidvignon.go4lunch.data.google_places.PlaceDetailsApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;

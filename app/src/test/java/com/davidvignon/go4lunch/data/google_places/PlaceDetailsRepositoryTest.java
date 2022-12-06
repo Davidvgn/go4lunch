@@ -55,7 +55,7 @@ public class PlaceDetailsRepositoryTest {
         Mockito.doReturn(expectedResponse).when(retrofitResponse).body();
 
         // When
-        LiveData<DetailsResponse> liveData = placeDetailsRepository.getDetailsResponse(PLACE_ID);
+        LiveData<DetailsResponse> liveData = placeDetailsRepository.getDetailsResponseLiveData(PLACE_ID);
         Mockito.verify(placeDetailsApi).getDetailsResponse(PLACE_ID, DEFAULT_KEY);
         Mockito.verify(call).enqueue(callBack.capture());
         callBack.getValue().onResponse(call, retrofitResponse);

@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places;
 
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
+import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -16,4 +17,9 @@ public interface PlacesApi {
         @Query("key") String key
     );
 
+    @GET("maps/api/place/details/json")
+    Call<DetailsResponse> getDetailsResponse(
+        @Query("place_id") String placeId,
+        @Query("key") String key
+    );
 }

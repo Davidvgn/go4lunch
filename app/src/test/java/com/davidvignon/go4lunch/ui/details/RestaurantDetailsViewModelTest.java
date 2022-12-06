@@ -43,7 +43,7 @@ public class RestaurantDetailsViewModelTest {
     @Before
     public void setUp() {
         Mockito.doReturn(detailsResponseMutableLiveData).when(placeDetailsRepository)
-            .getDetailsResponse(DEFAULT_PLACE_ID);
+            .getDetailsResponseLiveData(DEFAULT_PLACE_ID);
 
         detailsResponseMutableLiveData.setValue(getDefaultDetailsResponse());
 
@@ -140,48 +140,48 @@ public class RestaurantDetailsViewModelTest {
 
     // region IN
     private DetailsResponse getDefaultDetailsResponse() {
-        RestaurantDetailsResponse result = new RestaurantDetailsResponse(
-            0,
-            null,
-            true,
-            true,
-            null,
-            DEFAULT_RATING,
-            null,
-            true,
-            getDefaultPhotos(),
-            null,
-            null,
-            true,
-            null,
-            3,
-            null,
-            true,
-            null,
-            true,
-            true,
-            true,
-            null,
-            DEFAULT_PLACE_ID,
-            true,
-            true,
-            null,
-            DEFAULT_WEBSITE,
-            null,
-            null,
-            null,
-            0,
-            DEFAULT_NAME,
-            null,
-            null,
-            DEFAULT_VICINITY,
-            null,
-            null,
-            DEFAULT_NUMBER,
-            true
-        );
+//        RestaurantDetailsResponse result = new RestaurantDetailsResponse(
+//            0,
+//            null,
+//            true,
+//            true,
+//            null,
+//            DEFAULT_RATING,
+//            null,
+//            true,
+//            getDefaultPhotos(),
+//            null,
+//            null,
+//            true,
+//            null,
+//            3,
+//            null,
+//            true,
+//            null,
+//            true,
+//            true,
+//            true,
+//            null,
+//            DEFAULT_PLACE_ID,
+//            true,
+//            true,
+//            null,
+//            DEFAULT_WEBSITE,
+//            null,
+//            null,
+//            null,
+//            0,
+//            DEFAULT_NAME,
+//            null,
+//            null,
+//            DEFAULT_VICINITY,
+//            null,
+//            null,
+//            DEFAULT_NUMBER,
+//            true
+//        );
         return new DetailsResponse(
-            result,
+            Mockito.mock(RestaurantDetailsResponse.class), // TODO DAVID FILL THIS MOCK WITH DEFAULT VALUES
             null,
             null
         );
@@ -325,46 +325,51 @@ public class RestaurantDetailsViewModelTest {
         @Nullable Double rating
     ) {
 
-        return new RestaurantDetailsResponse(
-            0,
-            null,
-            true,
-            true,
-            null,
-            rating,
-            null,
-            true,
-            photo,
-            null,
-            null,
-            true,
-            null,
-            3,
-            null,
-            true,
-            null,
-            true,
-            true,
-            true,
-            null,
-            placeId,
-            true,
-            true,
-            null,
-            website,
-            null,
-            null,
-            null,
-            0,
-            name,
-            null,
-            null,
-            vicinity,
-            null,
-            null,
-            phoneNumber,
-            true
-        );
+        RestaurantDetailsResponse response = Mockito.mock(RestaurantDetailsResponse.class);
+        Mockito.doReturn(placeId).when(response).getPlaceId();
+
+        return response;
+
+//         new RestaurantDetailsResponse(
+//            0,
+//            null,
+//            true,
+//            true,
+//            null,
+//            rating,
+//            null,
+//            true,
+//            photo,
+//            null,
+//            null,
+//            true,
+//            null,
+//            3,
+//            null,
+//            true,
+//            null,
+//            true,
+//            true,
+//            true,
+//            null,
+//            placeId,
+//            true,
+//            true,
+//            null,
+//            website,
+//            null,
+//            null,
+//            null,
+//            0,
+//            name,
+//            null,
+//            null,
+//            vicinity,
+//            null,
+//            null,
+//            phoneNumber,
+//            true
+//        );
     }
     // endregion IN
 

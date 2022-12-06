@@ -29,6 +29,7 @@ import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
+import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.map.MapViewModel;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
@@ -59,8 +60,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener {
 
     //Dans menu navigation
-    //todo Nino : comment changer la couleur du background du menu pour le mettre en orange ?
-    //todo Nino : espace entre 1er element du menu et le header ?
 
     private MainViewModel viewModel;
 
@@ -153,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     startActivity(intent);
                     return true;
                 case (R.id.nav_logout):
-                    LoginManager.getInstance().logOut();
-                          //TODO NINO : Si : logout -> fermeture de l'app -> relancement de l'app -> je ne reviens pas sur l'écran de connection (gérer le dispatcher)
+                    FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(MainActivity.this, OAuthActivity.class));
                     return true;
             }
@@ -226,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
     @Override
     public void onItemClick(String placeId) {
-        startActivity(RestaurantDetailsActivity.navigate(this, placeId));
+        startActivity(RestaurantDetailsViewModel.navigate(this, placeId));
     }
 
 }

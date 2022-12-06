@@ -34,8 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
-    private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
-
     @NonNull
     private String phoneNumber;
 
@@ -44,15 +42,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     String restaurantName;
 
-    public static Intent navigate(
-        @NonNull Context context,
-        @NonNull String placeId) {
-        Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-        intent.putExtra(KEY_PLACE_ID, placeId);
-        return intent;
-
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,11 +49,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         RestaurantDetailsActivityBinding binding = RestaurantDetailsActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        String placeId = getIntent().getStringExtra(KEY_PLACE_ID);
-
         RestaurantDetailsViewModel viewModel = new ViewModelProvider(this).get(RestaurantDetailsViewModel.class);
 
-        viewModel.getRestaurantDetailsViewStateLiveData(placeId).observe(this, new Observer<RestaurantDetailsViewState>() {
+        viewModel.getRestaurantDetailsViewStateLiveData().observe(this, new Observer<RestaurantDetailsViewState>() {
             @Override
             public void onChanged(RestaurantDetailsViewState restaurantDetailsViewState) {
                 binding.restaurantDetailsTvName.setText(restaurantDetailsViewState.getName());

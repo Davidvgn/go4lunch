@@ -3,15 +3,16 @@ package com.davidvignon.go4lunch.data.google_places.place_details;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+import java.util.Objects;
 
 public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("utc_offset")
-    private int utcOffset;
+    private Integer utcOffset;
 
     @Nullable
     @SerializedName("formatted_address")
@@ -19,11 +20,11 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("wheelchair_accessible_entrance")
-    private boolean wheelchairAccessibleEntrance;
+    private Boolean wheelchairAccessibleEntrance;
 
     @Nullable
     @SerializedName("reservable")
-    private boolean reservable;
+    private Boolean reservable;
 
     @Nullable
     @SerializedName("icon")
@@ -39,7 +40,7 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("takeout")
-    private boolean takeout;
+    private Boolean takeout;
 
     @Nullable
     @SerializedName("photos")
@@ -55,7 +56,7 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("dine_in")
-    private boolean dineIn;
+    private Boolean dineIn;
 
     @Nullable
     @SerializedName("current_opening_hours")
@@ -63,7 +64,7 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("user_ratings_total")
-    private int userRatingsTotal;
+    private Integer userRatingsTotal;
 
     @Nullable
     @SerializedName("reviews")
@@ -71,7 +72,7 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("serves_dinner")
-    private boolean servesDinner;
+    private Boolean servesDinner;
 
     @Nullable
     @SerializedName("icon_mask_base_uri")
@@ -79,15 +80,15 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("serves_brunch")
-    private boolean servesBrunch;
+    private Boolean servesBrunch;
 
     @Nullable
     @SerializedName("serves_breakfast")
-    private boolean servesBreakfast;
+    private Boolean servesBreakfast;
 
     @Nullable
     @SerializedName("serves_wine")
-    private boolean servesWine;
+    private Boolean servesWine;
 
     @Nullable
     @SerializedName("adr_address")
@@ -99,11 +100,11 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("serves_lunch")
-    private boolean servesLunch;
+    private Boolean servesLunch;
 
     @Nullable
     @SerializedName("delivery")
-    private boolean delivery;
+    private Boolean delivery;
 
     @Nullable
     @SerializedName("types")
@@ -127,7 +128,7 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("price_level")
-    private int priceLevel;
+    private Integer priceLevel;
 
     @Nullable
     @SerializedName("name")
@@ -159,276 +160,209 @@ public class RestaurantDetailsResponse {
 
     @Nullable
     @SerializedName("serves_beer")
-    private boolean servesBeer;
-
-    public RestaurantDetailsResponse(
-       @Nullable int utcOffset,
-       @Nullable String formattedAddress,
-       @Nullable boolean wheelchairAccessibleEntrance,
-       @Nullable boolean reservable,
-       @Nullable String icon,
-       @Nullable Double rating,
-       @Nullable String iconBackgroundColor,
-       @Nullable boolean takeout,
-       @Nullable List<PhotosItem> photos,
-       @Nullable EditorialSummary editorialSummary,
-       @Nullable String reference,
-       @Nullable boolean dineIn,
-       @Nullable CurrentOpeningHours currentOpeningHours,
-       @Nullable int userRatingsTotal,
-       @Nullable List<ReviewsItem> reviews,
-       @Nullable boolean servesDinner,
-       @Nullable String iconMaskBaseUri,
-       @Nullable boolean servesBrunch,
-       @Nullable boolean servesBreakfast,
-       @Nullable boolean servesWine,
-       @Nullable String adrAddress,
-       @Nullable String placeId,
-       @Nullable boolean servesLunch,
-       @Nullable boolean delivery,
-       @Nullable List<String> types,
-       @Nullable String website,
-       @Nullable String businessStatus,
-       @Nullable List<AddressComponentsItem> addressComponents,
-       @Nullable String url,
-       @Nullable int priceLevel,
-       @Nullable String name,
-       @Nullable OpeningHours openingHours,
-       @Nullable Geometry geometry,
-       @Nullable String vicinity,
-       @Nullable PlusCode plusCode,
-       @Nullable String formattedPhoneNumber,
-       @Nullable String internationalPhoneNumber,
-       @Nullable boolean servesBeer
-    ) {
-        this.utcOffset = utcOffset;
-        this.formattedAddress = formattedAddress;
-        this.wheelchairAccessibleEntrance = wheelchairAccessibleEntrance;
-        this.reservable = reservable;
-        this.icon = icon;
-        this.rating = rating;
-        this.iconBackgroundColor = iconBackgroundColor;
-        this.takeout = takeout;
-        this.photos = photos;
-        this.editorialSummary = editorialSummary;
-        this.reference = reference;
-        this.dineIn = dineIn;
-        this.currentOpeningHours = currentOpeningHours;
-        this.userRatingsTotal = userRatingsTotal;
-        this.reviews = reviews;
-        this.servesDinner = servesDinner;
-        this.iconMaskBaseUri = iconMaskBaseUri;
-        this.servesBrunch = servesBrunch;
-        this.servesBreakfast = servesBreakfast;
-        this.servesWine = servesWine;
-        this.adrAddress = adrAddress;
-        this.placeId = placeId;
-        this.servesLunch = servesLunch;
-        this.delivery = delivery;
-        this.types = types;
-        this.website = website;
-        this.businessStatus = businessStatus;
-        this.addressComponents = addressComponents;
-        this.url = url;
-        this.priceLevel = priceLevel;
-        this.name = name;
-        this.openingHours = openingHours;
-        this.geometry = geometry;
-        this.vicinity = vicinity;
-        this.plusCode = plusCode;
-        this.formattedPhoneNumber = formattedPhoneNumber;
-        this.internationalPhoneNumber = internationalPhoneNumber;
-        this.servesBeer = servesBeer;
-    }
+    private Boolean servesBeer;
 
     @Nullable
-    public int getUtcOffset(){
+    public Integer getUtcOffset() {
         return utcOffset;
     }
 
     @Nullable
-    public String getFormattedAddress(){
+    public String getFormattedAddress() {
         return formattedAddress;
     }
 
     @Nullable
-    public boolean isWheelchairAccessibleEntrance(){
+    public Boolean isWheelchairAccessibleEntrance() {
         return wheelchairAccessibleEntrance;
     }
 
     @Nullable
-    public boolean isReservable(){
+    public Boolean isReservable() {
         return reservable;
     }
 
     @Nullable
-    public String getIcon(){
+    public String getIcon() {
         return icon;
     }
 
     @Nullable
-    public Double getRating(){
+    public Double getRating() {
         return rating;
     }
 
     @Nullable
-    public String getIconBackgroundColor(){
+    public String getIconBackgroundColor() {
         return iconBackgroundColor;
     }
 
     @Nullable
-    public boolean isTakeout(){
+    public Boolean isTakeout() {
         return takeout;
     }
 
     @Nullable
-    public List<PhotosItem> getPhotos(){
+    public List<PhotosItem> getPhotos() {
         return photos;
     }
 
     @Nullable
-    public EditorialSummary getEditorialSummary(){
+    public EditorialSummary getEditorialSummary() {
         return editorialSummary;
     }
 
     @Nullable
-    public String getReference(){
+    public String getReference() {
         return reference;
     }
 
     @Nullable
-    public boolean isDineIn(){
+    public Boolean isDineIn() {
         return dineIn;
     }
 
     @Nullable
-    public CurrentOpeningHours getCurrentOpeningHours(){
+    public CurrentOpeningHours getCurrentOpeningHours() {
         return currentOpeningHours;
     }
 
     @Nullable
-    public int getUserRatingsTotal(){
+    public Integer getUserRatingsTotal() {
         return userRatingsTotal;
     }
 
     @Nullable
-    public List<ReviewsItem> getReviews(){
+    public List<ReviewsItem> getReviews() {
         return reviews;
     }
 
     @Nullable
-    public boolean isServesDinner(){
+    public Boolean isServesDinner() {
         return servesDinner;
     }
 
     @Nullable
-    public String getIconMaskBaseUri(){
+    public String getIconMaskBaseUri() {
         return iconMaskBaseUri;
     }
 
     @Nullable
-    public boolean isServesBrunch(){
+    public Boolean isServesBrunch() {
         return servesBrunch;
     }
 
     @Nullable
-    public boolean isServesBreakfast(){
+    public Boolean isServesBreakfast() {
         return servesBreakfast;
     }
 
     @Nullable
-    public boolean isServesWine(){
+    public Boolean isServesWine() {
         return servesWine;
     }
 
     @Nullable
-    public String getAdrAddress(){
+    public String getAdrAddress() {
         return adrAddress;
     }
 
     @Nullable
-    public String getPlaceId(){
+    public String getPlaceId() {
         return placeId;
     }
 
     @Nullable
-    public boolean isServesLunch(){
+    public Boolean isServesLunch() {
         return servesLunch;
     }
 
     @Nullable
-    public boolean isDelivery(){
+    public Boolean isDelivery() {
         return delivery;
     }
 
     @Nullable
-    public List<String> getTypes(){
+    public List<String> getTypes() {
         return types;
     }
 
     @Nullable
-    public String getWebsite(){
+    public String getWebsite() {
         return website;
     }
 
     @Nullable
-    public String getBusinessStatus(){
+    public String getBusinessStatus() {
         return businessStatus;
     }
 
     @Nullable
-    public List<AddressComponentsItem> getAddressComponents(){
+    public List<AddressComponentsItem> getAddressComponents() {
         return addressComponents;
     }
 
     @Nullable
-    public String getUrl(){
+    public String getUrl() {
         return url;
     }
 
     @Nullable
-    public int getPriceLevel(){
+    public Integer getPriceLevel() {
         return priceLevel;
     }
 
     @Nullable
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     @Nullable
-    public OpeningHours getOpeningHours(){
+    public OpeningHours getOpeningHours() {
         return openingHours;
     }
 
     @Nullable
-    public Geometry getGeometry(){
+    public Geometry getGeometry() {
         return geometry;
     }
 
     @Nullable
-    public String getVicinity(){
+    public String getVicinity() {
         return vicinity;
     }
 
     @Nullable
-    public PlusCode getPlusCode(){
+    public PlusCode getPlusCode() {
         return plusCode;
     }
 
     @Nullable
-    public String getFormattedPhoneNumber(){
+    public String getFormattedPhoneNumber() {
         return formattedPhoneNumber;
     }
 
     @Nullable
-    public String getInternationalPhoneNumber(){
+    public String getInternationalPhoneNumber() {
         return internationalPhoneNumber;
     }
 
     @Nullable
-    public boolean isServesBeer(){
+    public Boolean isServesBeer() {
         return servesBeer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestaurantDetailsResponse that = (RestaurantDetailsResponse) o;
+        return Objects.equals(utcOffset, that.utcOffset) && Objects.equals(formattedAddress, that.formattedAddress) && Objects.equals(wheelchairAccessibleEntrance, that.wheelchairAccessibleEntrance) && Objects.equals(reservable, that.reservable) && Objects.equals(icon, that.icon) && Objects.equals(rating, that.rating) && Objects.equals(iconBackgroundColor, that.iconBackgroundColor) && Objects.equals(takeout, that.takeout) && Objects.equals(photos, that.photos) && Objects.equals(editorialSummary, that.editorialSummary) && Objects.equals(reference, that.reference) && Objects.equals(dineIn, that.dineIn) && Objects.equals(currentOpeningHours, that.currentOpeningHours) && Objects.equals(userRatingsTotal, that.userRatingsTotal) && Objects.equals(reviews, that.reviews) && Objects.equals(servesDinner, that.servesDinner) && Objects.equals(iconMaskBaseUri, that.iconMaskBaseUri) && Objects.equals(servesBrunch, that.servesBrunch) && Objects.equals(servesBreakfast, that.servesBreakfast) && Objects.equals(servesWine, that.servesWine) && Objects.equals(adrAddress, that.adrAddress) && Objects.equals(placeId, that.placeId) && Objects.equals(servesLunch, that.servesLunch) && Objects.equals(delivery, that.delivery) && Objects.equals(types, that.types) && Objects.equals(website, that.website) && Objects.equals(businessStatus, that.businessStatus) && Objects.equals(addressComponents, that.addressComponents) && Objects.equals(url, that.url) && Objects.equals(priceLevel, that.priceLevel) && Objects.equals(name, that.name) && Objects.equals(openingHours, that.openingHours) && Objects.equals(geometry, that.geometry) && Objects.equals(vicinity, that.vicinity) && Objects.equals(plusCode, that.plusCode) && Objects.equals(formattedPhoneNumber, that.formattedPhoneNumber) && Objects.equals(internationalPhoneNumber, that.internationalPhoneNumber) && Objects.equals(servesBeer, that.servesBeer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(utcOffset, formattedAddress, wheelchairAccessibleEntrance, reservable, icon, rating, iconBackgroundColor, takeout, photos, editorialSummary, reference, dineIn, currentOpeningHours, userRatingsTotal, reviews, servesDinner, iconMaskBaseUri, servesBrunch, servesBreakfast, servesWine, adrAddress, placeId, servesLunch, delivery, types, website, businessStatus, addressComponents, url, priceLevel, name, openingHours, geometry, vicinity, plusCode, formattedPhoneNumber, internationalPhoneNumber, servesBeer);
     }
 
     @NonNull
