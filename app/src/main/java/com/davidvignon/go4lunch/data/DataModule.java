@@ -11,6 +11,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -22,9 +26,18 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 @Module
 @InstallIn(SingletonComponent.class)
 public class DataModule {
+
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface PlacesAPi {}
+
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface DetailsPlacesAPi {}
 
     @Singleton
     @Provides
@@ -40,6 +53,7 @@ public class DataModule {
 
     @Singleton
     @Provides
+    @PlacesAPi
     public PlacesApi providePlacesApi() {
         Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient httpClient = new OkHttpClient.Builder().build();
@@ -56,7 +70,8 @@ public class DataModule {
 
     @Singleton
     @Provides
-    public PlaceDetailsApi providePlaceDetailsApi() {
+    @DetailsPlacesAPi
+    public PlacesApi providePlaceDetailsApi() {
         Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient httpClient = new OkHttpClient.Builder().build();
         String baseUrl = "https://maps.googleapis.com/";
@@ -67,7 +82,7 @@ public class DataModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
-        return retrofit.create(PlaceDetailsApi.class);
+        return retrofit.create(PlacesApi.class);
     }
 
     @Singleton

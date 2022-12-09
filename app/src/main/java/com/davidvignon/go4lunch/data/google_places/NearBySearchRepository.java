@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ public class NearBySearchRepository {
     private final PlacesApi placesApi;
 
     @Inject
-    public NearBySearchRepository(@NonNull PlacesApi placesApi) {
+    public NearBySearchRepository(@NonNull @DataModule.PlacesAPi PlacesApi placesApi) {
         this.placesApi = placesApi;
     }
 

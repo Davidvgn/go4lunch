@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 
 import javax.inject.Inject;
@@ -16,11 +17,12 @@ import retrofit2.Response;
 @Singleton
 public class PlaceDetailsRepository {
 
+
     @NonNull
     private final PlacesApi placesApi;
 
     @Inject
-    public PlaceDetailsRepository(@NonNull PlacesApi placesApi) {
+    public PlaceDetailsRepository(@NonNull @DataModule.DetailsPlacesAPi PlacesApi placesApi) {
         this.placesApi = placesApi;
     }
 

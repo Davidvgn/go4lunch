@@ -1,10 +1,8 @@
 package com.davidvignon.go4lunch.ui.details;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -14,20 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
-import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.databinding.RestaurantDetailsActivityBinding;
-import com.davidvignon.go4lunch.ui.map.MapViewModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firestore.v1.WriteResult;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import dagger.hilt.android.AndroidEntryPoint;
 

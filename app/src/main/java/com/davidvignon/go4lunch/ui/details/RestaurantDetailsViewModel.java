@@ -72,5 +72,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
 // (A faire : Si un resto est déjà choisi, penser à passer sa valeur à false si l'user en choisi un autre)
-
+public LiveData<Integer> restaurantIsSelected(boolean bool){
+        MutableLiveData<Integer> fabColor = new MutableLiveData<>();
+        return null;
+}
 }
