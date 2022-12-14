@@ -10,11 +10,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.users.User;
-import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.databinding.AuthActivityBinding;
 import com.davidvignon.go4lunch.ui.main.MainActivity;
 import com.facebook.AccessToken;
@@ -27,18 +25,16 @@ import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,14 +44,10 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class OAuthActivity extends AppCompatActivity {
-
-    private FirebaseAuth mAuth;
 
     private FirebaseFirestore firebaseFirestore;
 
@@ -75,12 +67,11 @@ public class OAuthActivity extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         oneTapClient = Identity.getSignInClient(this);
 
-        mAuth = FirebaseAuth.getInstance();
-
         //GOOGLE
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
+            .requestProfile()
             .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -88,6 +79,7 @@ public class OAuthActivity extends AppCompatActivity {
         MaterialButton googleLoginButton = binding.authGoogleLoginButton;
 
         googleLoginButton.setOnClickListener(view -> {
+            Log.d("DavidVgn", "googleLoginButton.setOnClickListener");
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             activityResultLauncher.launch(signInIntent);
         });
@@ -122,7 +114,7 @@ public class OAuthActivity extends AppCompatActivity {
     });
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
@@ -130,7 +122,7 @@ public class OAuthActivity extends AppCompatActivity {
     //FACEBOOK
     private void handleFacebookAccessToken(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener(this, task -> {
                 if (task.isSuccessful()) {
                     startActivity(new Intent(OAuthActivity.this, MainActivity.class));
@@ -181,44 +173,51 @@ public class OAuthActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount googleAccount = completedTask.getResult(ApiException.class);
-            String id = googleAccount.getId();
 
-            Log.d("DavidVgn", "handleSignInResult: " + id);
-            String fullName = googleAccount.getDisplayName();
-            String email = googleAccount.getEmail();
-            Uri pictureUri = googleAccount.getPhotoUrl();
-            String picturePath = pictureUri.toString();
-            List<String> favoritesRestaurants = new ArrayList<>();
-            String selectedRestaurant = "";
-
-            String idToken = googleAccount.getIdToken();
-            Log.d("DavidVgn", "idtoken: " + idToken);
-
-
-            AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-            mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
+            AuthCredential credential = GoogleAuthProvider.getCredential(googleAccount.getIdToken(), null);
+            FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(this, task -> {
                 if (task.isSuccessful()) {
-                    startActivity(new Intent(OAuthActivity.this, MainActivity.class));
+
                     Log.d("DavidVgn", "onComplete: isSuccessful");
+
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        Log.d("DavidVgn", "user not null");
+                        String id = user.getUid();
+                        String fullName = user.getDisplayName();
+                        String email = user.getEmail();
+                        Uri pictureUri = user.getPhotoUrl();
+                        String picturePath = pictureUri != null ? pictureUri.toString() : null;
+
+                        if (fullName != null) {
+
+                            Log.d("DavidVgn", "fullName not null");
+
+                            if(email == null) {
+                                Log.e("DavidVgn", "email is NULL!");
+                            }
+                            DocumentReference documentReference = firebaseFirestore.collection("users").document(id);
+
+                            User googleUser = new User(
+                                id,
+                                fullName,
+                                picturePath,
+                                email,
+                                null,
+                                null
+                            );
+
+                            documentReference.set(googleUser).addOnSuccessListener(this, unused -> {
+                                Log.d("DavidVgn", "onSuccessFirestore: ");
+
+                                startActivity(new Intent(OAuthActivity.this, MainActivity.class));
+                            });
+                        }
+                    }
                 } else {
-                    Toast.makeText(OAuthActivity.this, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OAuthActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                 }
             });
-
-            DocumentReference documentReference = firebaseFirestore.collection("users").document(fullName);
-
-            User googleUser = new User(
-                id,
-                fullName,
-                picturePath,
-                email,
-                favoritesRestaurants,
-                selectedRestaurant
-            );
-
-            documentReference.set(googleUser).addOnSuccessListener(this, unused -> Log.d("DavidVgn", "onSuccessFirestore: "));
-
         } catch (ApiException e) {
             Log.w("DavidVgn", "signInResult:failed code=" + e.getStatusCode());
         }

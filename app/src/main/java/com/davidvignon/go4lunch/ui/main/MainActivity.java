@@ -62,11 +62,11 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.main_navigation_view);
+        NavigationView navigationView = findViewById(R.id.main_navigation_view);
         View headerView = navigationView.getHeaderView(0);
-        TextView navUsername = (TextView) headerView.findViewById(R.id.header_user_name);
-        ImageView navUserImage = (ImageView) headerView.findViewById(R.id.header_iv);
-        TextView navUseremail = (TextView) headerView.findViewById(R.id.header_user_email);
+        TextView navUsername = headerView.findViewById(R.id.header_user_name);
+        ImageView navUserImage = headerView.findViewById(R.id.header_iv);
+        TextView navUseremail = headerView.findViewById(R.id.header_user_email);
 
         Toolbar toolbar = binding.mainToolBar;
         toolbar.setTitle(R.string.restaurantViewTitle);
@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     return true;
                 case (R.id.nav_logout):
                     FirebaseAuth.getInstance().signOut();
-                    LoginManager.getInstance().logOut();
                     startActivity(new Intent(MainActivity.this, OAuthActivity.class));
                     return true;
             }
