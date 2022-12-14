@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -18,16 +18,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class RestaurantDetailsActivity extends AppCompatActivity {
-
-    @NonNull
-    private String phoneNumber;
-
-    @NonNull
-    private String website;
-
-    String restaurantName;
-
-    boolean isFavorite;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,22 +35,43 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             binding.restaurantDetailsTvName.setText(restaurantDetailsViewState.getName());
             binding.restaurantDetailsTvAddress.setText(restaurantDetailsViewState.getVicinity());
             binding.restaurantDetailsRb.setRating(restaurantDetailsViewState.getRating());
-            phoneNumber = restaurantDetailsViewState.getPhoneNumber();
-            website = restaurantDetailsViewState.getWebsite();
 
             String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
             String restaurantPicture = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
-                + restaurantDetailsViewState.getPhotosItemResponse() +
+                + restaurantDetailsViewState.getPhotoUrl() +
                 "&key=" + API_KEY;
 
             Glide.with(getApplicationContext())
                 .load(restaurantPicture)
                 .into(binding.restaurantDetailsIvHeader);
 
-            restaurantName = restaurantDetailsViewState.getName();
+            binding.restaurantDetailsBtCall.setOnClickListener(v -> {
+                Intent intentDial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + restaurantDetailsViewState.getPhoneNumber()));
+                startActivity(intentDial);
+            });
+
+            binding.restaurantDetailsBtLike.setText(restaurantDetailsViewState.getLikeButtonText());
+            binding.restaurantDetailsBtLike.setCompoundDrawables(
+                null,
+                ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
+                null,
+                null
+            );
+            binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    viewModel.onLikedButtonClicked();
+                }
+            });
+
+            binding.restaurantDetailsBtWebsite.setOnClickListener(view -> {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(restaurantDetailsViewState.getWebsite()));
+                startActivity(i);
+            });
         });
 
-            binding.restaurantDetailsFab.setOnClickListener(view -> viewModel.selectRestaurant());
+        binding.restaurantDetailsFab.setOnClickListener(view -> viewModel.selectRestaurant());
 
         binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,18 +82,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
 
         viewModel.getWorkmatesViewStatesLiveData().observe(this, workmatesViewStates -> adapter.submitList(workmatesViewStates));
-
-        binding.restaurantDetailsBtCall.setOnClickListener(v -> {
-            Intent intentDial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-            startActivity(intentDial);
-        });
-
-        binding.restaurantDetailsBtWebsite.setOnClickListener(view -> {
-            String url = website;
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
-        });
     }
 
 }

@@ -1,8 +1,7 @@
 package com.davidvignon.go4lunch.ui.details;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-
-import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
 
 import java.util.Objects;
 
@@ -21,31 +20,37 @@ public class RestaurantDetailsViewState {
     private final String website;
 
     @NonNull
-    private final String photosItemResponse;
+    private final String photoUrl;
 
     private final float rating;
 
     private final boolean isSelected;
-    private final boolean isLiked;
+
+    private final String likeButtonText;
+
+    @DrawableRes
+    private final int likeButtonIcon;
 
     public RestaurantDetailsViewState(
         @NonNull String name,
         @NonNull String vicinity,
         @NonNull String phoneNumber,
         @NonNull String website,
-        @NonNull String photosItemResponse,
+        @NonNull String photoUrl,
         float rating,
         boolean isSelected,
-        boolean isLiked
-        ) {
+        String likeButtonText,
+        int likeButtonIcon
+    ) {
         this.name = name;
         this.vicinity = vicinity;
         this.phoneNumber = phoneNumber;
         this.website = website;
-        this.photosItemResponse = photosItemResponse;
+        this.photoUrl = photoUrl;
         this.rating = rating;
         this.isSelected = isSelected;
-        this.isLiked = isLiked;
+        this.likeButtonText = likeButtonText;
+        this.likeButtonIcon = likeButtonIcon;
     }
 
     @NonNull
@@ -69,8 +74,8 @@ public class RestaurantDetailsViewState {
     }
 
     @NonNull
-    public String getPhotosItemResponse() {
-        return photosItemResponse;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
     public float getRating() {
@@ -81,19 +86,28 @@ public class RestaurantDetailsViewState {
         return isSelected;
     }
 
+    public String getLikeButtonText() {
+        return likeButtonText;
+    }
+
+    public int getLikeButtonIcon() {
+        return likeButtonIcon;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
-        return Double.compare(that.rating, rating) == 0 && name.equals(that.name) && vicinity.equals(that.vicinity) && phoneNumber.equals(that.phoneNumber) && website.equals(that.website) && photosItemResponse.equals(that.photosItemResponse);
+        return Float.compare(that.rating, rating) == 0 && isSelected == that.isSelected && likeButtonIcon == that.likeButtonIcon && name.equals(that.name) && vicinity.equals(that.vicinity) && phoneNumber.equals(that.phoneNumber) && website.equals(that.website) && photoUrl.equals(that.photoUrl) && Objects.equals(likeButtonText, that.likeButtonText);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, vicinity, phoneNumber, website, photosItemResponse, rating);
+        return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, isSelected, likeButtonText, likeButtonIcon);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetailsViewState{" +
@@ -101,8 +115,11 @@ public class RestaurantDetailsViewState {
             ", vicinity='" + vicinity + '\'' +
             ", phoneNumber='" + phoneNumber + '\'' +
             ", website='" + website + '\'' +
-            ", photosItemResponse=" + photosItemResponse +
+            ", photoUrl='" + photoUrl + '\'' +
             ", rating=" + rating +
+            ", isSelected=" + isSelected +
+            ", likeButtonText='" + likeButtonText + '\'' +
+            ", likeButtonIcon=" + likeButtonIcon +
             '}';
     }
 }

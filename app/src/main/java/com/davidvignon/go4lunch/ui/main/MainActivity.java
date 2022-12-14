@@ -1,9 +1,7 @@
 package com.davidvignon.go4lunch.ui.main;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +20,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
@@ -30,21 +27,9 @@ import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-
-import com.facebook.login.Login;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.json.JSONException;
-
-import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -78,50 +63,21 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        Button currentLocation = binding.locationButton;
-        currentLocation.setOnClickListener(new View.OnClickListener() {
+        binding.locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             }
         });
 
-        //FACEBOOK
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        GraphRequest request = GraphRequest.newMeRequest(
-        accessToken,
-            (object, response) -> {
-                // Application code
-                try {
-                    String fullName = object.getString("name");
-                    String email = object.getString("email");
-                    String picturePath = object.getJSONObject("picture").getJSONObject("data").getString("url");
+        if (firebaseUser != null) {
+            String fullName = firebaseUser.getDisplayName();
+            String email = firebaseUser.getEmail();
+            String picturePath = firebaseUser.getPhotoUrl() == null ? null : firebaseUser.getPhotoUrl().toString();
 
-                    navUsername.setText(fullName);
-                    navUseremail.setText(email);
-                    Glide.with(MainActivity.this)
-                        .load(picturePath)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(navUserImage);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name, email,link,picture.type(large)");
-        request.setParameters(parameters);
-        request.executeAsync();
-
-        //GOOGLE
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-        if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personEmail = acct.getEmail();
-            Uri picturePath = acct.getPhotoUrl();
-
-            navUsername.setText(personName);
-            navUseremail.setText(personEmail);
+            navUsername.setText(fullName);
+            navUseremail.setText(email);
             Glide.with(MainActivity.this)
                 .load(picturePath)
                 .apply(RequestOptions.circleCropTransform())
