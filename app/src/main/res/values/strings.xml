@@ -24,6 +24,7 @@
     <string name="restaurant_dtls_iv_header_descrip">Restaurant photo</string>
     <string name="call_restaurant">CALL</string>
     <string name="like_restaurant">LIKE</string>
+    <string name="unlike_restaurant">UNLIKE</string>
     <string name="restaurant_website">WEBSITE</string>
     <string name="open">Open</string>
     <string name="closed">Closed</string>

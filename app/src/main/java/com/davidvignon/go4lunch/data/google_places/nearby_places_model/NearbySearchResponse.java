@@ -9,19 +9,23 @@ import javax.annotation.Nullable;
 
 public class NearbySearchResponse {
 
+    @Nullable
     @SerializedName("next_page_token")
-    private String nextPageToken;
+    private final String nextPageToken;
 
+    @Nullable
     @SerializedName("html_attributions")
-    private List<Object> htmlAttributions;
+    private final List<Object> htmlAttributions;
 
+    @Nullable
     @SerializedName("results")
-    private List<RestaurantResponse> results;
+    private final List<RestaurantResponse> results;
 
+    @Nullable
     @SerializedName("status")
-    private String status;
+    private final String status;
 
-    public NearbySearchResponse(String nextPageToken, List<Object> htmlAttributions, List<RestaurantResponse> results, String status) {
+    public NearbySearchResponse(@Nullable String nextPageToken, @Nullable List<Object> htmlAttributions, @Nullable List<RestaurantResponse> results, @Nullable String status) {
         this.nextPageToken = nextPageToken;
         this.htmlAttributions = htmlAttributions;
         this.results = results;

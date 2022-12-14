@@ -12,75 +12,75 @@ public class RestaurantResponse {
 
     @Nullable
     @SerializedName("types")
-    private List<String> types;
+    private final List<String> types;
 
     @Nullable
     @SerializedName("business_status")
-    private String businessStatus;
+    private final String businessStatus;
 
     @Nullable
     @SerializedName("icon")
-    private String icon;
+    private final String icon;
 
     @Nullable
     @SerializedName("rating")
-    private Double rating;
+    private final Double rating;
 
     @Nullable
     @SerializedName("icon_background_color")
-    private String iconBackgroundColor;
+    private final String iconBackgroundColor;
 
     @Nullable
     @SerializedName("photos")
-    private List<PhotosItemResponse> photos;
+    private final List<PhotosItemResponse> photos;
 
     @Nullable
     @SerializedName("reference")
-    private String reference;
+    private final String reference;
 
     @Nullable
     @SerializedName("user_ratings_total")
-    private Integer userRatingsTotal;
+    private final Integer userRatingsTotal;
 
     @Nullable
     @SerializedName("price_level")
-    private Integer priceLevel;
+    private final Integer priceLevel;
 
     @Nullable
     @SerializedName("scope")
-    private String scope;
+    private final String scope;
 
     @Nullable
     @SerializedName("name")
-    private String name;
+    private final String name;
 
     @Nullable
     @SerializedName("opening_hours")
-    private OpeningHoursResponse openingHoursResponse;
+    private final OpeningHoursResponse openingHoursResponse;
 
     @Nullable
     @SerializedName("geometry")
-    private GeometryResponse geometryResponse;
+    private final GeometryResponse geometryResponse;
 
     @Nullable
     @SerializedName("icon_mask_base_uri")
-    private String iconMaskBaseUri;
+    private final String iconMaskBaseUri;
 
     @Nullable
     @SerializedName("vicinity")
-    private String vicinity;
+    private final String vicinity;
 
     @Nullable
     @SerializedName("plus_code")
-    private PlusCodeResponse plusCodeResponse;
+    private final PlusCodeResponse plusCodeResponse;
 
     @Nullable
     @SerializedName("place_id")
-    private String placeId;
+    private final String placeId;
 
     @Nullable
     @SerializedName("permanently_closed")
-    private Boolean permanentlyClosed;
+    private final Boolean permanentlyClosed;
 
     public RestaurantResponse(
         @Nullable List<String> types,

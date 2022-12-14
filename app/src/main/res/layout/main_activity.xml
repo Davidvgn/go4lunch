@@ -58,6 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:srcCompat="@drawable/ic_baseline_my_location_24"
+                android:drawableTint="@color/black"
                 />
 
 
@@ -79,7 +80,7 @@
             android:layout_height="150dp"
             android:layout_gravity="bottom|center"
             app:srcCompat="@drawable/ic_baseline_ramen_dining_24"
-            app:tint="@color/black" />
+            />
 
     </com.google.android.material.navigation.NavigationView>
 

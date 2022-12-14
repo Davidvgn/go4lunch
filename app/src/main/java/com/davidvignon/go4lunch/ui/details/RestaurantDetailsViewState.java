@@ -25,19 +25,27 @@ public class RestaurantDetailsViewState {
 
     private final float rating;
 
+    private final boolean isSelected;
+    private final boolean isLiked;
+
     public RestaurantDetailsViewState(
         @NonNull String name,
         @NonNull String vicinity,
         @NonNull String phoneNumber,
         @NonNull String website,
         @NonNull String photosItemResponse,
-        float rating) {
+        float rating,
+        boolean isSelected,
+        boolean isLiked
+        ) {
         this.name = name;
         this.vicinity = vicinity;
         this.phoneNumber = phoneNumber;
         this.website = website;
         this.photosItemResponse = photosItemResponse;
         this.rating = rating;
+        this.isSelected = isSelected;
+        this.isLiked = isLiked;
     }
 
     @NonNull
@@ -67,6 +75,10 @@ public class RestaurantDetailsViewState {
 
     public float getRating() {
         return rating;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
     }
 
     @Override

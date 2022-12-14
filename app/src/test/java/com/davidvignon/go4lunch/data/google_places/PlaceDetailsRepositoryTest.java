@@ -30,7 +30,7 @@ public class PlaceDetailsRepositoryTest {
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final PlaceDetailsApi placeDetailsApi = Mockito.mock(PlaceDetailsApi.class);
+    private final PlacesApi placeDetailsApi = Mockito.mock(PlacesApi.class);
 
     private final Call call = Mockito.mock(Call.class);
     private final ArgumentCaptor<Callback> callBack = ArgumentCaptor.forClass(Callback.class);

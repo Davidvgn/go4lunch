@@ -1,19 +1,26 @@
 package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
+import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -32,7 +39,6 @@ public class MapFragment extends SupportMapFragment {
         super.onViewCreated(view, savedInstanceState);
 
         MapViewModel viewModel = new ViewModelProvider(this).get(MapViewModel.class);
-
 
         requestPermissions(
             new String[]{
@@ -53,6 +59,14 @@ public class MapFragment extends SupportMapFragment {
                             .title(result.getTitle())
                             .alpha(0.8f)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                }
+
+            });
+            googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+                @Override
+                public void onInfoWindowClick(@NonNull Marker marker) {
+                    Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
                 }
             });
             viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), new Observer<LatLng>() {

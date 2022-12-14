@@ -12,43 +12,35 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.google_places.LocationRepository;
-import com.davidvignon.go4lunch.data.permission.PermissionRepository;
+import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
-import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
-import com.davidvignon.go4lunch.ui.map.MapViewModel;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
+
+import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 
@@ -58,8 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener {
-
-    //Dans menu navigation
 
     private MainViewModel viewModel;
 
@@ -153,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     return true;
                 case (R.id.nav_logout):
                     FirebaseAuth.getInstance().signOut();
+                    LoginManager.getInstance().logOut();
                     startActivity(new Intent(MainActivity.this, OAuthActivity.class));
                     return true;
             }
@@ -177,13 +168,11 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     displayFragment(RestaurantsFragment.newInstance());
                     toolbar.setTitle(R.string.restaurantViewTitle);
                     binding.locationButton.setVisibility(View.INVISIBLE);
-
                     break;
                 case (R.id.bottom_nav_workmates):
                     displayFragment(WorkmatesFragment.newInstance());
                     toolbar.setTitle(R.string.workermatesViewTitle);
                     binding.locationButton.setVisibility(View.INVISIBLE);
-
                     break;
             }
             return true;

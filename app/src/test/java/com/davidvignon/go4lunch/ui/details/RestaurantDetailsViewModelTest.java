@@ -1,8 +1,9 @@
-//todo david repasser dessus après la mise en place du SavedStateHandle le 6/12/22
+////todo david repasser dessus après la mise en place du SavedStateHandle le 6/12/22
 //package com.davidvignon.go4lunch.ui.details;
 //
 //import static org.junit.Assert.assertEquals;
 //import static org.junit.Assert.assertNull;
+//import static org.mockito.ArgumentMatchers.any;
 //
 //import androidx.annotation.Nullable;
 //import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -33,6 +34,9 @@
 //    private static final String DEFAULT_PHOTO = "DEFAULT_PHOTO";
 //    private static final double DEFAULT_RATING = 3.4;
 //
+//    private static final String DEFAULT_KEY_PLACE_ID = "DEFAULT_KEY_PLACE_ID";
+//
+//
 //    @Rule
 //    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 //
@@ -57,7 +61,6 @@
 //    public void initial_case() {
 //        // When
 //        RestaurantDetailsViewState viewState = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData());
-//
 //
 //        // Then
 //        assertEquals(getDefaultRestaurantViewState(), viewState);
@@ -330,6 +333,12 @@
 //
 //        RestaurantDetailsResponse response = Mockito.mock(RestaurantDetailsResponse.class);
 //        Mockito.doReturn(placeId).when(response).getPlaceId();
+//        Mockito.doReturn(name).when(response).getName();
+//        Mockito.doReturn(vicinity).when(response).getVicinity();
+//        Mockito.doReturn(phoneNumber).when(response).getInternationalPhoneNumber();
+//        Mockito.doReturn(website).when(response).getWebsite();
+//        Mockito.doReturn(photo).when(response).getPhotos();
+//        Mockito.doReturn(rating).when(response).getRating();
 //
 //        return response;
 //

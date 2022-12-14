@@ -6,19 +6,21 @@ import javax.annotation.Nullable;
 
 public class NortheastResponse {
 
+    @Nullable
     @SerializedName("lng")
-    private double lng;
-
-    @SerializedName("lat")
-    private double lat;
+    private Double lng;
 
     @Nullable
-    public double getLng() {
+    @SerializedName("lat")
+    private Double lat;
+
+    @Nullable
+    public Double getLng() {
         return lng;
     }
 
     @Nullable
-    public double getLat() {
+    public Double getLat() {
         return lat;
     }
 

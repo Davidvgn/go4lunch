@@ -1,12 +1,17 @@
 package com.davidvignon.go4lunch.data.google_places.place_details;
 
 import java.util.List;
+import java.util.Objects;
+
 import com.google.gson.annotations.SerializedName;
+
+import javax.annotation.Nullable;
 
 public class PhotosItem{
 
+    @Nullable
     @SerializedName("photo_reference")
-    private String photoReference;
+    private final String photoReference;
 
     @SerializedName("width")
     private int width;
@@ -17,10 +22,11 @@ public class PhotosItem{
     @SerializedName("height")
     private int height;
 
-    public PhotosItem(String photoReference) {
+    public PhotosItem(@Nullable String photoReference) {
         this.photoReference = photoReference;
     }
 
+    @Nullable
     public String getPhotoReference(){
         return photoReference;
     }
@@ -35,5 +41,28 @@ public class PhotosItem{
 
     public int getHeight(){
         return height;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PhotosItem that = (PhotosItem) o;
+        return width == that.width && height == that.height && Objects.equals(photoReference, that.photoReference) && Objects.equals(htmlAttributions, that.htmlAttributions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(photoReference, width, htmlAttributions, height);
+    }
+
+    @Override
+    public String toString() {
+        return "PhotosItem{" +
+            "photoReference='" + photoReference + '\'' +
+            ", width=" + width +
+            ", htmlAttributions=" + htmlAttributions +
+            ", height=" + height +
+            '}';
     }
 }

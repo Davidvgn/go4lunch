@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
-import static android.os.Build.VERSION_CODES.R;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
 
     @NonNull
     private final OnRestaurantClickedListener listener;
-
 
     public RestaurantAdapter(@NonNull OnRestaurantClickedListener listener) {
         super(new ListRestaurantItemCallBack());

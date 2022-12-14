@@ -4,17 +4,19 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 
 public class GeometryResponse {
 
     @Nullable
     @SerializedName("viewport")
-    private ViewportResponse viewportResponse;
+    private final ViewportResponse viewportResponse;
 
     @Nullable
     @SerializedName("location")
-    private LocationResponse locationResponse;
+    private final LocationResponse locationResponse;
 
     public GeometryResponse(@Nullable ViewportResponse viewportResponse, @Nullable LocationResponse locationResponse) {
         this.viewportResponse = viewportResponse;
@@ -29,6 +31,19 @@ public class GeometryResponse {
     @Nullable
     public LocationResponse getLocation() {
         return locationResponse;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GeometryResponse that = (GeometryResponse) o;
+        return Objects.equals(viewportResponse, that.viewportResponse) && Objects.equals(locationResponse, that.locationResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(viewportResponse, locationResponse);
     }
 
     @NonNull

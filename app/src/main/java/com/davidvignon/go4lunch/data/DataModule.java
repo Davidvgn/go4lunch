@@ -7,6 +7,7 @@ import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -90,6 +91,10 @@ public class DataModule {
     public FirebaseFirestore provideFirestoreDb() {
         return FirebaseFirestore.getInstance();
     }
+
+    @Singleton
+    @Provides
+    public FirebaseUser provideCurrentUser() {return FirebaseAuth.getInstance().getCurrentUser();}
 
     @Provides
     public Looper provideLooper() {

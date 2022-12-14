@@ -22,7 +22,7 @@ public class Workmates {
     @Nullable
     private final String selectedRestaurant;
 
-    public Workmates(@NonNull String id, @NonNull String name, @NonNull String email, String picturePath, @Nullable String selectedRestaurant) {
+    public Workmates(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -75,7 +75,7 @@ public class Workmates {
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             ", picturePath='" + picturePath + '\'' +
-            ", choice='" + selectedRestaurant + '\'' +
+            ", selectedRestaurant='" + selectedRestaurant + '\'' +
             '}';
     }
 }

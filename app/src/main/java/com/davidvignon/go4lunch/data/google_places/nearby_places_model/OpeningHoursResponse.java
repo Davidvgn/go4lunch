@@ -8,11 +8,12 @@ import javax.annotation.Nullable;
 
 public class OpeningHoursResponse {
 
+    @Nullable
     @SerializedName("open_now")
-    private boolean openNow;
+    private Boolean openNow;
 
     @Nullable
-    public boolean isOpenNow() {
+    public Boolean isOpenNow() {
         return openNow;
     }
 
@@ -20,7 +21,7 @@ public class OpeningHoursResponse {
     }
 
     @VisibleForTesting
-    public OpeningHoursResponse(boolean openNow) {
+    public OpeningHoursResponse(Boolean openNow) {
         this.openNow = openNow;
     }
 
