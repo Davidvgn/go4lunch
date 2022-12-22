@@ -2,14 +2,15 @@ package com.davidvignon.go4lunch.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,9 +28,15 @@ import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -70,19 +77,37 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         });
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DocumentReference docRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.d("DavidVgn", "task isSuccessful");
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d("DavidVgn", "DocumentSnapshot data: " + document.getData());
+                        String userPicturePath = document.get("picturePath").toString();
 
-        if (firebaseUser != null) {
-            String fullName = firebaseUser.getDisplayName();
-            String email = firebaseUser.getEmail();
-            String picturePath = firebaseUser.getPhotoUrl() == null ? null : firebaseUser.getPhotoUrl().toString();
+                        String fullName = firebaseUser.getDisplayName();
+                        String email = firebaseUser.getProviderData().get(1).getEmail();
 
-            navUsername.setText(fullName);
-            navUseremail.setText(email);
-            Glide.with(MainActivity.this)
-                .load(picturePath)
-                .apply(RequestOptions.circleCropTransform())
-                .into(navUserImage);
-        }
+                        navUsername.setText(fullName);
+                        navUseremail.setText(email);
+                        Glide.with(MainActivity.this)
+                            .load(userPicturePath)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(navUserImage);
+
+
+                        Log.d("DavidVgn", "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d("DavidVgn", "No such document");
+                    }
+                } else {
+                    Log.d("DavidVgn", "get failed with ", task.getException());
+                }
+            }
+        });
 
         toolbar.setNavigationOnClickListener(view -> binding.mainDrawerLayout.open());
 
@@ -98,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     startActivity(intent);
                     return true;
                 case (R.id.nav_logout):
+                    LoginManager.getInstance().logOut();
                     FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(MainActivity.this, OAuthActivity.class));
                     return true;

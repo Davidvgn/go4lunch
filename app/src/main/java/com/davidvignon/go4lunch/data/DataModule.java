@@ -92,7 +92,6 @@ public class DataModule {
         return FirebaseFirestore.getInstance();
     }
 
-    @Singleton
     @Provides
     public FirebaseUser provideCurrentUser() {return FirebaseAuth.getInstance().getCurrentUser();}
 

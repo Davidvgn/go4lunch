@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
@@ -10,8 +8,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.data.users.UserRepository;
-import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -26,12 +22,12 @@ public class WorkmatesViewModel extends ViewModel {
 
     private final LiveData<List<WorkmatesViewStates>> workmatesViewStatesLiveData;
 
-    private final UserRepository userRepository;
+    @NonNull
+    private final FirebaseUser firebaseUser;
 
     @Inject
-    public WorkmatesViewModel(@NonNull UserRepository userRepository) {
-        this.userRepository = userRepository;
-
+    public WorkmatesViewModel(UserRepository userRepository,@NonNull FirebaseUser firebaseUser) {
+        this.firebaseUser = firebaseUser;
         LiveData<List<User>> dataBaseUsersLiveData = userRepository.getDataBaseUsers();
         workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
     }
@@ -48,22 +44,19 @@ public class WorkmatesViewModel extends ViewModel {
             public List<WorkmatesViewStates> apply(List<User> result) {
                 List<WorkmatesViewStates> viewStates = new ArrayList<>();
 
-                Log.d("DavidVgn", "apply: "+ result.get(0).toString());
-
-                if (result != null) {
-//                    for (int i = 0; i < result.size(); i++) {
-//                        if (result.get(i).getId().equals()){
-//                            result.remove(i);
-//                            break;
-//                        }
-//                    }
+                for (int i = 0; i < result.size(); i++) {
+                        if (result.get(i).getId().equals(firebaseUser.getUid())){
+                            result.remove(i);
+                            break;
+                        }
+                    }
                     for (User user : result) {
                         viewStates.add(new WorkmatesViewStates(
                             user.getId(),
                             user.getName(),
                             user.getPicturePath()));
                     }
-                }
+
                 return viewStates;
 
             }
