@@ -54,7 +54,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             });
 
             binding.restaurantDetailsBtLike.setText(restaurantDetailsViewState.getLikeButtonText());
-//            binding.restaurantDetailsBtLike.setCompoundDrawables(
+//            binding.restaurantDetailsBtLike.setCompoundDrawables(//todo david à checker -> NPE
 //                null,
 //                ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
 //                null,
