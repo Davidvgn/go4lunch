@@ -7,16 +7,22 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.data.FirestoreRepository;
+import com.davidvignon.go4lunch.data.Workmates;
+import com.davidvignon.go4lunch.data.WorkmatesRepository;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
-import com.davidvignon.go4lunch.data.users.User;
+import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewStates;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,166 +35,169 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class RestaurantDetailsViewModel extends ViewModel {
 
     private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
+
     public static Intent navigate(@NonNull Context context, @NonNull String placeId) {
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
         intent.putExtra(KEY_PLACE_ID, placeId);
         return intent;
     }
 
+    @NonNull
     private final UserRepository userRepository;
 
     // TODO David Utiliser un MediatorLiveData pour avoir l'état des boutons (liked / isGoing) ET les workmates
-    private final LiveData<List<WorkmatesViewStates>> workmatesViewStatesLiveData;
+    private final MutableLiveData<List<WorkmatesViewStates>> workmatesViewStatesLiveData = new MutableLiveData<>();
 
     private final LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
 
     private final MutableLiveData<String> restaurantPlaceId = new MutableLiveData<>();
 
-    // TODO DAVID Cette livedata vient du repo (firestore)
     public final MutableLiveData<Boolean> isLikedMutableLiveData = new MutableLiveData<>();
 
-    // TODO DAVID Cette livedata vient du repo (firestore)
     public final MutableLiveData<Boolean> isSelectedMutableLiveData = new MutableLiveData<>();
 
-
-    public final MutableLiveData<Integer> visibleornot = new MutableLiveData<>();
+    public final MediatorLiveData<RestaurantDetailsViewState> mediatorLiveData = new MediatorLiveData<>();
 
     @Inject
     public RestaurantDetailsViewModel(
         @NonNull PlaceDetailsRepository placeDetailsRepository,
         @NonNull UserRepository userRepository,
+        @NonNull WorkmatesRepository workmatesRepository,
+        @NonNull FirestoreRepository firestoreRepository,
         @NonNull SavedStateHandle savedStateHandle
     ) {
         this.userRepository = userRepository;
 
-        if (isSelectedMutableLiveData.getValue() == null) {
+        LiveData<List<Workmates>> workmatesLiveData = workmatesRepository.getDataBaseUsers();
+
+        if (isSelectedMutableLiveData.getValue() != null) {
+            isSelectedMutableLiveData.setValue(firestoreRepository.isRestaurantSelectedByUser(savedStateHandle.get(KEY_PLACE_ID)).getValue());
+        } else {
             isSelectedMutableLiveData.setValue(false);
         }
-        if (isLikedMutableLiveData.getValue() == null) {
+
+        if (isLikedMutableLiveData.getValue() != null) {
+            isLikedMutableLiveData.setValue(firestoreRepository.isRestaurantLikedByUser(savedStateHandle.get(KEY_PLACE_ID)).getValue());
+        } else {
             isLikedMutableLiveData.setValue(false);
         }
+
         restaurantPlaceId.setValue(savedStateHandle.get(KEY_PLACE_ID));
 
         restaurantDetailsViewStateLiveData = Transformations.map(
             placeDetailsRepository.getDetailsResponseLiveData(savedStateHandle.get(KEY_PLACE_ID)),
-            response -> {
-                if (response.getResult() != null
-                    && response.getResult().getName() != null
-                    && response.getResult().getVicinity() != null
-                    && response.getResult().getInternationalPhoneNumber() != null
-                    && response.getResult().getWebsite() != null
-                    && response.getResult().getPhotos() != null
-                    && response.getResult().getPhotos().get(0).getPhotoReference() != null
-                    && response.getResult().getRating() != null
-                ) {
-                    Double initialRating = response.getResult().getRating();
+            new Function<DetailsResponse, RestaurantDetailsViewState>() {
+                @Override
+                public RestaurantDetailsViewState apply(DetailsResponse response) {
+                    if (response.getResult() != null
+                        && response.getResult().getName() != null
+                        && response.getResult().getVicinity() != null
+                        && response.getResult().getInternationalPhoneNumber() != null
+                        && response.getResult().getWebsite() != null
+                        && response.getResult().getPhotos() != null
+                        && response.getResult().getPhotos().get(0).getPhotoReference() != null
+                        && response.getResult().getRating() != null
+                    ) {
+                        Double initialRating = response.getResult().getRating();
 
-                    boolean isLiked = isLikedMutableLiveData.getValue() != null && isLikedMutableLiveData.getValue();
+                        boolean isLiked = isLikedMutableLiveData.getValue() != null ? isLikedMutableLiveData.getValue() : false;
 
-                    return new RestaurantDetailsViewState(
-                        response.getResult().getName(),
-                        response.getResult().getVicinity(),
-                        response.getResult().getInternationalPhoneNumber(),
-                        response.getResult().getWebsite(),
-                        response.getResult().getPhotos().get(0).getPhotoReference(),
-                        (float) (initialRating * 3 / 5),
-                        isSelectedMutableLiveData.getValue(),
-                        isLiked ? "liked" : "not liked",
-                        isLiked ? R.drawable.ic_baseline_red_star_rate_24 : R.drawable.ic_baseline_star_border_24
-                    );
-                } else {
-                    return null;
+                        return new RestaurantDetailsViewState(
+                            response.getResult().getName(),
+                            response.getResult().getVicinity(),
+                            response.getResult().getInternationalPhoneNumber(),
+                            response.getResult().getWebsite(),
+                            response.getResult().getPhotos().get(0).getPhotoReference(),
+                            (float) (initialRating * 3 / 5),
+                            isSelectedMutableLiveData.getValue(),
+                            isLiked ? "unlike" : "like",
+                            isLiked ? R.drawable.ic_baseline_red_star_rate_24 : R.drawable.ic_baseline_star_border_24
+                        );
+                    } else {
+                        return null;
+                    }
                 }
             }
         );
 
-        LiveData<List<User>> dataBaseUsersLiveData = userRepository.getDataBaseUsers();
-        workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
+        mediatorLiveData.addSource(restaurantDetailsViewStateLiveData, new Observer<RestaurantDetailsViewState>() {
+            @Override
+            public void onChanged(RestaurantDetailsViewState restaurantDetailsViewState) {
+                combine(restaurantDetailsViewState, isLikedMutableLiveData.getValue(), isSelectedMutableLiveData.getValue(), workmatesLiveData.getValue());
+            }
+        });
 
+        mediatorLiveData.addSource(isLikedMutableLiveData, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isLiked) {
+                combine(restaurantDetailsViewStateLiveData.getValue(), isLiked, isSelectedMutableLiveData.getValue(), workmatesLiveData.getValue());
+            }
+        });
+
+        mediatorLiveData.addSource(isSelectedMutableLiveData, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isSelected) {
+                combine(restaurantDetailsViewStateLiveData.getValue(), isLikedMutableLiveData.getValue(), isSelected, workmatesLiveData.getValue());
+            }
+        });
+
+        mediatorLiveData.addSource(workmatesLiveData, new Observer<List<Workmates>>() {
+            @Override
+            public void onChanged(List<Workmates> workmates) {
+                combine(restaurantDetailsViewStateLiveData.getValue(), isLikedMutableLiveData.getValue(), isSelectedMutableLiveData.getValue(), workmates);
+            }
+        });
+
+    }
+
+    public void combine(RestaurantDetailsViewState restaurantDetailsViewState, Boolean isLiked, Boolean isSelected, List<Workmates> workmatesList) {
+        List<WorkmatesViewStates> viewStates = new ArrayList<>();
+
+        if (restaurantDetailsViewState != null) {
+            if (workmatesList != null) {
+                for (Workmates workmates : workmatesList) {
+                    if (workmates.getSelectedRestaurant() != null && workmates.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
+                        viewStates.add(new WorkmatesViewStates(
+                            workmates.getId(),
+                            workmates.getName(),
+                            workmates.getPicturePath()));
+                }
+                workmatesViewStatesLiveData.setValue(viewStates);
+            }
+            mediatorLiveData.setValue(restaurantDetailsViewState);
+        }
     }
 
     @NonNull
     public LiveData<RestaurantDetailsViewState> getRestaurantDetailsViewStateLiveData() {
-        return restaurantDetailsViewStateLiveData;
+        return mediatorLiveData;
     }
-    @NonNull
-    public LiveData<List<WorkmatesViewStates>> getWorkmatesViewStatesLiveData() {
+
+    public LiveData<List<WorkmatesViewStates>> getWorkmatesViewStates() {
         return workmatesViewStatesLiveData;
     }
 
-    public void restaurantIsFavoriteOrNot() {
-        if (isLikedMutableLiveData.getValue() != null) {
-            boolean isFavorite = isLikedMutableLiveData.getValue();
-            isLikedMutableLiveData.setValue(!isFavorite);
-
-            if (isLikedMutableLiveData.getValue()) {
-                userRepository.likeRestaurant(restaurantPlaceId.getValue());
-
-            } else {
-                userRepository.unLikeRestaurant(restaurantPlaceId.getValue());
-            }
+    public void onLikedButtonClicked() {
+        Boolean previousValue = isLikedMutableLiveData.getValue();
+        if (previousValue == null) {
+            previousValue = false;
+        }
+        isLikedMutableLiveData.setValue(!previousValue);
+        boolean newValue = isLikedMutableLiveData.getValue();
+        if (newValue) {
+            userRepository.likeRestaurant(restaurantPlaceId.getValue());
+        } else {
+            userRepository.unLikeRestaurant(restaurantPlaceId.getValue());
         }
     }
 
     public void selectRestaurant() {
-        if (isSelectedMutableLiveData.getValue() != null) {
-            boolean isFavorite = isSelectedMutableLiveData.getValue();
-            isSelectedMutableLiveData.setValue(!isFavorite);
-            if (isSelectedMutableLiveData.getValue()) {
-                userRepository.selectRestaurant(restaurantPlaceId.getValue());
-            } else {
-                userRepository.unSelectRestaurant();
-            }
+        Boolean previousValue = isSelectedMutableLiveData.getValue();
+        if (previousValue == null) {
+            previousValue = false;
         }
-    }
-    @NonNull
-    private LiveData<List<WorkmatesViewStates>> bindViewState(LiveData<List<User>> dataBaseUsersLiveData) {
-        return Transformations.map(dataBaseUsersLiveData, new Function<List<User>, List<WorkmatesViewStates>>() {
-            @Override
-            public List<WorkmatesViewStates> apply(List<User> result) {
-                List<WorkmatesViewStates> viewStates = new ArrayList<>();
-
-                Log.d("DavidVgn", "apply: "+ result.get(0).getSelectedRestaurant());
-                Log.d("DavidVgn", "apply1: "+ result.get(1).getSelectedRestaurant());
-                Log.d("DavidVgn", "apply: "+ restaurantPlaceId.getValue());
-                Log.d("DavidVgn", "apply: "+ userRepository.getUserSelectedRestaurant().getValue());
-
-//                if (result != null) {
-//                    for (int i = 0; i < result.size(); i++) {
-//                        if (result.get(i).getFavoritesRestaurants().equals(restaurantplaceid.getValue())){
-//                            result.remove(i);
-//                            break;
-//                        }
-//                    }
-//                    for (User user : result) {
-//                        viewStates.add(new WorkmatesViewStates(
-//                            user.getId(),
-//                            user.getName(),
-//                            user.getPicturePath()));
-//                    }
-//                }
-                if (result != null) {
-                    for (int i = 0; i < result.size(); i++) {
-                        if (result.get(i).getFavoritesRestaurants().equals(restaurantPlaceId)){
-                            for (User user : result) {
-                                viewStates.add(new WorkmatesViewStates(
-                                    user.getId(),
-                                    user.getName(),
-                                    user.getPicturePath()));
-                            }
-                        } else {
-                            result.remove(i);
-                        }
-                    }
-
-                }
-                return viewStates;
-
-            }
-        });
+        isSelectedMutableLiveData.setValue(!previousValue);
+        userRepository.selectRestaurant(restaurantPlaceId.getValue());
     }
 
-    public void onLikedButtonClicked() {
-        // TODO DAVID Repo à mettre à jour
-    }
 }

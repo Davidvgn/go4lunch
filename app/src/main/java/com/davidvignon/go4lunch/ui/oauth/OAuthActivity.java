@@ -15,7 +15,6 @@ import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.databinding.AuthActivityBinding;
 import com.davidvignon.go4lunch.ui.main.MainActivity;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -25,12 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -80,7 +75,6 @@ public class OAuthActivity extends AppCompatActivity {
                         @Override
                         public void onChanged(User user) {
                             startActivity(new Intent(OAuthActivity.this, MainActivity.class));
-
                         }
                     });
                 }
@@ -103,7 +97,6 @@ public class OAuthActivity extends AppCompatActivity {
             @Override
             public void onChanged(User user) {
                 startActivity(new Intent(OAuthActivity.this, MainActivity.class));
-
             }
         });
     });
@@ -113,5 +106,4 @@ public class OAuthActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
 }

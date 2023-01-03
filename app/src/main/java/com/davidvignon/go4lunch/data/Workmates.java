@@ -8,19 +8,22 @@ import java.util.Objects;
 public class Workmates {
 
     @NonNull
-    private final String id;
+    private  String id;
 
     @NonNull
-    private final String name;
+    private  String name;
 
     @NonNull
-    private final String email;
+    private  String email;
 
     @NonNull
-    private final String picturePath;
+    private  String picturePath;
 
     @Nullable
-    private final String selectedRestaurant;
+    private  String selectedRestaurant;
+
+    public Workmates() {
+    }
 
     public Workmates(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant) {
         this.id = id;

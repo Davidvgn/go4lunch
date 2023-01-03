@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.ui.details;
 
+import android.graphics.drawable.Drawable;
+
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 

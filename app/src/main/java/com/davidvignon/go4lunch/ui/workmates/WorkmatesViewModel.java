@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.data.Workmates;
+import com.davidvignon.go4lunch.data.WorkmatesRepository;
 import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,9 +28,9 @@ public class WorkmatesViewModel extends ViewModel {
     private final FirebaseUser firebaseUser;
 
     @Inject
-    public WorkmatesViewModel(UserRepository userRepository,@NonNull FirebaseUser firebaseUser) {
+    public WorkmatesViewModel(WorkmatesRepository workmatesRepository, @NonNull FirebaseUser firebaseUser) {
         this.firebaseUser = firebaseUser;
-        LiveData<List<User>> dataBaseUsersLiveData = userRepository.getDataBaseUsers();
+        LiveData<List<Workmates>> dataBaseUsersLiveData = workmatesRepository.getDataBaseUsers();
         workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
     }
 
@@ -38,27 +40,25 @@ public class WorkmatesViewModel extends ViewModel {
     }
 
     @NonNull
-    private LiveData<List<WorkmatesViewStates>> bindViewState(LiveData<List<User>> dataBaseUsersLiveData) {
-        return Transformations.map(dataBaseUsersLiveData, new Function<List<User>, List<WorkmatesViewStates>>() {
+    private LiveData<List<WorkmatesViewStates>> bindViewState(LiveData<List<Workmates>> dataBaseUsersLiveData) {
+        return Transformations.map(dataBaseUsersLiveData, new Function<List<Workmates>, List<WorkmatesViewStates>>() {
             @Override
-            public List<WorkmatesViewStates> apply(List<User> result) {
+            public List<WorkmatesViewStates> apply(List<Workmates> result) {
                 List<WorkmatesViewStates> viewStates = new ArrayList<>();
 
                 for (int i = 0; i < result.size(); i++) {
-                        if (result.get(i).getId().equals(firebaseUser.getUid())){
-                            result.remove(i);
-                            break;
-                        }
+                    if (result.get(i).getId().equals(firebaseUser.getUid())) {
+                        result.remove(i);
+                        break;
                     }
-                    for (User user : result) {
-                        viewStates.add(new WorkmatesViewStates(
-                            user.getId(),
-                            user.getName(),
-                            user.getPicturePath()));
-                    }
-
+                }
+                for (Workmates workmates : result) {
+                    viewStates.add(new WorkmatesViewStates(
+                        workmates.getId(),
+                        workmates.getName(),
+                        workmates.getPicturePath()));
+                }
                 return viewStates;
-
             }
         });
     }
