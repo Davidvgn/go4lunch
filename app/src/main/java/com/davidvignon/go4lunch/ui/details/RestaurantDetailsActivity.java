@@ -54,12 +54,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             });
 
             binding.restaurantDetailsBtLike.setText(restaurantDetailsViewState.getLikeButtonText());
-            binding.restaurantDetailsBtLike.setCompoundDrawables(
-                null,
-                ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
-                null,
-                null
-            );
+//            binding.restaurantDetailsBtLike.setCompoundDrawables(
+//                null,
+//                ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
+//                null,
+//                null
+//            );
             binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -128,33 +128,6 @@ public class FirestoreRepository {
         return userMutableLiveData;
     }
 
-    public LiveData<List<User>> getWorkmatesSelection(String placeId) {
-        List<User> users = new ArrayList<>();
-        List<String> test = new ArrayList<>();
-        MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("users")
-            .whereEqualTo("selectedRestaurant", placeId)
-            .get()
-            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                        users.add(new User(
-                                document.get("id").toString(),
-                                document.get("name").toString(),
-                                document.get("picturePath").toString(),
-                                "document.gettoString()",
-                                test,
-                                "document.gettoString()"
-                            )
-                        );
-                        userMutableLiveData.setValue(users);
-                    }
-                }
-            });
-        return userMutableLiveData;
-    }
-
     public LiveData<Boolean> isRestaurantLikedByUser(String placeId) {
         firebaseFirestore.collection("users")
             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
