@@ -54,16 +54,26 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             });
 
             binding.restaurantDetailsBtLike.setText(restaurantDetailsViewState.getLikeButtonText());
-//            binding.restaurantDetailsBtLike.setCompoundDrawables(//todo david à checker -> NPE
-//                null,
-//                ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
-//                null,
-//                null
-//            );
+
+            binding.restaurantDetailsBtLike.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
+                null,
+                null
+            );
+
+            binding.restaurantDetailsFab.setImageResource(restaurantDetailsViewState.getSelectedButtonIcon());
+
             binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     viewModel.onLikedButtonClicked();
+                    binding.restaurantDetailsBtLike.setCompoundDrawables(
+                        null,
+                        ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
+                        null,
+                        null
+                    );
                 }
             });
 
@@ -76,7 +86,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
 
         binding.restaurantDetailsFab.setOnClickListener(view -> viewModel.selectRestaurant());
-
     }
 
 }

@@ -131,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:backgroundTint="@color/white"
-                    android:drawableTop="@drawable/ic_baseline_red_star_rate_24"
+                    android:drawableTop="@drawable/ic_baseline_star_outline_24"
                     android:paddingTop="8dp"
                     android:text="@string/like_restaurant"
                     android:textColor="@color/dominantRed"

@@ -19,13 +19,11 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -54,20 +52,16 @@ public class OAuthActivity extends AppCompatActivity {
 
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        MaterialButton googleLoginButton = binding.authGoogleLoginButton;
-
-        googleLoginButton.setOnClickListener(view -> {
+        binding.authGoogleLoginButton.setOnClickListener(view -> {
             Log.d("DavidVgn", "googleLoginButton.setOnClickListener");
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             activityResultLauncher.launch(signInIntent);
         });
 
         //FACEBOOK
-        LoginButton facebookButton = binding.authFacebookLoginButton;
+        binding.authFacebookLoginButton.setPermissions("email", "public_profile", "user_photos");
 
-        facebookButton.setPermissions("email", "public_profile", "user_photos");
-
-        facebookButton.registerCallback(callbackManager,
+        binding.authFacebookLoginButton.registerCallback(callbackManager,
             new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {

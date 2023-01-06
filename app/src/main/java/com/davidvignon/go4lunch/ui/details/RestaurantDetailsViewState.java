@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.ui.details;
 
-import android.graphics.drawable.Drawable;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
@@ -26,8 +24,11 @@ public class RestaurantDetailsViewState {
 
     private final float rating;
 
-    private final boolean isSelected;
+    //    private final boolean isSelected;
+    @DrawableRes
+    private final int isSelected;
 
+    @NonNull
     private final String likeButtonText;
 
     @DrawableRes
@@ -40,8 +41,9 @@ public class RestaurantDetailsViewState {
         @NonNull String website,
         @NonNull String photoUrl,
         float rating,
-        boolean isSelected,
-        String likeButtonText,
+//        boolean isSelected,
+        int isSelected,
+        @NonNull String likeButtonText,
         int likeButtonIcon
     ) {
         this.name = name;
@@ -84,10 +86,14 @@ public class RestaurantDetailsViewState {
         return rating;
     }
 
-    public boolean isSelected() {
+//    public boolean isSelected() {
+//        return isSelected;
+//    }
+    public int getSelectedButtonIcon() {
         return isSelected;
     }
 
+    @NonNull
     public String getLikeButtonText() {
         return likeButtonText;
     }
@@ -100,8 +106,8 @@ public class RestaurantDetailsViewState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
-        return Float.compare(that.rating, rating) == 0 && isSelected == that.isSelected && likeButtonIcon == that.likeButtonIcon && name.equals(that.name) && vicinity.equals(that.vicinity) && phoneNumber.equals(that.phoneNumber) && website.equals(that.website) && photoUrl.equals(that.photoUrl) && Objects.equals(likeButtonText, that.likeButtonText);
+        RestaurantDetailsViewState viewState = (RestaurantDetailsViewState) o;
+        return Float.compare(viewState.rating, rating) == 0 && isSelected == viewState.isSelected && likeButtonIcon == viewState.likeButtonIcon && name.equals(viewState.name) && vicinity.equals(viewState.vicinity) && phoneNumber.equals(viewState.phoneNumber) && website.equals(viewState.website) && photoUrl.equals(viewState.photoUrl) && likeButtonText.equals(viewState.likeButtonText);
     }
 
     @Override
@@ -109,7 +115,6 @@ public class RestaurantDetailsViewState {
         return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, isSelected, likeButtonText, likeButtonIcon);
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetailsViewState{" +
@@ -124,4 +129,39 @@ public class RestaurantDetailsViewState {
             ", likeButtonIcon=" + likeButtonIcon +
             '}';
     }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
+//        return Float.compare(that.rating, rating) == 0
+//            && isSelected == that.isSelected
+//            && likeButtonIcon == that.likeButtonIcon
+//            && name.equals(that.name) && vicinity.equals(that.vicinity)
+//            && phoneNumber.equals(that.phoneNumber)
+//            && website.equals(that.website)
+//            && photoUrl.equals(that.photoUrl)
+//            && Objects.equals(likeButtonText, that.likeButtonText);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, isSelected, likeButtonText, likeButtonIcon);
+//    }
+//
+//    @NonNull
+//    @Override
+//    public String toString() {
+//        return "RestaurantDetailsViewState{" +
+//            "name='" + name + '\'' +
+//            ", vicinity='" + vicinity + '\'' +
+//            ", phoneNumber='" + phoneNumber + '\'' +
+//            ", website='" + website + '\'' +
+//            ", photoUrl='" + photoUrl + '\'' +
+//            ", rating=" + rating +
+//            ", isSelected=" + isSelected +
+//            ", likeButtonText='" + likeButtonText + '\'' +
+//            ", likeButtonIcon=" + likeButtonIcon +
+//            '}';
+//    }
 }

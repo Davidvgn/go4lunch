@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.data.FirestoreRepository;
+import com.davidvignon.go4lunch.data.OAuthRepository;
 import com.davidvignon.go4lunch.data.users.User;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -19,11 +19,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class OAuthViewModel extends ViewModel {
 
     @NonNull
-    private final FirestoreRepository firebaseRepository;
+    private final OAuthRepository firebaseRepository;
 
 
     @Inject
-    public OAuthViewModel(@NonNull FirestoreRepository firebaseRepository) {
+    public OAuthViewModel(@NonNull OAuthRepository firebaseRepository) {
         this.firebaseRepository = firebaseRepository;
 
     }
