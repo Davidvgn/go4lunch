@@ -1,5 +1,8 @@
 package com.davidvignon.go4lunch.data.users;
 
+import static com.google.common.base.CharMatcher.any;
+import static com.google.common.base.CharMatcher.javaLetter;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -7,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.davidvignon.go4lunch.data.Workmates;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -17,6 +21,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +46,21 @@ public class UserRepository {
         this.firebaseFirestore = firebaseFirestore;
         this.firebaseAuth = firebaseAuth;
     }
+
+//    public LiveData<List<User>> getAllUserLiveData() {
+//        MutableLiveData<List<User>> userMutableLiveData = new MutableLiveData<>();
+//
+//        firebaseFirestore.collection("users")
+//            .get().
+//            addOnCompleteListener(task -> {
+//                if (task.isSuccessful()) {
+//                    userMutableLiveData.setValue(task.getResult().toObjects(User.class));
+//                } else {
+//                    Log.d("DavidVgn", "Error getting documents: ");
+//                }
+//            });
+//        return userMutableLiveData;
+//    }
 
     public LiveData<Boolean> isRestaurantSelectedLiveData(String placeId) {
         MutableLiveData<Boolean> isSelectedLiveData = new MutableLiveData<>();
@@ -87,7 +111,7 @@ public class UserRepository {
         });
     }
 
-    public LiveData<Boolean> isRestaurantLikedByUser(String placeId) {
+    public LiveData<Boolean> isRestaurantLikedByUserLiveData(String placeId) {
         MutableLiveData<Boolean> isLiked = new MutableLiveData<>();
         firebaseFirestore.collection("users")
             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -103,7 +127,6 @@ public class UserRepository {
                         }
                     } else {
                         isLiked.setValue(false);
-
                     }
                 }
             });

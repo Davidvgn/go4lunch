@@ -10,6 +10,7 @@
 //import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 //import com.google.android.gms.tasks.OnCompleteListener;
 //import com.google.android.gms.tasks.Task;
+//import com.google.firebase.auth.FirebaseAuth;
 //import com.google.firebase.firestore.CollectionReference;
 //import com.google.firebase.firestore.FirebaseFirestore;
 //import com.google.firebase.firestore.QuerySnapshot;
@@ -29,6 +30,7 @@
 //    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 //
 //    private final FirebaseFirestore firebaseFirestore = Mockito.mock(FirebaseFirestore.class);
+//    private final FirebaseAuth firebaseAuth = Mockito.mock(FirebaseAuth.class);
 //    private final CollectionReference collectionReference = Mockito.mock(CollectionReference.class);
 //    private final Task task = Mockito.mock(Task.class);
 //    private final QuerySnapshot querySnapshot = Mockito.mock(QuerySnapshot.class);
@@ -41,7 +43,7 @@
 //        Mockito.doReturn(collectionReference).when(firebaseFirestore).collection("users");
 //        Mockito.doReturn(task).when(collectionReference).get();
 //
-//        userRepository = new UserRepository(firebaseFirestore);
+//        userRepository = new UserRepository(firebaseFirestore, firebaseAuth);
 //    }
 //
 //    @Test

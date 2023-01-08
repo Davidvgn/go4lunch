@@ -2,9 +2,9 @@ package com.davidvignon.go4lunch.ui.details;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,7 +13,6 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.OAuthRepository;
 import com.davidvignon.go4lunch.data.Workmates;
 import com.davidvignon.go4lunch.data.WorkmatesRepository;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
@@ -59,7 +58,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         String placeId = savedStateHandle.get(KEY_PLACE_ID);
         LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
-        LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUser(placeId);
+        LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
         LiveData<List<Workmates>> workmatesLiveData = workmatesRepository.getDataBaseUsers();
 
@@ -95,21 +94,16 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     }
 
-    //todo david : gérer la couleur du selected qui est black et non blue / liste workmates / testUnit / chat/recherche
+    //todo david : gérer la couleur du selected qui est black et non blue / testUnit / chat/recherche
 
     public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmates> workmatesList) {
         List<WorkmatesViewStates> viewStates = new ArrayList<>();
         RestaurantDetailsViewState restaurantDetailsViewState;
-
-        if (workmatesList != null) {
-            for (Workmates workmates : workmatesList) {
-                if (workmates.getSelectedRestaurant() != null && workmates.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
-                    viewStates.add(new WorkmatesViewStates(
-                        workmates.getId(),
-                        workmates.getName(),
-                        workmates.getPicturePath()));
-            }
-            workmatesViewStatesLiveData.setValue(viewStates);
+        if (isLiked == null){
+            isLiked = false;
+        }
+        if (isSelected == null){
+            isSelected = false;
         }
 
         if (response != null) {
@@ -134,6 +128,19 @@ public class RestaurantDetailsViewModel extends ViewModel {
                     isLiked ? "unlike" : "like",
                     isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
                 );
+
+                    if (workmatesList != null) {
+                        for (Workmates workmates : workmatesList) {
+                            if (workmates.getSelectedRestaurant() != null && workmates.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
+                                viewStates.add(new WorkmatesViewStates(
+                                    workmates.getId(),
+                                    workmates.getName(),
+                                    workmates.getPicturePath()));
+                        }
+                        workmatesViewStatesLiveData.setValue(viewStates);
+                }
+
+
                 mediatorLiveData.setValue(restaurantDetailsViewState);
             }
         }
@@ -149,7 +156,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
     public void onLikedButtonClicked() {
-        userRepository.isRestaurantLikedByUser(restaurantPlaceId.getValue());
+        userRepository.isRestaurantLikedByUserLiveData(restaurantPlaceId.getValue());
         userRepository.toggleRestaurantLiked(restaurantPlaceId.getValue());
     }
 

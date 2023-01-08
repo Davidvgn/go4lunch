@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.data.Workmates;
 import com.davidvignon.go4lunch.data.WorkmatesRepository;
-import com.davidvignon.go4lunch.data.users.User;
-import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -52,6 +50,8 @@ public class WorkmatesViewModel extends ViewModel {
                         break;
                     }
                 }
+
+
                 for (Workmates workmates : result) {
                     viewStates.add(new WorkmatesViewStates(
                         workmates.getId(),
