@@ -1,6 +1,9 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,11 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.databinding.WorkmatesItemviewBinding;
+import com.davidvignon.go4lunch.ui.chat.ChatActivity;
 
 public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, WorkmatesAdapter.ViewHolder> {
+    private Context context;
 
-    public WorkmatesAdapter() {
+
+    public WorkmatesAdapter(Context context) {
         super(new ListWorkmatesItemCallBack());
+        this.context = context;
     }
 
     @NonNull
@@ -26,7 +33,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(getItem(position), context);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -37,14 +44,25 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
             this.binding = binding;
         }
 
-        public void bind(WorkmatesViewStates item) {
+
+        public void bind(WorkmatesViewStates item, Context context) {
             binding.itemListName.setText(item.getName());
 
             Glide.with(binding.itemListAvatar.getContext())
                 .load(item.getPicturePath())
                 .apply(RequestOptions.circleCropTransform())
                 .into(binding.itemListAvatar);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    intent.putExtra("workmatesId", item.getId());
+                    context.startActivity(intent);
+                }
+            });
         }
+
+
     }
 
     private static class ListWorkmatesItemCallBack extends DiffUtil.ItemCallback<WorkmatesViewStates> {

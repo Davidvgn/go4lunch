@@ -94,7 +94,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     }
 
-    //todo david : gérer la couleur du selected qui est black et non blue / testUnit / chat/recherche
+    //todo david : gérer la couleur du selected qui est black et non blue (gérer les couleurs d'une manière génrale) / testUnit / chat/recherche
 
     public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmates> workmatesList) {
         List<WorkmatesViewStates> viewStates = new ArrayList<>();
@@ -165,4 +165,14 @@ public class RestaurantDetailsViewModel extends ViewModel {
         userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue());
     }
 
+    public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState ){
+        String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
+        return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
+            + restaurantDetailsViewState.getPhotoUrl() +
+            "&key=" + API_KEY;
+    }
+
+    public String getRestaurantPhoneNumber(RestaurantDetailsViewState restaurantDetailsViewState){
+        return "tel:" + restaurantDetailsViewState.getPhoneNumber();
+    }
 }

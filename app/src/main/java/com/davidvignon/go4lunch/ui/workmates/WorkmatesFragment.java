@@ -10,16 +10,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
 
-import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class WorkmatesFragment extends Fragment {
-    //todo david don't show yourself in list
 
     private WorkmatesFragmentBinding binding;
 
@@ -39,7 +36,7 @@ public class WorkmatesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         WorkmatesViewModel viewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
-        WorkmatesAdapter adapter = new WorkmatesAdapter();
+        WorkmatesAdapter adapter = new WorkmatesAdapter(getContext());
         binding.workmatesRv.setAdapter(adapter);
 
         viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), workmatesViewStates -> adapter.submitList(workmatesViewStates));
