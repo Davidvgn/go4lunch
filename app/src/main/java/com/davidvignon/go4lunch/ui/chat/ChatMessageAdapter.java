@@ -42,11 +42,7 @@ public class ChatMessageAdapter extends ListAdapter<ChatMessageViewState, ChatMe
 
             binding.chatRcTv.setText(item.getMessage());
             binding.chatRcTvMessageDate.setText(item.getTime());
-
-            Glide.with(binding.chatRcIv.getContext())
-                .load(item.getWorkmatePicture())
-                .apply(RequestOptions.circleCropTransform())
-                .into(binding.chatRcIv);
+            binding.chatRcTvMessageAuthor.setText(item.getWorkmateName());
         }
     }
 

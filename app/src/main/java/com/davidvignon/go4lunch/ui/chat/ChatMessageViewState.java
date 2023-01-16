@@ -10,17 +10,15 @@ public class ChatMessageViewState {
     private final String id;
     @NonNull
     private final String workmateName;
-    @NonNull
-    private final String workmatePicture;
+
     @NonNull
     private final String message;
     @NonNull
     private final String time;
 
-    public ChatMessageViewState(String id, String workmateName, String workmatePicture, String message, String time) {
+    public ChatMessageViewState(String id, String workmateName, String message, String time) {
         this.id = id;
         this.workmateName = workmateName;
-        this.workmatePicture = workmatePicture;
         this.message = message;
         this.time = time;
     }
@@ -33,11 +31,6 @@ public class ChatMessageViewState {
     @NonNull
     public String getWorkmateName() {
         return workmateName;
-    }
-
-    @NonNull
-    public String getWorkmatePicture() {
-        return workmatePicture;
     }
 
     @NonNull
@@ -55,22 +48,21 @@ public class ChatMessageViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatMessageViewState that = (ChatMessageViewState) o;
-        return id.equals(that.id) && workmateName.equals(that.workmateName) && workmatePicture.equals(that.workmatePicture) && message.equals(that.message) && time.equals(that.time);
+        return id.equals(that.id) && workmateName.equals(that.workmateName) && message.equals(that.message) && time.equals(that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, workmateName, workmatePicture, message, time);
+        return Objects.hash(id, workmateName, message, time);
     }
 
     @Override
     public String toString() {
-        return "ChatViewState{" +
+        return "ChatMessageViewState{" +
             "id='" + id + '\'' +
             ", workmateName='" + workmateName + '\'' +
-            ", workmatePicture='" + workmatePicture + '\'' +
             ", message='" + message + '\'' +
-            ", time=" + time +
+            ", time='" + time + '\'' +
             '}';
     }
 }

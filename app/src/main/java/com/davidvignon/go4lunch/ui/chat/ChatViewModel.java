@@ -12,8 +12,8 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.data.Chat;
-import com.davidvignon.go4lunch.data.chat.ChatMessage;
-import com.davidvignon.go4lunch.data.chat.ChatMessageRepository;
+import com.davidvignon.go4lunch.data.chatMessage.ChatMessage;
+import com.davidvignon.go4lunch.data.chatMessage.ChatMessageRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,13 +37,12 @@ public class ChatViewModel extends ViewModel {
     public static Intent navigate(Context context, String workmateId) {
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtra(KEY_WORKMATE_ID, workmateId);
-
         return intent;
     }
 
-    //TODO DAVID : ordre des messages + picture + date
-    private final WorkmateRepository workmateRepository;
+    //TODO DAVID : ordre des messages + date
     private final ChatMessageRepository chatMessageRepository;
+    private final FirebaseUser firebaseUser;
 
     private final MediatorLiveData<Chat> mediatorLiveData = new MediatorLiveData<>();
     private final MutableLiveData<String> workmateIdMutableLiveData = new MutableLiveData<>();
@@ -52,8 +51,8 @@ public class ChatViewModel extends ViewModel {
     @Inject
     public ChatViewModel(@NonNull FirebaseUser firebaseUser, @NonNull WorkmateRepository workmateRepository, @NonNull ChatMessageRepository chatMessageRepository, @NonNull SavedStateHandle savedStateHandle
     ) {
-        this.workmateRepository = workmateRepository;
         this.chatMessageRepository = chatMessageRepository;
+        this.firebaseUser = firebaseUser;
 
 
         String workmateId = savedStateHandle.get(KEY_WORKMATE_ID);
@@ -65,15 +64,15 @@ public class ChatViewModel extends ViewModel {
 
         mediatorLiveData.addSource(chatMessageReceivedLiveData, new Observer<List<ChatMessage>>() {
             @Override
-            public void onChanged(List<ChatMessage> chatMessagesReceived) {
-                combine(workmateLiveData.getValue(), chatMessageSendLiveData.getValue(), chatMessagesReceived);
+            public void onChanged(List<ChatMessage> receivedMessagesList) {
+                combine(workmateLiveData.getValue(), chatMessageSendLiveData.getValue(), receivedMessagesList);
             }
         });
 
         mediatorLiveData.addSource(chatMessageSendLiveData, new Observer<List<ChatMessage>>() {
             @Override
-            public void onChanged(List<ChatMessage> chatMessages) {
-                combine(workmateLiveData.getValue(), chatMessages, chatMessageReceivedLiveData.getValue());
+            public void onChanged(List<ChatMessage> sentMessagesList) {
+                combine(workmateLiveData.getValue(), sentMessagesList, chatMessageReceivedLiveData.getValue());
             }
         });
 
@@ -86,39 +85,35 @@ public class ChatViewModel extends ViewModel {
     }
 
 
-    public void combine(Workmate workmate, List<ChatMessage> chatMessageList, List<ChatMessage> chatMessageReceivedList) {
+    public void combine(Workmate workmate, List<ChatMessage> sentMessagesList, List<ChatMessage> receivedMessagesList) {
         List<ChatMessageViewState> viewStates = new ArrayList<>();
         Chat chat;
         String formattedTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
         String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        if (chatMessageList != null || chatMessageReceivedList != null) {
+        if (sentMessagesList != null || receivedMessagesList != null) {
 
-
-            if (chatMessageList != null) {
-                for (ChatMessage chatMessage : chatMessageList) {
+            if (sentMessagesList != null) {
+                for (ChatMessage chatMessage : sentMessagesList) {
                     viewStates.add(new ChatMessageViewState(
                         "",
-                        "",
-                        "", //todo david : afficher celui qui envoie le message pas le workmate
+                        firebaseUser.getDisplayName(),
                         chatMessage.getMessage(),
                         "le " + formattedDate + " à " + formattedTime));//todo david : pas bon la date est MAJ pour tous les messages à l'heure du dernier message envoyé
 
                 }
             }
 
-            if (chatMessageReceivedList != null) {
-                for (ChatMessage chatMessage : chatMessageReceivedList) {
+            if (receivedMessagesList != null) {
+                for (ChatMessage chatMessage : receivedMessagesList) {
                     viewStates.add(new ChatMessageViewState(
                         "",
-                        "",
-                        "", //todo david : afficher celui qui envoie le message pas le workmate
+                        workmate.getName(),
                         chatMessage.getMessage(),
                         "le " + formattedDate + " à " + formattedTime));//todo david : pas bon la date est MAJ pour tous les messages à l'heure du dernier message envoyé
 
                 }
             }
-
             chatMessageMutableLiveData.setValue(viewStates);
         }
 
@@ -131,12 +126,10 @@ public class ChatViewModel extends ViewModel {
         mediatorLiveData.setValue(chat);
     }
 
-
     @NonNull
     public LiveData<Chat> getChat() {
         return mediatorLiveData;
     }
-
 
     public LiveData<List<ChatMessageViewState>> getChatmess() {
         return chatMessageMutableLiveData;

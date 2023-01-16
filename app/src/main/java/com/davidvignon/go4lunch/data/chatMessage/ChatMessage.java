@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.data.chat;
+package com.davidvignon.go4lunch.data.chatMessage;
 
 import java.util.Objects;
 

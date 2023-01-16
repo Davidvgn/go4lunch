@@ -1,16 +1,20 @@
 package com.davidvignon.go4lunch.ui.chat;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.Chat;
 import com.davidvignon.go4lunch.databinding.ChatActivityBinding;
 

@@ -40,7 +40,6 @@ public class UserRepository {
     }
 
 
-
     public LiveData<Boolean> isRestaurantSelectedLiveData(String placeId) {
         MutableLiveData<Boolean> isSelectedLiveData = new MutableLiveData<>();
         firebaseFirestore
