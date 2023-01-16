@@ -1,10 +1,11 @@
-package com.davidvignon.go4lunch.data.users;
+package com.davidvignon.go4lunch.ui.workmates;
 
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-public class UserViewState {
+public class WorkmatesViewState {
+
     @NonNull
     private final String id;
 
@@ -14,8 +15,8 @@ public class UserViewState {
     @NonNull
     private final String picturePath;
 
-    public UserViewState(@NonNull String id, @NonNull String name, @NonNull String picturePath) {
-        this.id = id;
+    public WorkmatesViewState(@NonNull String id, @NonNull String name, @NonNull String picturePath) {
+        this.id =id;
         this.name = name;
         this.picturePath = picturePath;
     }
@@ -39,7 +40,7 @@ public class UserViewState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserViewState that = (UserViewState) o;
+        WorkmatesViewState that = (WorkmatesViewState) o;
         return id.equals(that.id) && name.equals(that.name) && picturePath.equals(that.picturePath);
     }
 
@@ -50,10 +51,13 @@ public class UserViewState {
 
     @Override
     public String toString() {
-        return "UserViewState{" +
+        return "WorkmatesViewStates{" +
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", picturePath='" + picturePath + '\'' +
             '}';
     }
 }
+
+
+

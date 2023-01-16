@@ -24,7 +24,6 @@ public class RestaurantDetailsViewState {
 
     private final float rating;
 
-    //    private final boolean isSelected;
     @DrawableRes
     private final int isSelected;
 
@@ -41,7 +40,6 @@ public class RestaurantDetailsViewState {
         @NonNull String website,
         @NonNull String photoUrl,
         float rating,
-//        boolean isSelected,
         int isSelected,
         @NonNull String likeButtonText,
         int likeButtonIcon
@@ -86,9 +84,6 @@ public class RestaurantDetailsViewState {
         return rating;
     }
 
-//    public boolean isSelected() {
-//        return isSelected;
-//    }
     public int getSelectedButtonIcon() {
         return isSelected;
     }
@@ -129,39 +124,4 @@ public class RestaurantDetailsViewState {
             ", likeButtonIcon=" + likeButtonIcon +
             '}';
     }
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
-//        return Float.compare(that.rating, rating) == 0
-//            && isSelected == that.isSelected
-//            && likeButtonIcon == that.likeButtonIcon
-//            && name.equals(that.name) && vicinity.equals(that.vicinity)
-//            && phoneNumber.equals(that.phoneNumber)
-//            && website.equals(that.website)
-//            && photoUrl.equals(that.photoUrl)
-//            && Objects.equals(likeButtonText, that.likeButtonText);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, isSelected, likeButtonText, likeButtonIcon);
-//    }
-//
-//    @NonNull
-//    @Override
-//    public String toString() {
-//        return "RestaurantDetailsViewState{" +
-//            "name='" + name + '\'' +
-//            ", vicinity='" + vicinity + '\'' +
-//            ", phoneNumber='" + phoneNumber + '\'' +
-//            ", website='" + website + '\'' +
-//            ", photoUrl='" + photoUrl + '\'' +
-//            ", rating=" + rating +
-//            ", isSelected=" + isSelected +
-//            ", likeButtonText='" + likeButtonText + '\'' +
-//            ", likeButtonIcon=" + likeButtonIcon +
-//            '}';
-//    }
 }

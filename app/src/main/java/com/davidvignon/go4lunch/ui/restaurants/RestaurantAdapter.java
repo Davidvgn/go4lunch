@@ -62,7 +62,7 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(item.getPlaceId());
+                    listener.onRestaurantClicked(item.getPlaceId());
                 }
             });
         }

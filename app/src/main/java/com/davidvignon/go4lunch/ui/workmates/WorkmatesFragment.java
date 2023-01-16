@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
+import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
+import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -18,10 +21,19 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class WorkmatesFragment extends Fragment {
 
-    private WorkmatesFragmentBinding binding;
-
     public static WorkmatesFragment newInstance() {
         return new WorkmatesFragment();
+    }
+
+    private WorkmatesFragmentBinding binding;
+
+    private OnWorkmateClickedListener onWorkmateClickedListener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        onWorkmateClickedListener = (OnWorkmateClickedListener) context;
     }
 
     @Nullable
@@ -36,7 +48,7 @@ public class WorkmatesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         WorkmatesViewModel viewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
-        WorkmatesAdapter adapter = new WorkmatesAdapter(getContext());
+        WorkmatesAdapter adapter = new WorkmatesAdapter(onWorkmateClickedListener);
         binding.workmatesRv.setAdapter(adapter);
 
         viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), workmatesViewStates -> adapter.submitList(workmatesViewStates));

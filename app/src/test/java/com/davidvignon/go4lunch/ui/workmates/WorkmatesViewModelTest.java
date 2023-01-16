@@ -6,7 +6,7 @@
 //import androidx.lifecycle.LiveData;
 //
 //import com.davidvignon.go4lunch.data.Workmates;
-//import com.davidvignon.go4lunch.data.WorkmatesRepository;
+//import com.davidvignon.go4lunch.data.workmate.WorkmatesRepository;
 //import com.davidvignon.go4lunch.data.users.User;
 //import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 //import com.google.android.gms.tasks.OnCompleteListener;

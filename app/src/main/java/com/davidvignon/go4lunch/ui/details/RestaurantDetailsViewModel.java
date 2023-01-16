@@ -2,7 +2,6 @@ package com.davidvignon.go4lunch.ui.details;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -13,12 +12,12 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.Workmates;
-import com.davidvignon.go4lunch.data.WorkmatesRepository;
+import com.davidvignon.go4lunch.data.workmate.Workmate;
+import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.data.users.UserRepository;
-import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewStates;
+import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     @NonNull
     private final UserRepository userRepository;
 
-    private final MutableLiveData<List<WorkmatesViewStates>> workmatesViewStatesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<String> restaurantPlaceId = new MutableLiveData<>();
 
@@ -51,7 +50,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     public RestaurantDetailsViewModel(
         @NonNull PlaceDetailsRepository placeDetailsRepository,
         @NonNull UserRepository userRepository,
-        @NonNull WorkmatesRepository workmatesRepository,
+        @NonNull WorkmateRepository workmateRepository,
         @NonNull SavedStateHandle savedStateHandle
     ) {
         this.userRepository = userRepository;
@@ -60,7 +59,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
         LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
-        LiveData<List<Workmates>> workmatesLiveData = workmatesRepository.getDataBaseUsers();
+        LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getUserListGoingTo(placeId);
 
         restaurantPlaceId.setValue(placeId);
 
@@ -85,19 +84,19 @@ public class RestaurantDetailsViewModel extends ViewModel {
             }
         });
 
-        mediatorLiveData.addSource(workmatesLiveData, new Observer<List<Workmates>>() {
+        mediatorLiveData.addSource(workmatesLiveData, new Observer<List<Workmate>>() {
             @Override
-            public void onChanged(List<Workmates> workmates) {
+            public void onChanged(List<Workmate> workmates) {
                 combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates);
-            }
-        });
 
+            }
+    });
     }
 
     //todo david : gérer la couleur du selected qui est black et non blue (gérer les couleurs d'une manière génrale) / testUnit / chat/recherche
 
-    public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmates> workmatesList) {
-        List<WorkmatesViewStates> viewStates = new ArrayList<>();
+    public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmate> workmatesList) {
+        List<WorkmatesViewState> viewStates = new ArrayList<>();
         RestaurantDetailsViewState restaurantDetailsViewState;
         if (isLiked == null){
             isLiked = false;
@@ -130,9 +129,9 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 );
 
                     if (workmatesList != null) {
-                        for (Workmates workmates : workmatesList) {
+                        for (Workmate workmates : workmatesList) {
                             if (workmates.getSelectedRestaurant() != null && workmates.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
-                                viewStates.add(new WorkmatesViewStates(
+                                viewStates.add(new WorkmatesViewState(
                                     workmates.getId(),
                                     workmates.getName(),
                                     workmates.getPicturePath()));
@@ -151,7 +150,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         return mediatorLiveData;
     }
 
-    public LiveData<List<WorkmatesViewStates>> getWorkmatesViewStates() {
+    public LiveData<List<WorkmatesViewState>> getWorkmatesViewStates() {
         return workmatesViewStatesLiveData;
     }
 

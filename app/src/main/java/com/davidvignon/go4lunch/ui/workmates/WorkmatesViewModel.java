@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.data.Workmates;
-import com.davidvignon.go4lunch.data.WorkmatesRepository;
+import com.davidvignon.go4lunch.data.workmate.Workmate;
+import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -20,43 +20,40 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class WorkmatesViewModel extends ViewModel {
 
-    private final LiveData<List<WorkmatesViewStates>> workmatesViewStatesLiveData;
+    private final LiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData;
 
     @NonNull
     private final FirebaseUser firebaseUser;
 
     @Inject
-    public WorkmatesViewModel(WorkmatesRepository workmatesRepository, @NonNull FirebaseUser firebaseUser) {
+    public WorkmatesViewModel(WorkmateRepository workmateRepository, @NonNull FirebaseUser firebaseUser) {
         this.firebaseUser = firebaseUser;
-        LiveData<List<Workmates>> dataBaseUsersLiveData = workmatesRepository.getDataBaseUsers();
+        LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsers();
         workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
     }
 
     @NonNull
-    public LiveData<List<WorkmatesViewStates>> getWorkmatesViewStatesLiveData() {
+    public LiveData<List<WorkmatesViewState>> getWorkmatesViewStatesLiveData() {
         return workmatesViewStatesLiveData;
     }
 
     @NonNull
-    private LiveData<List<WorkmatesViewStates>> bindViewState(LiveData<List<Workmates>> dataBaseUsersLiveData) {
-        return Transformations.map(dataBaseUsersLiveData, new Function<List<Workmates>, List<WorkmatesViewStates>>() {
+    private LiveData<List<WorkmatesViewState>> bindViewState(LiveData<List<Workmate>> dataBaseUsersLiveData) {
+        return Transformations.map(dataBaseUsersLiveData, new Function<List<Workmate>, List<WorkmatesViewState>>() {
             @Override
-            public List<WorkmatesViewStates> apply(List<Workmates> result) {
-                List<WorkmatesViewStates> viewStates = new ArrayList<>();
+            public List<WorkmatesViewState> apply(List<Workmate> workmates) {
+                List<WorkmatesViewState> viewStates = new ArrayList<>();
 
-                for (int i = 0; i < result.size(); i++) {
-                    if (result.get(i).getId().equals(firebaseUser.getUid())) {
-                        result.remove(i);
-                        break;
+                for (Workmate workmate : workmates) {
+                    if (!workmate.getId().equals(firebaseUser.getUid())) {
+                        viewStates.add(
+                            new WorkmatesViewState(
+                                workmate.getId(),
+                                workmate.getName(),
+                                workmate.getPicturePath()
+                            )
+                        );
                     }
-                }
-
-
-                for (Workmates workmates : result) {
-                    viewStates.add(new WorkmatesViewStates(
-                        workmates.getId(),
-                        workmates.getName(),
-                        workmates.getPicturePath()));
                 }
                 return viewStates;
             }

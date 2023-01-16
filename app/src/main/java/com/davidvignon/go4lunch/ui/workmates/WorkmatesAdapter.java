@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.databinding.WorkmatesItemviewBinding;
-import com.davidvignon.go4lunch.ui.chat.ChatActivity;
+import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 
-public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, WorkmatesAdapter.ViewHolder> {
-    private Context context;
+public class WorkmatesAdapter extends ListAdapter<WorkmatesViewState, WorkmatesAdapter.ViewHolder> {
 
+    @NonNull
+    private final OnWorkmateClickedListener listener;
 
-    public WorkmatesAdapter(Context context) {
+    public WorkmatesAdapter(@NonNull OnWorkmateClickedListener listener) {
         super(new ListWorkmatesItemCallBack());
-        this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,7 +32,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position), context);
+        holder.bind(getItem(position), listener);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -44,8 +43,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
             this.binding = binding;
         }
 
-
-        public void bind(WorkmatesViewStates item, Context context) {
+        public void bind(WorkmatesViewState item, OnWorkmateClickedListener listener) {
             binding.itemListName.setText(item.getName());
 
             Glide.with(binding.itemListAvatar.getContext())
@@ -55,26 +53,21 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewStates, Workmates
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(context, ChatActivity.class);
-                    intent.putExtra("workmatesId", item.getId());
-                    context.startActivity(intent);
+                    listener.onWorkmateClicked(item.getId());
                 }
             });
         }
-
-
     }
 
-    private static class ListWorkmatesItemCallBack extends DiffUtil.ItemCallback<WorkmatesViewStates> {
+    private static class ListWorkmatesItemCallBack extends DiffUtil.ItemCallback<WorkmatesViewState> {
         @Override
-        public boolean areItemsTheSame(@NonNull WorkmatesViewStates oldItem, @NonNull WorkmatesViewStates newItem) {
-            return oldItem.getName().equals(newItem.getName());
+        public boolean areItemsTheSame(@NonNull WorkmatesViewState oldItem, @NonNull WorkmatesViewState newItem) {
+            return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull WorkmatesViewStates oldItem, @NonNull WorkmatesViewStates newItem) {
+        public boolean areContentsTheSame(@NonNull WorkmatesViewState oldItem, @NonNull WorkmatesViewState newItem) {
             return oldItem.equals(newItem);
         }
     }
-
 }

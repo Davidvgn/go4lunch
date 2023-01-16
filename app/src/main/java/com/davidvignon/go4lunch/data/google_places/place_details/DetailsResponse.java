@@ -1,11 +1,12 @@
 package com.davidvignon.go4lunch.data.google_places.place_details;
 
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
 
-public class DetailsResponse{
+public class DetailsResponse {
 
     @Nullable
     @SerializedName("result")
@@ -19,23 +20,24 @@ public class DetailsResponse{
     @SerializedName("status")
     private final String status;
 
-    public DetailsResponse(@Nullable RestaurantDetailsResponse result,@Nullable  List<Object> htmlAttributions,@Nullable  String status) {
+    public DetailsResponse(@Nullable RestaurantDetailsResponse result, @Nullable List<Object> htmlAttributions, @Nullable String status) {
         this.result = result;
         this.htmlAttributions = htmlAttributions;
         this.status = status;
     }
 
     @Nullable
-    public RestaurantDetailsResponse getResult(){
+    public RestaurantDetailsResponse getResult() {
         return result;
     }
+
     @Nullable
-    public List<Object> getHtmlAttributions(){
+    public List<Object> getHtmlAttributions() {
         return htmlAttributions;
     }
 
     @Nullable
-    public String getStatus(){
+    public String getStatus() {
         return status;
     }
 }

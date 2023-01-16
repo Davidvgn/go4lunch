@@ -1,11 +1,11 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.data.workmate;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-public class Workmates {
+public class Workmate {
 
     @NonNull
     private  String id;
@@ -22,10 +22,10 @@ public class Workmates {
     @Nullable
     private  String selectedRestaurant;
 
-    public Workmates() {
+    public Workmate() {
     }
 
-    public Workmates(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant) {
+    public Workmate(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -62,8 +62,8 @@ public class Workmates {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Workmates workmates = (Workmates) o;
-        return id.equals(workmates.id) && name.equals(workmates.name) && email.equals(workmates.email) && picturePath.equals(workmates.picturePath) && Objects.equals(selectedRestaurant, workmates.selectedRestaurant);
+        Workmate workmate = (Workmate) o;
+        return id.equals(workmate.id) && name.equals(workmate.name) && email.equals(workmate.email) && picturePath.equals(workmate.picturePath) && Objects.equals(selectedRestaurant, workmate.selectedRestaurant);
     }
 
     @Override

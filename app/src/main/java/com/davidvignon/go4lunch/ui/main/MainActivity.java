@@ -23,6 +23,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
+import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
+import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
@@ -41,9 +43,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener {
+public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener, OnWorkmateClickedListener {
 
     private MainViewModel viewModel;
+    //todo david notification + bouton lunch -> qui montre le resto + redidrection vers resto quand click sur marker
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -193,8 +196,12 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     }
 
     @Override
-    public void onItemClick(String placeId) {
+    public void onRestaurantClicked(String placeId) {
         startActivity(RestaurantDetailsViewModel.navigate(this, placeId));
     }
 
+    @Override
+    public void onWorkmateClicked(String workmateId) {
+        startActivity(ChatViewModel.navigate(this, workmateId));
+    }
 }

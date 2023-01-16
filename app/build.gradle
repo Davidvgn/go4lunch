@@ -18,13 +18,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
-
     }
 
     buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -126,7 +122,6 @@ dependencies {
 
 // open JaCoCo report after generation
 def openReport(htmlOutDir) {
-
     final reportPath = "$htmlOutDir\\index.html"
 
     println "HTML Report: $reportPath"
@@ -135,7 +130,7 @@ def openReport(htmlOutDir) {
     if (os.isWindows()) {
         exec { commandLine 'cmd', '/c', "start $reportPath" }
     } else if (os.isMacOsX()) {
-        exec { commandLine 'open', "$htmlOutDir/index.html" }
+        exec { commandLine 'open', "$reportPath" }
     } else if (os.isLinux()) {
         try {
             exec { commandLine 'xdg-open', "$reportPath" }
@@ -153,8 +148,8 @@ def openReport(htmlOutDir) {
 android.applicationVariants.all { variant ->
     def variantName = variant.name.capitalize()
     def filesToAnalyze = [
-            '**/*ViewModel.class',
-            '**/*Repository.class'
+        '**/*ViewModel.class',
+        '**/*Repository.class'
     ]
 
     task("jacoco${variantName}Report", type: JacocoReport, dependsOn: "test${variantName}UnitTest") {

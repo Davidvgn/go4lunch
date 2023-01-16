@@ -8,7 +8,7 @@
 
     <string name="map">Map View</string>
     <string name="list">List View</string>
-    <string name="workmates">Workmates</string>
+    <string name="workmate">Workmates</string>
     <string name="your_web_client_id">157511151080-i8dqn6e8bljp2rmcr02s1v837i1ml1j2.apps.googleusercontent.com</string>
 
     <string name="nav_open">Open</string>
@@ -20,7 +20,7 @@
     <string name="people_icon">People icon</string>
     <string name="test">test</string>
     <string name="restaurantViewTitle">I\'m Hungry!</string>
-    <string name="workermatesViewTitle">Available workmates</string>
+    <string name="workermatesViewTitle">Available workmate</string>
     <string name="restaurant_dtls_iv_header_descrip">Restaurant photo</string>
     <string name="call_restaurant">CALL</string>
     <string name="like_restaurant">LIKE</string>
@@ -36,5 +36,9 @@
 
 
     <string name="googleLogin">Sign in With Google</string>
+    <string name="message_field">Enter message here</string>
+    <string name="chat_activity_title">Messages</string>
+    <string name="chat_iv_description">Receiver picture</string>
+    <string name="chat_ib_description">Send icon</string>
 
 </resources>

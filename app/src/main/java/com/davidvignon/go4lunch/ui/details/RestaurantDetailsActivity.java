@@ -12,12 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.davidvignon.go4lunch.databinding.RestaurantDetailsActivityBinding;
+import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
+import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesAdapter;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class RestaurantDetailsActivity extends AppCompatActivity {
+public class RestaurantDetailsActivity extends AppCompatActivity implements OnWorkmateClickedListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
         RestaurantDetailsActivityBinding binding = RestaurantDetailsActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        WorkmatesAdapter adapter = new WorkmatesAdapter(getApplicationContext());
+        WorkmatesAdapter adapter = new WorkmatesAdapter(this);
         binding.workmatesRv.setAdapter(adapter);
 
         RestaurantDetailsViewModel viewModel = new ViewModelProvider(this).get(RestaurantDetailsViewModel.class);
@@ -88,4 +90,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         );
     }
 
+    @Override
+    public void onWorkmateClicked(String workmateId) {
+        startActivity(ChatViewModel.navigate(this, workmateId));
+    }
 }
