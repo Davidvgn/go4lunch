@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class RestaurantsFragment extends Fragment {
-
+//todo david gérer le nombre de gens qui vont à se restaurant
     @NonNull
     public static RestaurantsFragment newInstance() {
         return new RestaurantsFragment();

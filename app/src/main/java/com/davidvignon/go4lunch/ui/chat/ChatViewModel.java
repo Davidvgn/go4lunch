@@ -2,8 +2,10 @@ package com.davidvignon.go4lunch.ui.chat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -95,22 +97,33 @@ public class ChatViewModel extends ViewModel {
 
             if (sentMessagesList != null) {
                 for (ChatMessage chatMessage : sentMessagesList) {
+
+//                    String formattedTime = chatMessage.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+//                    String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+
                     viewStates.add(new ChatMessageViewState(
                         "",
                         firebaseUser.getDisplayName(),
                         chatMessage.getMessage(),
-                        "le " + formattedDate + " à " + formattedTime));//todo david : pas bon la date est MAJ pour tous les messages à l'heure du dernier message envoyé
+                        ""));
+//                    "le " + formattedDate + " à " + formattedTime));//todo david : pas bon la date est MAJ pour tous les messages à l'heure du dernier message envoyé
 
                 }
             }
 
             if (receivedMessagesList != null) {
                 for (ChatMessage chatMessage : receivedMessagesList) {
+
+//                    String formattedTime = chatMessage.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+//                    String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
                     viewStates.add(new ChatMessageViewState(
                         "",
                         workmate.getName(),
                         chatMessage.getMessage(),
-                        "le " + formattedDate + " à " + formattedTime));//todo david : pas bon la date est MAJ pour tous les messages à l'heure du dernier message envoyé
+                        ""));
+//                        "le " + formattedDate + " à " + formattedTime));//todo david : pas bon la date est MAJ pour tous les messages à l'heure du dernier message envoyé
 
                 }
             }

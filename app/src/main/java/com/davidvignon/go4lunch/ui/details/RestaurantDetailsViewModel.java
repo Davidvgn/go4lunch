@@ -90,7 +90,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates);
 
             }
-    });
+        });
     }
 
     //todo david : gérer la couleur du selected qui est black et non blue (gérer les couleurs d'une manière génrale) / testUnit / chat/recherche
@@ -98,10 +98,10 @@ public class RestaurantDetailsViewModel extends ViewModel {
     public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmate> workmatesList) {
         List<WorkmatesViewState> viewStates = new ArrayList<>();
         RestaurantDetailsViewState restaurantDetailsViewState;
-        if (isLiked == null){
+        if (isLiked == null) {
             isLiked = false;
         }
-        if (isSelected == null){
+        if (isSelected == null) {
             isSelected = false;
         }
 
@@ -128,15 +128,16 @@ public class RestaurantDetailsViewModel extends ViewModel {
                     isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
                 );
 
-                    if (workmatesList != null) {
-                        for (Workmate workmates : workmatesList) {
-                            if (workmates.getSelectedRestaurant() != null && workmates.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
-                                viewStates.add(new WorkmatesViewState(
-                                    workmates.getId(),
-                                    workmates.getName(),
-                                    workmates.getPicturePath()));
-                        }
-                        workmatesViewStatesLiveData.setValue(viewStates);
+                if (workmatesList != null) {
+                    for (Workmate workmate : workmatesList) {
+                        if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
+                            viewStates.add(new WorkmatesViewState(
+                                workmate.getId(),
+                                workmate.getName(),
+                                workmate.getPicturePath(),
+                                workmate.getSelectedRestaurant()));
+                    }
+                    workmatesViewStatesLiveData.setValue(viewStates);
                 }
 
 
@@ -164,14 +165,14 @@ public class RestaurantDetailsViewModel extends ViewModel {
         userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue());
     }
 
-    public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState ){
+    public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState) {
         String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
         return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
             + restaurantDetailsViewState.getPhotoUrl() +
             "&key=" + API_KEY;
     }
 
-    public String getRestaurantPhoneNumber(RestaurantDetailsViewState restaurantDetailsViewState){
+    public String getRestaurantPhoneNumber(RestaurantDetailsViewState restaurantDetailsViewState) {
         return "tel:" + restaurantDetailsViewState.getPhoneNumber();
     }
 }

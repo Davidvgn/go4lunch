@@ -98,10 +98,12 @@ public class UserRepository {
                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
                     if (documentSnapshot != null) {
                         List<String> firestoreList = (List<String>) documentSnapshot.get("favoritesRestaurants");
-                        if (firestoreList.contains(placeId)) {
-                            isLiked.setValue(true);
-                        } else {
-                            isLiked.setValue(false);
+                        if(firestoreList != null) {
+                            if (firestoreList.contains(placeId)) {
+                                isLiked.setValue(true);
+                            } else {
+                                isLiked.setValue(false);
+                            }
                         }
                     } else {
                         isLiked.setValue(false);

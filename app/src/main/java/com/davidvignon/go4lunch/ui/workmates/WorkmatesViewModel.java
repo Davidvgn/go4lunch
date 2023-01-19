@@ -50,7 +50,8 @@ public class WorkmatesViewModel extends ViewModel {
                             new WorkmatesViewState(
                                 workmate.getId(),
                                 workmate.getName(),
-                                workmate.getPicturePath()
+                                workmate.getPicturePath(),
+                                workmate.getSelectedRestaurant()
                             )
                         );
                     }

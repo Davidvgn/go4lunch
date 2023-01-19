@@ -45,7 +45,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewState, WorkmatesA
 
         public void bind(WorkmatesViewState item, OnWorkmateClickedListener listener) {
             binding.itemListName.setText(item.getName());
-
+            //todo david gérer le texte pour is going to + item pale si resto non choisi
             Glide.with(binding.itemListAvatar.getContext())
                 .load(item.getPicturePath())
                 .apply(RequestOptions.circleCropTransform())

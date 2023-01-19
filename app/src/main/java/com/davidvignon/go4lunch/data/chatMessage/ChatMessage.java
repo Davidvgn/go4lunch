@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.chatMessage;
 
+import com.google.firebase.Timestamp;
+
 import java.util.Objects;
 
 public class ChatMessage {
@@ -7,13 +9,13 @@ public class ChatMessage {
     String sender;
     String receiver;
     String message;
-    String time;
+    Timestamp time;
 
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String sender, String receiver, String message, String time) {
+    public ChatMessage(String sender, String receiver, String message, Timestamp time) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
@@ -32,7 +34,7 @@ public class ChatMessage {
         return message;
     }
 
-    public String getTime() {
+    public Timestamp getTime() {
         return time;
     }
 

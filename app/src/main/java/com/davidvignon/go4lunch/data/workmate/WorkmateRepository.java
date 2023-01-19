@@ -7,12 +7,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,7 +41,7 @@ public class WorkmateRepository {
         firebaseFirestore.collection("users").whereEqualTo("id", workmateId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null){
+                if (value != null) {
                     workmateMutableLiveData.setValue(value.toObjects(Workmate.class).get(0));
                 }
             }
@@ -52,7 +54,7 @@ public class WorkmateRepository {
         firebaseFirestore.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null){
+                if (value != null) {
                     workmateMutableLiveData.setValue(value.toObjects(Workmate.class));
                 }
             }
@@ -66,11 +68,29 @@ public class WorkmateRepository {
         firebaseFirestore.collection("users").whereEqualTo("selectedRestaurant", placeId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null){
+                if (value != null) {
                     userMutableLiveData.setValue(value.toObjects(Workmate.class));
                 }
             }
         });
         return userMutableLiveData;
+    }
+
+    public LiveData<String> getSelectedRestaurant() {
+        MutableLiveData<String> selectedRestaurantMutableliveData = new MutableLiveData<>();
+
+        firebaseFirestore
+            .collection("users")
+            .document()
+            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                    if (documentSnapshot != null) {
+                        String selectedRestaurantField = documentSnapshot.getString("selectedRestaurant");
+                        selectedRestaurantMutableliveData.setValue(selectedRestaurantField);
+                    }
+                }
+            });
+        return selectedRestaurantMutableliveData;
     }
 }

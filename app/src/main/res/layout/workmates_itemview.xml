@@ -33,4 +33,15 @@
         app:layout_constraintTop_toTopOf="@+id/item_list_avatar"
         />
 
+    <TextView
+        android:id="@+id/item_list_restaurant"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/item_list_avatar"
+        app:layout_constraintStart_toEndOf="@+id/item_list_name"
+        app:layout_constraintTop_toTopOf="@+id/item_list_avatar"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

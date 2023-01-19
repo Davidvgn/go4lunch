@@ -5,10 +5,12 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
@@ -40,7 +42,7 @@ public class ChatMessageRepository {
                 firebaseAuth.getCurrentUser().getUid(),
                 userReceiverId,
                 message,
-                "now"));//todo david
+                Timestamp.now()));
     }
 
     public LiveData<List<ChatMessage>> getSentMessagesLiveData(String receiver, String sender) {
@@ -50,6 +52,8 @@ public class ChatMessageRepository {
             .collection("allConversations")
             .whereEqualTo("receiver", receiver)
             .whereEqualTo("sender", sender)
+            .orderBy("time", Query.Direction.DESCENDING)
+            
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -67,6 +71,7 @@ public class ChatMessageRepository {
             .collection("allConversations")
             .whereEqualTo("receiver", sender)
             .whereEqualTo("sender", receiver)
+            .orderBy("time", Query.Direction.DESCENDING)
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

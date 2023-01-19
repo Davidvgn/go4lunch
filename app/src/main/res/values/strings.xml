@@ -40,5 +40,6 @@
     <string name="chat_activity_title">Messages</string>
     <string name="chat_iv_description">Receiver picture</string>
     <string name="chat_ib_description">Send icon</string>
+    <string name="hasnt_decide_yes">hasn\'t decide yet</string>
 
 </resources>
