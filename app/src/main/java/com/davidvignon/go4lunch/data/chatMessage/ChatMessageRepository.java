@@ -1,19 +1,18 @@
 package com.davidvignon.go4lunch.data.chatMessage;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,51 +33,53 @@ public class ChatMessageRepository {
     }
 
     public void sendMessage(String message, String userReceiverId) {
+        final String roomId = getRoomId(userReceiverId);
+
+        Log.d("Nino", "sendMessage() called with: roomId = [" + roomId + "]");
+
+        ChatMessage chatMessage = new ChatMessage(
+            UUID.randomUUID().toString(),
+            firebaseAuth.getCurrentUser().getUid(),
+            userReceiverId,
+            message,
+            Instant.now().toEpochMilli()
+        );
+
         firebaseFirestore
             .collection("chat")
-            .document("conversations")
-            .collection("allConversations")
-            .add(new ChatMessage(
-                firebaseAuth.getCurrentUser().getUid(),
-                userReceiverId,
-                message,
-                Timestamp.now()));
+            .document(roomId)
+            .collection("messages")
+            .add(chatMessage);
     }
 
-    public LiveData<List<ChatMessage>> getSentMessagesLiveData(String receiver, String sender) {
+    public LiveData<List<ChatMessage>> getChatMessagesLiveData(String userReceiverId) {
+        final String roomId = getRoomId(userReceiverId);
+
         MutableLiveData<List<ChatMessage>> chatMessageMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("chat")
-            .document("conversations")
-            .collection("allConversations")
-            .whereEqualTo("receiver", receiver)
-            .whereEqualTo("sender", sender)
-            .orderBy("time", Query.Direction.DESCENDING)
-            
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null)
+        firebaseFirestore
+            .collection("chat")
+            .document(roomId)
+            .collection("messages")
+            .orderBy("epochMilli", Query.Direction.DESCENDING)
+            .addSnapshotListener((value, error) -> {
+                if (value != null) {
                     chatMessageMutableLiveData.setValue(value.toObjects(ChatMessage.class));
-            }
-        });
-        return chatMessageMutableLiveData;
-    }
-
-    public LiveData<List<ChatMessage>> getReceivedMessagesLiveData(String receiver, String sender) {
-        MutableLiveData<List<ChatMessage>> chatMessageMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("chat")
-            .document("conversations")
-            .collection("allConversations")
-            .whereEqualTo("receiver", sender)
-            .whereEqualTo("sender", receiver)
-            .orderBy("time", Query.Direction.DESCENDING)
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (value != null)
-                        chatMessageMutableLiveData.setValue(value.toObjects(ChatMessage.class));
                 }
             });
         return chatMessageMutableLiveData;
+    }
+
+    @NonNull
+    private String getRoomId(String userReceiverId) {
+        String myId = firebaseAuth.getCurrentUser().getUid();
+
+        final String roomId;
+
+        if (myId.compareTo(userReceiverId) > 0) {
+            roomId = userReceiverId + "_" + myId;
+        } else {
+            roomId = myId + "_" + userReceiverId;
+        }
+        return roomId;
     }
 }

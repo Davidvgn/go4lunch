@@ -1,21 +1,23 @@
-package com.davidvignon.go4lunch.data;
+package com.davidvignon.go4lunch.ui.chat;
 
 import androidx.annotation.NonNull;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
-public class Chat {
+public class ChatViewState {
 
     @NonNull
     private final String workmateName;
     @NonNull
     private final String workmatePicture;
+    @NonNull
+    private final List<ChatViewStateItem> messages;
 
-    public Chat (String workmateName, String workmatePicture) {
+    public ChatViewState(@NonNull String workmateName, @NonNull String workmatePicture, @NonNull List<ChatViewStateItem> messages) {
         this.workmateName = workmateName;
         this.workmatePicture = workmatePicture;
-
+        this.messages = messages;
     }
 
     @NonNull
@@ -28,17 +30,22 @@ public class Chat {
         return workmatePicture;
     }
 
+    @NonNull
+    public List<ChatViewStateItem> getMessages() {
+        return messages;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Chat chat = (Chat) o;
-        return workmateName.equals(chat.workmateName) && workmatePicture.equals(chat.workmatePicture);
+        ChatViewState chatViewState = (ChatViewState) o;
+        return workmateName.equals(chatViewState.workmateName) && workmatePicture.equals(chatViewState.workmatePicture) && messages.equals(chatViewState.messages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workmateName, workmatePicture);
+        return Objects.hash(workmateName, workmatePicture, messages);
     }
 
     @Override
@@ -46,6 +53,7 @@ public class Chat {
         return "Chat{" +
             "workmateName='" + workmateName + '\'' +
             ", workmatePicture='" + workmatePicture + '\'' +
+            ", messages=" + messages +
             '}';
     }
 }

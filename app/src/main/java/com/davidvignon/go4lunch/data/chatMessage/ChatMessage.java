@@ -1,41 +1,44 @@
 package com.davidvignon.go4lunch.data.chatMessage;
 
-import com.google.firebase.Timestamp;
-
 import java.util.Objects;
 
 public class ChatMessage {
 
-    String sender;
-    String receiver;
-    String message;
-    Timestamp time;
-
+    private String uuid;
+    private String senderId;
+    private String receiverId;
+    private String message;
+    private long epochMilli;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String sender, String receiver, String message, Timestamp time) {
-        this.sender = sender;
-        this.receiver = receiver;
+    public ChatMessage(String uuid, String senderId, String receiverId, String message, long epochMilli) {
+        this.uuid = uuid;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.message = message;
-        this.time = time;
+        this.epochMilli = epochMilli;
     }
 
-    public String getSender() {
-        return sender;
+    public String getUuid() {
+        return uuid;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public String getReceiverId() {
+        return receiverId;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public Timestamp getTime() {
-        return time;
+    public long getEpochMilli() {
+        return epochMilli;
     }
 
     @Override
@@ -43,21 +46,22 @@ public class ChatMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatMessage that = (ChatMessage) o;
-        return Objects.equals(sender, that.sender) && Objects.equals(receiver, that.receiver) && Objects.equals(message, that.message) && Objects.equals(time, that.time);
+        return epochMilli == that.epochMilli && Objects.equals(uuid, that.uuid) && Objects.equals(senderId, that.senderId) && Objects.equals(receiverId, that.receiverId) && Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sender, receiver, message, time);
+        return Objects.hash(uuid, senderId, receiverId, message, epochMilli);
     }
 
     @Override
     public String toString() {
         return "ChatMessage{" +
-            "sender='" + sender + '\'' +
-            ", receiver='" + receiver + '\'' +
+            "uuid='" + uuid + '\'' +
+            ", senderId='" + senderId + '\'' +
+            ", receiverId='" + receiverId + '\'' +
             ", message='" + message + '\'' +
-            ", time='" + time + '\'' +
+            ", epochMilli=" + epochMilli +
             '}';
     }
 }

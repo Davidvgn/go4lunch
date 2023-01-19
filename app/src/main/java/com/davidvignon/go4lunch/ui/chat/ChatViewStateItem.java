@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-public class ChatMessageViewState {
+public class ChatViewStateItem {
 
     @NonNull
     private final String id;
@@ -16,7 +16,7 @@ public class ChatMessageViewState {
     @NonNull
     private final String time;
 
-    public ChatMessageViewState(String id, String workmateName, String message, String time) {
+    public ChatViewStateItem(@NonNull String id, @NonNull String workmateName, @NonNull String message, @NonNull String time) {
         this.id = id;
         this.workmateName = workmateName;
         this.message = message;
@@ -47,7 +47,7 @@ public class ChatMessageViewState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChatMessageViewState that = (ChatMessageViewState) o;
+        ChatViewStateItem that = (ChatViewStateItem) o;
         return id.equals(that.id) && workmateName.equals(that.workmateName) && message.equals(that.message) && time.equals(that.time);
     }
 
@@ -56,6 +56,7 @@ public class ChatMessageViewState {
         return Objects.hash(id, workmateName, message, time);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ChatMessageViewState{" +

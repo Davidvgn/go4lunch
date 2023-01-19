@@ -8,10 +8,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.davidvignon.go4lunch.data.Chat;
 import com.davidvignon.go4lunch.databinding.ChatActivityBinding;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -29,13 +30,12 @@ public class ChatActivity extends AppCompatActivity {
         ChatMessageAdapter adapter = new ChatMessageAdapter();
         binding.chatRv.setAdapter(adapter);
 
-
         ChatViewModel viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
 
-        viewModel.getChat().observe(this, new Observer<Chat>() {
+        viewModel.getChatViewStateLiveData().observe(this, new Observer<ChatViewState>() {
             @Override
-            public void onChanged(Chat chat) {
-                binding.chatTvWorkmateName.setText(chat.getWorkmateName());
+            public void onChanged(ChatViewState chatViewState) {
+                binding.chatTvWorkmateName.setText(chatViewState.getWorkmateName());
 
                 binding.chatIb.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -47,11 +47,11 @@ public class ChatActivity extends AppCompatActivity {
                 });
 
                 Glide.with(getApplicationContext())
-                    .load(chat.getWorkmatePicture())
+                    .load(chatViewState.getWorkmatePicture())
                     .apply(RequestOptions.circleCropTransform())
                     .into(binding.chatIv);
 
-                adapter.submitList(viewModel.getChatmess().getValue());
+                adapter.submitList(chatViewState.getMessages());
             }
         });
     }

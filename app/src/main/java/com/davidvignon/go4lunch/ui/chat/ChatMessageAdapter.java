@@ -9,11 +9,9 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.databinding.ChatItemviewBinding;
 
-public class ChatMessageAdapter extends ListAdapter<ChatMessageViewState, ChatMessageAdapter.ViewHolder> {
+public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, ChatMessageAdapter.ViewHolder> {
 
     public ChatMessageAdapter() {
         super(new ListChatMessageItemCallBack());
@@ -38,7 +36,7 @@ public class ChatMessageAdapter extends ListAdapter<ChatMessageViewState, ChatMe
             this.binding = binding;
         }
 
-        public void bind(ChatMessageViewState item) {
+        public void bind(ChatViewStateItem item) {
 
             binding.chatRcTv.setText(item.getMessage());
             binding.chatRcTvMessageDate.setText(item.getTime());
@@ -46,14 +44,14 @@ public class ChatMessageAdapter extends ListAdapter<ChatMessageViewState, ChatMe
         }
     }
 
-    private static class ListChatMessageItemCallBack extends DiffUtil.ItemCallback<ChatMessageViewState> {
+    private static class ListChatMessageItemCallBack extends DiffUtil.ItemCallback<ChatViewStateItem> {
         @Override
-        public boolean areItemsTheSame(@NonNull ChatMessageViewState oldItem, @NonNull ChatMessageViewState newItem) {
+        public boolean areItemsTheSame(@NonNull ChatViewStateItem oldItem, @NonNull ChatViewStateItem newItem) {
             return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull ChatMessageViewState oldItem, @NonNull ChatMessageViewState newItem) {
+        public boolean areContentsTheSame(@NonNull ChatViewStateItem oldItem, @NonNull ChatViewStateItem newItem) {
             return oldItem.equals(newItem);
         }
     }
