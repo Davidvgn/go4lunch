@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 
 import com.davidvignon.go4lunch.databinding.WorkmatesFragmentBinding;
 import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
@@ -43,6 +44,7 @@ public class WorkmatesFragment extends Fragment {
         binding = WorkmatesFragmentBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
+
     }
 
     @Override
@@ -52,6 +54,8 @@ public class WorkmatesFragment extends Fragment {
         WorkmatesViewModel viewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
         WorkmatesAdapter adapter = new WorkmatesAdapter(onWorkmateClickedListener);
         binding.workmatesRv.setAdapter(adapter);
+        binding.workmatesRv.addItemDecoration(new DividerItemDecoration(binding.workmatesRv.getContext(), DividerItemDecoration.VERTICAL));
+
 
         viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesViewState>>() {
             @Override

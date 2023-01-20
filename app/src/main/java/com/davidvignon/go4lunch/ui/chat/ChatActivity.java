@@ -20,8 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ChatActivity extends AppCompatActivity {
 
-    //todo david : add button to see which restaurant is choosen by workmate
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

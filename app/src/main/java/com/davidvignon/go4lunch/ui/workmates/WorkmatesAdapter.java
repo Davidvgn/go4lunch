@@ -1,5 +1,9 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
+import static android.provider.Settings.System.getString;
+
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.WorkmatesItemviewBinding;
 import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 
@@ -44,8 +49,30 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewState, WorkmatesA
         }
 
         public void bind(WorkmatesViewState item, OnWorkmateClickedListener listener) {
-            binding.itemListName.setText(item.getName());
+            binding.itemListName.setText(item.getName());//todo david italic si pas restau choisi
             //todo david gérer le texte pour is going to + item pale si resto non choisi
+
+            if (item.getSelectedRestaurant() != null) {
+
+                binding.itemListName.setTypeface(null, Typeface.NORMAL);
+
+                binding.itemListName.setTextColor(Color.BLACK);
+
+                binding.itemListRestaurant.setText(R.string.is_eating_at);
+                binding.itemListRestaurant.setTypeface(null, Typeface.NORMAL);
+                binding.itemListRestaurant.setTextColor(Color.BLACK);
+
+
+
+            } else {
+                binding.itemListName.setTypeface(null, Typeface.ITALIC);
+
+
+                binding.itemListRestaurant.setText(R.string.hasnt_decide_yet);
+                binding.itemListRestaurant.setTypeface(null, Typeface.ITALIC);
+            }
+
+
             Glide.with(binding.itemListAvatar.getContext())
                 .load(item.getPicturePath())
                 .apply(RequestOptions.circleCropTransform())

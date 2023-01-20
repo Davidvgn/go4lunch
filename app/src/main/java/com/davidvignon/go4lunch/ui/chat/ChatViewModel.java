@@ -38,7 +38,6 @@ public class ChatViewModel extends ViewModel {
         return intent;
     }
 
-    //TODO DAVID : ordre des messages + date
     private final ChatMessageRepository chatMessageRepository;
     private final FirebaseUser firebaseUser;
 
@@ -107,9 +106,7 @@ public class ChatViewModel extends ViewModel {
     }
 
     public void sendMessage(String message) {
-        if (!message.equals("")) {
-            chatMessageRepository.sendMessage(message, workmateId);
-        } //todo david faire un TOAST le cas échéant
+        chatMessageRepository.sendMessage(message, workmateId);
     }
 
 }

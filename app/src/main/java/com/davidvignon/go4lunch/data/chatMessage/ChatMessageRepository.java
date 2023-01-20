@@ -1,7 +1,5 @@
 package com.davidvignon.go4lunch.data.chatMessage;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -34,8 +32,6 @@ public class ChatMessageRepository {
 
     public void sendMessage(String message, String userReceiverId) {
         final String roomId = getRoomId(userReceiverId);
-
-        Log.d("Nino", "sendMessage() called with: roomId = [" + roomId + "]");
 
         ChatMessage chatMessage = new ChatMessage(
             UUID.randomUUID().toString(),
