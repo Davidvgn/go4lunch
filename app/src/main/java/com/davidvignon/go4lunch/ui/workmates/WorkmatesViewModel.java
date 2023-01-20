@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -46,12 +47,15 @@ public class WorkmatesViewModel extends ViewModel {
 
                 for (Workmate workmate : workmates) {
                     if (!workmate.getId().equals(firebaseUser.getUid())) {
+                        String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + " hasn't" : workmate.getName() + " is";
+
                         viewStates.add(
                             new WorkmatesViewState(
                                 workmate.getId(),
-                                workmate.getName(),
+                                workmateName,
                                 workmate.getPicturePath(),
-                                workmate.getSelectedRestaurant()
+                                workmate.getSelectedRestaurant(),
+                                workmate.getSelectedRestaurantName()
                             )
                         );
                     }

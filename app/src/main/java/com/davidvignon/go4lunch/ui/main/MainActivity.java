@@ -85,10 +85,8 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    Log.d("DavidVgn", "task isSuccessful");
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d("DavidVgn", "DocumentSnapshot data: " + document.getData());
                         String userPicturePath = document.get("picturePath").toString();
 
                         String fullName = firebaseUser.getDisplayName();
@@ -100,9 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                             .load(userPicturePath)
                             .apply(RequestOptions.circleCropTransform())
                             .into(navUserImage);
-
-
-                        Log.d("DavidVgn", "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d("DavidVgn", "No such document");
                     }
@@ -196,8 +191,8 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     }
 
     @Override
-    public void onRestaurantClicked(String placeId) {
-        startActivity(RestaurantDetailsViewModel.navigate(this, placeId));
+    public void onRestaurantClicked(String placeId, String restaurantName) {
+        startActivity(RestaurantDetailsViewModel.navigate(this, placeId, restaurantName));
     }
 
     @Override

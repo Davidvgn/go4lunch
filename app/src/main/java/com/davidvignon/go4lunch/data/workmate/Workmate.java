@@ -21,16 +21,19 @@ public class Workmate {
 
     @Nullable
     private  String selectedRestaurant;
+    @NonNull
+    private  String selectedRestaurantName;
 
     public Workmate() {
     }
 
-    public Workmate(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant) {
+    public Workmate(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant,  @NonNull String selectedRestaurantName) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.picturePath = picturePath;
         this.selectedRestaurant = selectedRestaurant;
+        this.selectedRestaurantName = selectedRestaurantName;
     }
 
     @NonNull
@@ -58,27 +61,33 @@ public class Workmate {
         return selectedRestaurant;
     }
 
+    @NonNull
+    public String getSelectedRestaurantName() {
+        return selectedRestaurantName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Workmate workmate = (Workmate) o;
-        return id.equals(workmate.id) && name.equals(workmate.name) && email.equals(workmate.email) && picturePath.equals(workmate.picturePath) && Objects.equals(selectedRestaurant, workmate.selectedRestaurant);
+        return id.equals(workmate.id) && name.equals(workmate.name) && email.equals(workmate.email) && picturePath.equals(workmate.picturePath) && Objects.equals(selectedRestaurant, workmate.selectedRestaurant) && selectedRestaurantName.equals(workmate.selectedRestaurantName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, picturePath, selectedRestaurant);
+        return Objects.hash(id, name, email, picturePath, selectedRestaurant, selectedRestaurantName);
     }
 
     @Override
     public String toString() {
-        return "Workmates{" +
+        return "Workmate{" +
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             ", picturePath='" + picturePath + '\'' +
             ", selectedRestaurant='" + selectedRestaurant + '\'' +
+            ", selectedRestaurantName='" + selectedRestaurantName + '\'' +
             '}';
     }
 }

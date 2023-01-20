@@ -39,7 +39,6 @@ public class UserRepository {
         this.firebaseAuth = firebaseAuth;
     }
 
-
     public LiveData<Boolean> isRestaurantSelectedLiveData(String placeId) {
         MutableLiveData<Boolean> isSelectedLiveData = new MutableLiveData<>();
         firebaseFirestore
@@ -63,7 +62,7 @@ public class UserRepository {
         return isSelectedLiveData;
     }
 
-    public void toggleRestaurantSelected(String placeId) {
+    public void toggleRestaurantSelected(String placeId, String restaurantName) {
         DocumentReference documentReference = firebaseFirestore
             .collection("users")
             .document(firebaseAuth.getCurrentUser().getUid());
@@ -78,10 +77,20 @@ public class UserRepository {
                             Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!");
                         })
                         .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                    documentReference.update("selectedRestaurantName", (restaurantName))
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!");
+                        })
+                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
                 } else {
                     documentReference.update("selectedRestaurant", null)
                         .addOnSuccessListener(aVoid -> {
                             Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!");
+                        })
+                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                    documentReference.update("selectedRestaurantName", (null))
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!");
                         })
                         .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
                 }

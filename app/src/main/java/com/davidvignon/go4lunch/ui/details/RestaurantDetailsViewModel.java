@@ -18,6 +18,8 @@ import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +32,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class RestaurantDetailsViewModel extends ViewModel {
 
     private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
+    private static final String KEY_RESTAURANT_NAME = "KEY_RESTAURANT_NAME";
 
-    public static Intent navigate(@NonNull Context context, @NonNull String placeId) {
+    public static Intent navigate(@NonNull Context context, @NonNull String placeId, @NonNull String restaurantName) {
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
         intent.putExtra(KEY_PLACE_ID, placeId);
+        intent.putExtra(KEY_RESTAURANT_NAME, restaurantName);
         return intent;
     }
 
@@ -43,6 +47,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final MutableLiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<String> restaurantPlaceId = new MutableLiveData<>();
+    private final MutableLiveData<String> restaurantName = new MutableLiveData<>();
 
     private final MediatorLiveData<RestaurantDetailsViewState> mediatorLiveData = new MediatorLiveData<>();
 
@@ -56,12 +61,14 @@ public class RestaurantDetailsViewModel extends ViewModel {
         this.userRepository = userRepository;
 
         String placeId = savedStateHandle.get(KEY_PLACE_ID);
+        String restaurantNameFromId = savedStateHandle.get(KEY_RESTAURANT_NAME);
         LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
         LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
         LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getUserListGoingTo(placeId);
 
         restaurantPlaceId.setValue(placeId);
+        restaurantName.setValue(restaurantNameFromId);
 
         mediatorLiveData.addSource(detailsResponseLiveData, new Observer<DetailsResponse>() {
             @Override
@@ -130,12 +137,17 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
                 if (workmatesList != null) {
                     for (Workmate workmate : workmatesList) {
-                        if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue()))
+                        if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())) {
+                            String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";
+
                             viewStates.add(new WorkmatesViewState(
                                 workmate.getId(),
-                                workmate.getName(),
+                                workmateName,
                                 workmate.getPicturePath(),
-                                workmate.getSelectedRestaurant()));
+                                workmate.getSelectedRestaurant(),
+                                workmate.getSelectedRestaurantName()
+                            ));
+                        }
                     }
                     workmatesViewStatesLiveData.setValue(viewStates);
                 }
@@ -162,7 +174,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public void selectRestaurant() {
         userRepository.isRestaurantSelectedLiveData(restaurantPlaceId.getValue());
-        userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue());
+        userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue(), restaurantName.getValue());
     }
 
     public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState) {

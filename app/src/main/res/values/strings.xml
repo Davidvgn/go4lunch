@@ -40,7 +40,9 @@
     <string name="chat_activity_title">Messages</string>
     <string name="chat_iv_description">Receiver picture</string>
     <string name="chat_ib_description">Send icon</string>
-    <string name="hasnt_decide_yet">hasn\'t decide yet</string>
-    <string name="is_eating_at">is eating at </string>
+<!--    <string name="hasnt_decide_yet">hasn\'t decide yet</string>-->
+    <string name="hasnt_decide_yet"> decide yet</string>
+<!--    <string name="is_eating_at">is eating at </string>-->//todo david
+    <string name="is_eating_at"> eating at </string>
 
 </resources>

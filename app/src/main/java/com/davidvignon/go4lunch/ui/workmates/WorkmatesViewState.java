@@ -15,14 +15,18 @@ public class WorkmatesViewState {
 
     @NonNull
     private final String picturePath;
+
     @Nullable
     private  String selectedRestaurant;
+    @NonNull
+    private  String selectedRestaurantName;
 
-    public WorkmatesViewState(@NonNull String id, @NonNull String name, @NonNull String picturePath, @Nullable String selectedRestaurant) {
+    public WorkmatesViewState(@NonNull String id, @NonNull String name, @NonNull String picturePath, @Nullable String selectedRestaurant, @Nullable String selectedRestaurantName) {
         this.id =id;
         this.name = name;
         this.picturePath = picturePath;
         this.selectedRestaurant = selectedRestaurant;
+        this.selectedRestaurantName = selectedRestaurantName;
 
     }
 
@@ -47,18 +51,21 @@ public class WorkmatesViewState {
         return selectedRestaurant;
     }
 
+    public String getSelectedRestaurantName() {
+        return selectedRestaurantName;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkmatesViewState that = (WorkmatesViewState) o;
-        return id.equals(that.id) && name.equals(that.name) && picturePath.equals(that.picturePath) && Objects.equals(selectedRestaurant, that.selectedRestaurant);
+        return id.equals(that.id) && name.equals(that.name) && picturePath.equals(that.picturePath) && Objects.equals(selectedRestaurant, that.selectedRestaurant) && Objects.equals(selectedRestaurantName, that.selectedRestaurantName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, picturePath, selectedRestaurant);
+        return Objects.hash(id, name, picturePath, selectedRestaurant, selectedRestaurantName);
     }
 
     @Override
@@ -68,6 +75,7 @@ public class WorkmatesViewState {
             ", name='" + name + '\'' +
             ", picturePath='" + picturePath + '\'' +
             ", selectedRestaurant='" + selectedRestaurant + '\'' +
+            ", selectedRestaurantName='" + selectedRestaurantName + '\'' +
             '}';
     }
 }
