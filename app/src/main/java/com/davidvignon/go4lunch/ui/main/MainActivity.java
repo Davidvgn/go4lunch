@@ -31,6 +31,7 @@ import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
+import com.davidvignon.go4lunch.ui.utils.EventWrapper;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             }
         });
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // TODO By ViewModel
         DocumentReference docRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -121,14 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.nav_lunch):
-
-                    viewModel.getSelectedRestaurant().observe(this, new Observer<String>() {
-                        @Override
-                        public void onChanged(String selectedRestaurantId) {
-                            onRestaurantClicked(selectedRestaurantId, "");
-                            viewModel.getSelectedRestaurant().removeObserver(this);//todo Nino Bonne pratique ou pas ?
-                        }
-                    });
+                    viewModel.onMyLunchClicked();
                     return true;
                 case (R.id.nav_settings):
                     Intent intent = new Intent();
@@ -148,9 +142,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         });
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_FrameLayout_fragment_container, MapFragment.newInstance())
-                .commit();
+            displayFragment(MapFragment.newInstance());
         }
 
         binding.mainBottomNavigationView.setOnItemSelectedListener(item -> {
@@ -173,11 +165,26 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             }
             return true;
         });
+
+        viewModel.getMainActionLiveData().observe(this, new Observer<EventWrapper<MainAction>>() {
+            @Override
+            public void onChanged(EventWrapper<MainAction> wrapper) {
+                MainAction mainAction = wrapper.getContentIfNotHandled();
+
+                if (mainAction != null) {
+                    if (mainAction instanceof MainAction.Toast) {
+                        Toast.makeText(MainActivity.this, ((MainAction.Toast) mainAction).messageStringRes, Toast.LENGTH_SHORT).show();
+                    } else if (mainAction instanceof MainAction.DetailNavigation) {
+                        startActivity(RestaurantDetailsViewModel.navigate(MainActivity.this, ((MainAction.DetailNavigation) mainAction).placeId));
+                    }
+                }
+            }
+        });
     }
 
     private void displayFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
-            .replace(R.id.main_FrameLayout_fragment_container, fragment, null)
+            .replace(R.id.main_FrameLayout_fragment_container, fragment)
             .commitNow();
     }
 
@@ -208,15 +215,8 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     }
 
     @Override
-    public void onRestaurantClicked(String placeId, String restaurantName) {
-        //todo Nino peut-on s'autoriser un if exceptionnellement ?
-        //todo Nino : car il semblerait que je ne peux pas utiliser 'startactivity' dans le vm.
-        if (placeId != null && !placeId.equals("")) {
-            startActivity(RestaurantDetailsViewModel.navigate(this, placeId, restaurantName));
-        } else {
-            //todo Nino : singleLIveEvent ??? :
-            Toast.makeText(MainActivity.this, R.string.no_restaurant_selected, Toast.LENGTH_SHORT).show();
-        }
+    public void onRestaurantClicked(String placeId) {
+        startActivity(RestaurantDetailsViewModel.navigate(this, placeId));
     }
 
     @Override

@@ -31,12 +31,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class RestaurantDetailsViewModel extends ViewModel {
 
     private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
-    private static final String KEY_RESTAURANT_NAME = "KEY_RESTAURANT_NAME";
 
-    public static Intent navigate(@NonNull Context context, @NonNull String placeId, @NonNull String restaurantName) {
+    public static Intent navigate(@NonNull Context context, @NonNull String placeId) {
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
         intent.putExtra(KEY_PLACE_ID, placeId);
-        intent.putExtra(KEY_RESTAURANT_NAME, restaurantName);
         return intent;
     }
 
@@ -46,7 +44,6 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final MutableLiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<String> restaurantPlaceId = new MutableLiveData<>();
-    private final MutableLiveData<String> restaurantName = new MutableLiveData<>();
 
     private final MediatorLiveData<RestaurantDetailsViewState> mediatorLiveData = new MediatorLiveData<>();
 
@@ -60,14 +57,12 @@ public class RestaurantDetailsViewModel extends ViewModel {
         this.userRepository = userRepository;
 
         String placeId = savedStateHandle.get(KEY_PLACE_ID);
-        String restaurantNameFromId = savedStateHandle.get(KEY_RESTAURANT_NAME);
         LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
         LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
         LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getUserListGoingTo(placeId);
 
         restaurantPlaceId.setValue(placeId);
-        restaurantName.setValue(restaurantNameFromId);
 
         mediatorLiveData.addSource(detailsResponseLiveData, new Observer<DetailsResponse>() {
             @Override
@@ -184,7 +179,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public void selectRestaurant() {
         userRepository.isRestaurantSelectedLiveData(restaurantPlaceId.getValue());
-        userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue(), restaurantName.getValue());
+        userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue(), ""); // TODO DAVID How to get RestaurantName from VM
     }
 
     public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState) {

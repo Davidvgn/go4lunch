@@ -131,13 +131,11 @@ public class UserRepository {
             .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .addSnapshotListener((documentSnapshot, error) -> {
                 if (documentSnapshot != null) {
-                    if (documentSnapshot.get("selectedRestaurant") != null
-                    ) {
+                    if (documentSnapshot.get("selectedRestaurant") != null) {
                         String firestoreList = documentSnapshot.get("selectedRestaurant").toString();
                         selectedRestaurantFieldMutable.setValue(firestoreList);
                     } else{
-                        selectedRestaurantFieldMutable.setValue("");
-
+                        selectedRestaurantFieldMutable.setValue(null);
                     }
                 }
             });
