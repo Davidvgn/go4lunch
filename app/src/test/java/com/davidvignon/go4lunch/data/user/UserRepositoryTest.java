@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -21,10 +22,14 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.EventListener;
 import java.util.List;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class UserRepositoryTest {
+
+    private static String DEFAULT_PLACE_ID = "DEFAULT_PLACE_ID";
+    private static String DEFAULT_USER = "DEFAULT_USER";
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -32,6 +37,7 @@ public class UserRepositoryTest {
     private final FirebaseFirestore firebaseFirestore = Mockito.mock(FirebaseFirestore.class);
     private final FirebaseAuth firebaseAuth = Mockito.mock(FirebaseAuth.class);
     private final CollectionReference collectionReference = Mockito.mock(CollectionReference.class);
+    private final DocumentReference documentReference = Mockito.mock(DocumentReference.class);
     private final Task task = Mockito.mock(Task.class);
     private final QuerySnapshot querySnapshot = Mockito.mock(QuerySnapshot.class);
     private final List users = Mockito.mock(List.class);
@@ -45,6 +51,7 @@ public class UserRepositoryTest {
 
         userRepository = new UserRepository(firebaseFirestore, firebaseAuth);
     }
+
 
     @Test
     public void nominal_case() {

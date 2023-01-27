@@ -44,5 +44,6 @@
     <string name="hasnt_decide_yet"> decide yet</string>
 <!--    <string name="is_eating_at">is eating at </string>-->//todo david
     <string name="is_eating_at"> eating at </string>
+    <string name="no_restaurant_selected">No Restaurant Selected</string>
 
 </resources>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -43,10 +45,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener, OnWorkmateClickedListener {
+public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener,
+    OnWorkmateClickedListener {
 
     private MainViewModel viewModel;
-    //todo david notification + bouton lunch -> qui montre le resto + redidrection vers resto quand click sur marker
+    //todo david notification
+    //todo david redirection vers resto quand click sur marker
+    //todo david repositionnement de la carte quand click sur icone + un border why not...
+    //todo david UNIT TEST
+    //todo david gérer les couleurs
+    //todo david gérer la traduction des strings
+    //todo david warnings
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +121,14 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.nav_lunch):
+
+                    viewModel.getSelectedRestaurant().observe(this, new Observer<String>() {
+                        @Override
+                        public void onChanged(String selectedRestaurantId) {
+                            onRestaurantClicked(selectedRestaurantId, "");
+                            viewModel.getSelectedRestaurant().removeObserver(this);//todo Nino Bonne pratique ou pas ?
+                        }
+                    });
                     return true;
                 case (R.id.nav_settings):
                     Intent intent = new Intent();
@@ -192,7 +209,14 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
     @Override
     public void onRestaurantClicked(String placeId, String restaurantName) {
-        startActivity(RestaurantDetailsViewModel.navigate(this, placeId, restaurantName));
+        //todo Nino peut-on s'autoriser un if exceptionnellement ?
+        //todo Nino : car il semblerait que je ne peux pas utiliser 'startactivity' dans le vm.
+        if (placeId != null && !placeId.equals("")) {
+            startActivity(RestaurantDetailsViewModel.navigate(this, placeId, restaurantName));
+        } else {
+            //todo Nino : singleLIveEvent ??? :
+            Toast.makeText(MainActivity.this, R.string.no_restaurant_selected, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

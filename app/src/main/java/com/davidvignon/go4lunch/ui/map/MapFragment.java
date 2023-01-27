@@ -27,7 +27,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MapFragment extends SupportMapFragment {
-    //todo david rendre fonctionnel button currentLocation + design
 
     @NonNull
     public static MapFragment newInstance() {
@@ -48,7 +47,6 @@ public class MapFragment extends SupportMapFragment {
             0
         );
 
-        //todo david au click aller sur les détails
         getMapAsync(googleMap -> {
             viewModel.getMapPoiViewStateLiveData().observe(getViewLifecycleOwner(), mapPoiViewStates -> {
 

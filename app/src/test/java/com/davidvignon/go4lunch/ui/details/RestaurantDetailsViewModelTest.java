@@ -3,8 +3,8 @@
 //
 //import static org.junit.Assert.assertEquals;
 //import static org.junit.Assert.assertNull;
-//import static org.mockito.ArgumentMatchers.any;
 //
+//import androidx.annotation.NonNull;
 //import androidx.annotation.Nullable;
 //import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 //import androidx.lifecycle.MutableLiveData;
@@ -14,6 +14,9 @@
 //import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 //import com.davidvignon.go4lunch.data.google_places.place_details.PhotosItem;
 //import com.davidvignon.go4lunch.data.google_places.place_details.RestaurantDetailsResponse;
+//import com.davidvignon.go4lunch.data.users.UserRepository;
+//import com.davidvignon.go4lunch.data.workmate.Workmate;
+//import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 //import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 //
 //import org.junit.Before;
@@ -26,7 +29,7 @@
 //
 //public class RestaurantDetailsViewModelTest {
 //
-//    private static final String DEFAULT_PLACE_ID = "DEFAULT_PLACE_ID";
+//    private static final String DEFAULT_KEY_PLACE_ID = "DEFAULT_KEY_PLACE_ID";
 //    private static final String DEFAULT_NAME = "DEFAULT_NAME";
 //    private static final String DEFAULT_VICINITY = "DEFAULT_VICINITY";
 //    private static final String DEFAULT_NUMBER = "DEFAULT_NUMBER";
@@ -34,27 +37,48 @@
 //    private static final String DEFAULT_PHOTO = "DEFAULT_PHOTO";
 //    private static final double DEFAULT_RATING = 3.4;
 //
-//    private static final String DEFAULT_KEY_PLACE_ID = "DEFAULT_KEY_PLACE_ID";
 //
 //
 //    @Rule
 //    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 //
 //    private final PlaceDetailsRepository placeDetailsRepository = Mockito.mock(PlaceDetailsRepository.class);
+//    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+//    private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
 //    private final SavedStateHandle savedStateHandle = Mockito.mock(SavedStateHandle.class);
+//    private final RestaurantDetailsResponse restaurantDetailsResponse = Mockito.mock(RestaurantDetailsResponse.class);
 //    MutableLiveData<DetailsResponse> detailsResponseMutableLiveData = new MutableLiveData<>();
+//    MutableLiveData<Boolean> isLiked = new MutableLiveData<>();
+//    MutableLiveData<List<Workmate>> workmateListMutableLiveData = new MutableLiveData<>();
 //
 //    private RestaurantDetailsViewModel viewModel;
 //
 //
 //    @Before
 //    public void setUp() {
-//        Mockito.doReturn(detailsResponseMutableLiveData).when(placeDetailsRepository)
-//            .getDetailsResponseLiveData(DEFAULT_PLACE_ID);
 //
 //        detailsResponseMutableLiveData.setValue(getDefaultDetailsResponse());
 //
-//        viewModel = new RestaurantDetailsViewModel(placeDetailsRepository, savedStateHandle);
+//        isLiked.setValue(true);//todo david test
+//
+//        Mockito.doReturn(isLiked).when(userRepository)//todo david test
+//            .isRestaurantLikedByUserLiveData(DEFAULT_KEY_PLACE_ID);
+//
+//        Mockito.doReturn(isLiked).when(userRepository)//todo david test
+//            .isRestaurantSelectedLiveData(DEFAULT_KEY_PLACE_ID);
+//
+//        workmateListMutableLiveData.setValue(getAWorkmateList());
+//
+//        Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository)
+//            .getUserListGoingTo(DEFAULT_KEY_PLACE_ID);
+//
+//        Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(savedStateHandle)
+//            .get(DEFAULT_KEY_PLACE_ID);
+//
+//        Mockito.doReturn(detailsResponseMutableLiveData).when(placeDetailsRepository)
+//            .getDetailsResponseLiveData(DEFAULT_KEY_PLACE_ID);
+//
+//        viewModel = new RestaurantDetailsViewModel(placeDetailsRepository, userRepository, workmateRepository, savedStateHandle);
 //    }
 //
 //    @Test
@@ -77,6 +101,7 @@
 //        // Then
 //        assertNull(viewStates);
 //    }
+//
 //    @Test
 //    public void if_name_is_null_it_returns_no_response() {
 //        // Given
@@ -88,6 +113,7 @@
 //        // Then
 //        assertNull(viewStates);
 //    }
+//
 //    @Test
 //    public void if_vicinity_is_null_it_returns_no_response() {
 //        // Given
@@ -99,6 +125,7 @@
 //        // Then
 //        assertNull(viewStates);
 //    }
+//
 //    @Test
 //    public void if_phoneNumber_is_null_it_returns_no_response() {
 //        // Given
@@ -110,6 +137,7 @@
 //        // Then
 //        assertNull(viewStates);
 //    }
+//
 //    @Test
 //    public void if_website_is_null_it_returns_no_response() {
 //        // Given
@@ -121,6 +149,7 @@
 //        // Then
 //        assertNull(viewStates);
 //    }
+//
 //    @Test
 //    public void if_photo_is_null_it_returns_no_response() {
 //        // Given
@@ -132,6 +161,7 @@
 //        // Then
 //        assertNull(viewStates);
 //    }
+//
 //    @Test
 //    public void if_rating_elements_are_null_it_returns_no_response() {
 //        // Given
@@ -146,50 +176,20 @@
 //
 //    // region IN
 //    private DetailsResponse getDefaultDetailsResponse() {
-////        RestaurantDetailsResponse result = new RestaurantDetailsResponse(
-////            0,
-////            null,
-////            true,
-////            true,
-////            null,
-////            DEFAULT_RATING,
-////            null,
-////            true,
-////            getDefaultPhotos(),
-////            null,
-////            null,
-////            true,
-////            null,
-////            3,
-////            null,
-////            true,
-////            null,
-////            true,
-////            true,
-////            true,
-////            null,
-////            DEFAULT_PLACE_ID,
-////            true,
-////            true,
-////            null,
-////            DEFAULT_WEBSITE,
-////            null,
-////            null,
-////            null,
-////            0,
-////            DEFAULT_NAME,
-////            null,
-////            null,
-////            DEFAULT_VICINITY,
-////            null,
-////            null,
-////            DEFAULT_NUMBER,
-////            true
-////        );
-//        return new DetailsResponse(
-//            Mockito.mock(RestaurantDetailsResponse.class), // TODO DAVID FILL THIS MOCK WITH DEFAULT VALUES
+//
+//        RestaurantDetailsResponse response = Mockito.mock(RestaurantDetailsResponse.class);
+//        Mockito.doReturn(DEFAULT_RATING).when(restaurantDetailsResponse).getRating();
+//        Mockito.doReturn(getDefaultPhotos()).when(restaurantDetailsResponse).getPhotos();
+//        Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(restaurantDetailsResponse).getPlaceId();
+//        Mockito.doReturn(DEFAULT_WEBSITE).when(restaurantDetailsResponse).getWebsite();
+//        Mockito.doReturn(DEFAULT_NAME).when(restaurantDetailsResponse).getName();
+//        Mockito.doReturn(DEFAULT_VICINITY).when(restaurantDetailsResponse).getVicinity();
+//        Mockito.doReturn(DEFAULT_NUMBER).when(restaurantDetailsResponse).getInternationalPhoneNumber();
+//
+//        return new DetailsResponse(response,
 //            null,
 //            null
+//
 //        );
 //    }
 //
@@ -202,7 +202,7 @@
 //
 //    private DetailsResponse getDefaultDetailsResponseWithNameMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            null,
 //            DEFAULT_VICINITY,
 //            DEFAULT_NUMBER,
@@ -217,9 +217,10 @@
 //            null
 //        );
 //    }
+//
 //    private DetailsResponse getDefaultDetailsResponseWithVicinityMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            DEFAULT_NAME,
 //            null,
 //            DEFAULT_NUMBER,
@@ -234,9 +235,10 @@
 //            null
 //        );
 //    }
+//
 //    private DetailsResponse getDefaultDetailsResponseWithPhoneNumberMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            DEFAULT_NAME,
 //            DEFAULT_VICINITY,
 //            null,
@@ -251,9 +253,10 @@
 //            null
 //        );
 //    }
+//
 //    private DetailsResponse getDefaultDetailsResponseWithWebsiteMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            DEFAULT_NAME,
 //            DEFAULT_VICINITY,
 //            DEFAULT_NUMBER,
@@ -268,9 +271,10 @@
 //            null
 //        );
 //    }
+//
 //    private DetailsResponse getDefaultDetailsResponseWithPhotoMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            DEFAULT_NAME,
 //            DEFAULT_VICINITY,
 //            DEFAULT_NUMBER,
@@ -285,9 +289,10 @@
 //            null
 //        );
 //    }
+//
 //    private DetailsResponse getDefaultDetailsResponseWithRatingMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            DEFAULT_NAME,
 //            DEFAULT_VICINITY,
 //            DEFAULT_NUMBER,
@@ -302,9 +307,10 @@
 //            null
 //        );
 //    }
+//
 //    private DetailsResponse getDefaultDetailsResponseWithAllElementsMissing() {
 //        RestaurantDetailsResponse result = getDefaultRestaurant(
-//            DEFAULT_PLACE_ID,
+//            DEFAULT_KEY_PLACE_ID,
 //            null,
 //            null,
 //            null,
@@ -319,7 +325,6 @@
 //            null
 //        );
 //    }
-//
 //
 //    private RestaurantDetailsResponse getDefaultRestaurant(
 //        @Nullable String placeId,
@@ -341,47 +346,6 @@
 //        Mockito.doReturn(rating).when(response).getRating();
 //
 //        return response;
-//
-////         new RestaurantDetailsResponse(
-////            0,
-////            null,
-////            true,
-////            true,
-////            null,
-////            rating,
-////            null,
-////            true,
-////            photo,
-////            null,
-////            null,
-////            true,
-////            null,
-////            3,
-////            null,
-////            true,
-////            null,
-////            true,
-////            true,
-////            true,
-////            null,
-////            placeId,
-////            true,
-////            true,
-////            null,
-////            website,
-////            null,
-////            null,
-////            null,
-////            0,
-////            name,
-////            null,
-////            null,
-////            vicinity,
-////            null,
-////            null,
-////            phoneNumber,
-////            true
-////        );
 //    }
 //    // endregion IN
 //
@@ -394,8 +358,27 @@
 //            DEFAULT_NUMBER,
 //            DEFAULT_WEBSITE,
 //            DEFAULT_PHOTO,
-//            2.04F
+//            2.04F,
+//            23,//todo david pour test
+//            "",//todo david pour test
+//            23//todo david pour test
 //        );
 //    }
 //    // endregion OUT
+//
+//
+//    private List<Workmate> getAWorkmateList(){
+//        List<Workmate> workmateList = new ArrayList<>();
+//
+//        workmateList.add(new Workmate(
+//            "23",
+//        "workmateName",
+//        "workmateEmail",
+//        "workmatePicture",
+//        "selectedRestaurant",
+//        "selectedRestaurantName"
+//        ));
+//
+//        return workmateList;
+//    }
 //}

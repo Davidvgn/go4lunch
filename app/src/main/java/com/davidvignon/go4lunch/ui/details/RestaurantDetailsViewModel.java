@@ -19,7 +19,6 @@ import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse
 import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +99,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         });
     }
 
-    //todo david : gérer la couleur du selected qui est black et non blue (gérer les couleurs d'une manière génrale) / testUnit / chat/recherche
+    //todo david : gérer la couleur du selected qui est black et non blue
 
     public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmate> workmatesList) {
         List<WorkmatesViewState> viewStates = new ArrayList<>();
@@ -113,49 +112,60 @@ public class RestaurantDetailsViewModel extends ViewModel {
         }
 
         if (response != null) {
-            Double initialRating = response.getResult().getRating();
-            if (response.getResult().getName() != null
-                && response.getResult().getVicinity() != null
-                && response.getResult().getInternationalPhoneNumber() != null
-                && response.getResult().getWebsite() != null
-                && response.getResult().getPhotos() != null
-                && response.getResult().getPhotos().get(0) != null
-                && response.getResult().getPhotos().get(0).getPhotoReference() != null
-                && initialRating != null
+
+
+            if (response.getResult() != null
+                && response.getResult().getRating() != null
             ) {
-                restaurantDetailsViewState = new RestaurantDetailsViewState(
-                    response.getResult().getName(),
-                    response.getResult().getVicinity(),
-                    response.getResult().getInternationalPhoneNumber(),
-                    response.getResult().getWebsite(),
-                    response.getResult().getPhotos().get(0).getPhotoReference(),
-                    (float) (initialRating * 3 / 5),
-                    isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
-                    isLiked ? "unlike" : "like",
-                    isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
-                );
 
-                if (workmatesList != null) {
-                    for (Workmate workmate : workmatesList) {
-                        if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())) {
-                            String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";
+                Double initialRating = response.getResult().getRating();
 
-                            viewStates.add(new WorkmatesViewState(
-                                workmate.getId(),
-                                workmateName,
-                                workmate.getPicturePath(),
-                                workmate.getSelectedRestaurant(),
-                                workmate.getSelectedRestaurantName()
-                            ));
+                if (response.getResult().getName() != null
+                    && response.getResult().getVicinity() != null
+                    && response.getResult().getInternationalPhoneNumber() != null
+                    && response.getResult().getWebsite() != null
+                    && response.getResult().getPhotos() != null
+                    && response.getResult().getPhotos().get(0) != null
+                    && response.getResult().getPhotos().get(0).getPhotoReference() != null
+                    && initialRating != null
+                ) {
+                    restaurantDetailsViewState = new RestaurantDetailsViewState(
+                        response.getResult().getName(),
+                        response.getResult().getVicinity(),
+                        response.getResult().getInternationalPhoneNumber(),
+                        response.getResult().getWebsite(),
+                        response.getResult().getPhotos().get(0).getPhotoReference(),
+                        (float) (initialRating * 3 / 5),
+                        isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
+                        isLiked ? "unlike" : "like",
+                        isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
+                    );
+
+                    if (workmatesList != null) {
+                        for (Workmate workmate : workmatesList) {
+                            if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())) {
+                                String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";
+
+                                viewStates.add(new WorkmatesViewState(
+                                    workmate.getId(),
+                                    workmateName,
+                                    workmate.getPicturePath(),
+                                    workmate.getSelectedRestaurant(),
+                                    workmate.getSelectedRestaurantName()
+                                ));
+                            }
                         }
+                        workmatesViewStatesLiveData.setValue(viewStates);
                     }
-                    workmatesViewStatesLiveData.setValue(viewStates);
+
+
+                    mediatorLiveData.setValue(restaurantDetailsViewState);
                 }
-
-
-                mediatorLiveData.setValue(restaurantDetailsViewState);
             }
+
         }
+
+
     }
 
     @NonNull
