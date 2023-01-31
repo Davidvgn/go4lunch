@@ -1,8 +1,7 @@
 package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -12,8 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
-import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;

@@ -115,7 +115,7 @@ public class UserRepository {
             DocumentSnapshot documentSnapshot = task.getResult();
             List<String> favoritesRestaurantsField = (List<String>) documentSnapshot.get("favoritesRestaurants");
 
-            if (!favoritesRestaurantsField.contains(placeId)) {
+            if (favoritesRestaurantsField != null && !favoritesRestaurantsField.contains(placeId)) {
                 documentReference.update("favoritesRestaurants", FieldValue.arrayUnion(placeId))
                     .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated!"));
             } else {
