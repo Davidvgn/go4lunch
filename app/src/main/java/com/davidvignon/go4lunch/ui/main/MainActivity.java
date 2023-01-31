@@ -46,9 +46,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener,
-    OnWorkmateClickedListener {
+public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener, OnWorkmateClickedListener {
 
+    private MainActivityBinding binding;
     private MainViewModel viewModel;
     //todo david notification
     //todo david redirection vers resto quand click sur marker
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());
+        binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -212,6 +212,15 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     public void onResume() {
         super.onResume();
         viewModel.refresh();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (binding.mainDrawerLayout.isOpen()) {
+            binding.mainDrawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

@@ -44,7 +44,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final MutableLiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<String> restaurantPlaceId = new MutableLiveData<>();
-    private final MutableLiveData<String> restaurantName = new MutableLiveData<>();
+    private String restaurantName;
 
     private final MediatorLiveData<RestaurantDetailsViewState> mediatorLiveData = new MediatorLiveData<>();
 
@@ -136,7 +136,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                         isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
                     );
 
-                    restaurantName.setValue(response.getResult().getName());
+                    restaurantName = response.getResult().getName();
                     if (workmatesList != null) {
                         for (Workmate workmate : workmatesList) {
                             if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())) {
@@ -180,7 +180,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public void selectRestaurant() {
         userRepository.isRestaurantSelectedLiveData(restaurantPlaceId.getValue());
-        userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue(), restaurantName.getValue());
+        userRepository.toggleRestaurantSelected(restaurantPlaceId.getValue(), restaurantName);
     }
 
     public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState) {
