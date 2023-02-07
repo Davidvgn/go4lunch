@@ -36,16 +36,19 @@ public class UserRepository {
     }
 
 
-    public LiveData<DocumentSnapshot> getUserPicturePathLiveData() {
+    public LiveData<User> getUserLiveData() {
 
-        MutableLiveData<DocumentSnapshot> documentSnapshotMutableLiveData = new MutableLiveData<>();
+        MutableLiveData<User> documentSnapshotMutableLiveData = new MutableLiveData<>();
 
-        firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getUid())
-            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firebaseFirestore
+            .collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid())
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
-                        documentSnapshotMutableLiveData.setValue(task.getResult());
+                        documentSnapshotMutableLiveData.setValue(task.getResult().toObject(User.class));
                     } else {
                         Log.d("DavidVgn", "get failed with ", task.getException());
                     }
@@ -54,24 +57,11 @@ public class UserRepository {
         return documentSnapshotMutableLiveData;
     }
 
-    public LiveData<List<String>> getUserNameAndEmailLiveData() {
-        MutableLiveData<List<String>> nameAndEmailListMutableLiveData = new MutableLiveData<>();
-
-        List<String> list = new ArrayList<>();
-        list.add(firebaseAuth.getCurrentUser().getDisplayName());
-        list.add(firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
-
-        nameAndEmailListMutableLiveData.setValue(list);
-
-        return nameAndEmailListMutableLiveData;
-    }
-
-
     public LiveData<Boolean> isRestaurantSelectedLiveData(String placeId) {
         MutableLiveData<Boolean> isSelectedLiveData = new MutableLiveData<>();
         firebaseFirestore
             .collection("users")
-            .document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid())//todo Nino le requireNonNull c'est ok ?
+            .document(firebaseAuth.getCurrentUser().getUid())
             .addSnapshotListener((documentSnapshot, error) -> {
                 if (documentSnapshot != null) {
                     String selectedRestaurantField = documentSnapshot.getString("selectedRestaurant");

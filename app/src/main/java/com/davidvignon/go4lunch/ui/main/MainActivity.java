@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.databinding.HeaderBinding;
 import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
@@ -64,11 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        NavigationView navigationView = findViewById(R.id.main_navigation_view);
-        View headerView = navigationView.getHeaderView(0);
-        TextView navUsername = headerView.findViewById(R.id.header_user_name);
-        ImageView navUserImage = headerView.findViewById(R.id.header_iv);
-        TextView navUseremail = headerView.findViewById(R.id.header_user_email);
+        HeaderBinding headerBinding = HeaderBinding.bind(binding.mainNavigationView.getHeaderView(0));
 
         Toolbar toolbar = binding.mainToolBar;
         toolbar.setTitle(R.string.restaurantViewTitle);
@@ -107,21 +104,16 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             }
         });
 
-        viewModel.getPicturePathLiveData().observe(this, new Observer<String>() {
+        viewModel.getMainViewStateLiveData().observe(this, new Observer<MainViewState>() {
             @Override
-            public void onChanged(String s) {
-                Glide.with(MainActivity.this)
-                    .load(s)
+            public void onChanged(MainViewState state) {
+                Glide.with(headerBinding.headerIv)
+                    .load(state.getImageUrl())
                     .apply(RequestOptions.circleCropTransform())
-                    .into(navUserImage);
-            }
-        });
+                    .into(headerBinding.headerIv);
 
-        viewModel.getNameAndEmailLiveData().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> stringList) {
-                navUsername.setText(stringList.get(0));
-                navUseremail.setText(stringList.get(1));
+                headerBinding.headerUserName.setText(state.getName());
+                headerBinding.headerUserEmail.setText(state.getMail());
             }
         });
 
