@@ -1,69 +1,181 @@
-//package com.davidvignon.go4lunch.ui.workmates;
-//
-//import static org.junit.Assert.assertEquals;
-//
-//import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-//import androidx.lifecycle.LiveData;
-//
-//import com.davidvignon.go4lunch.data.Workmates;
-//import com.davidvignon.go4lunch.data.workmate.WorkmatesRepository;
-//import com.davidvignon.go4lunch.data.users.User;
-//import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
-//import com.google.android.gms.tasks.OnCompleteListener;
-//import com.google.android.gms.tasks.Task;
-//import com.google.firebase.firestore.CollectionReference;
-//import com.google.firebase.firestore.FirebaseFirestore;
-//import com.google.firebase.firestore.QuerySnapshot;
-//
-//import org.junit.Before;
-//import org.junit.Rule;
-//import org.junit.Test;
-//import org.mockito.ArgumentCaptor;
-//import org.mockito.Mockito;
-//
-//import java.util.List;
-//
-//@SuppressWarnings({"rawtypes", "unchecked"})
-//public class WorkmatesViewModelTest {
-//
-//    @Rule
-//    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
-//
-//    private final FirebaseFirestore firebaseFirestore = Mockito.mock(FirebaseFirestore.class);
-//    private final CollectionReference collectionReference = Mockito.mock(CollectionReference.class);
-//    private final Task task = Mockito.mock(Task.class);
-//    private final QuerySnapshot querySnapshot = Mockito.mock(QuerySnapshot.class);
-//    private final List users = Mockito.mock(List.class);
-//
-//    private WorkmatesRepository workmatesRepository;
-//
-//    @Before
-//    public void setUp() {
-//        Mockito.doReturn(collectionReference).when(firebaseFirestore).collection("users");
-//        Mockito.doReturn(task).when(collectionReference).get();
-//
-//        workmatesRepository = new WorkmatesRepository(firebaseFirestore);
-//    }
-//
-//    @Test
-//    public void nominal_case() {
-//        // Given
-//        ArgumentCaptor<OnCompleteListener> onCompleteListenerArgumentCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
-//        Mockito.doReturn(true).when(task).isSuccessful();
-//        Mockito.doReturn(querySnapshot).when(task).getResult();
-//        Mockito.doReturn(users).when(querySnapshot).toObjects(User.class);
-//
-//        // When
-//        LiveData<List<Workmates>> liveData = workmatesRepository.getDataBaseUsers();
-//        Mockito.verify(task).addOnCompleteListener(onCompleteListenerArgumentCaptor.capture());
-//
-//        onCompleteListenerArgumentCaptor.getValue().onComplete(task);
-//
-//        List<Workmates> response = LiveDataTestUtils.getValueForTesting(liveData);
-//
-//        // Then
-//        assertEquals(response, users);
-//
-//    }
-//
-//}
+package com.davidvignon.go4lunch.ui.workmates;
+
+import static org.junit.Assert.assertEquals;
+
+import android.app.Application;
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.MutableLiveData;
+
+import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.data.workmate.Workmate;
+import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
+import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class WorkmatesViewModelTest {
+
+  private static final String DEFAULT_USER_UID = "DEFAULT_USER_UID";
+
+  private static final String DEFAULT_WORKMATE_ID = "DEFAULT_WORKMATE_ID";
+  private static final String DEFAULT_WORKMATE_NAME = "DEFAULT_WORKMATE_NAME";
+  private static final String DEFAULT_WORKMATE_EMAIL = "DEFAULT_WORKMATE_EMAIL";
+  private static final String DEFAULT_WORKMATE_PICTURE_PATH = "DEFAULT_WORKMATE_PICTURE_PATH";
+  private static final String DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID = "DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID";
+  private static final String DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME = "DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME";
+
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
+    private final Application application = Mockito.mock(Application.class);
+    private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
+    private final FirebaseUser firebaseUser = Mockito.mock(FirebaseUser.class);
+    private final MutableLiveData <List<Workmate>> workmateListMutableLiveData = new MutableLiveData<>();
+
+    private WorkmatesViewModel viewModel;
+
+    @Before
+    public void setUp(){
+        Mockito.doReturn(" is").when(application).getString(R.string.a_restaurant_is_selected);
+        Mockito.doReturn(" hasn't").when(application).getString(R.string.no_selected_restaurant);
+        Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getDataBaseUsers();
+        workmateListMutableLiveData.setValue(getWorkmateList());
+
+        Mockito.doReturn(DEFAULT_USER_UID).when(firebaseUser).getUid();
+
+        viewModel = new WorkmatesViewModel(application, workmateRepository, firebaseUser);
+    }
+
+    @Test
+    public void initial_case(){
+        // When
+        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
+
+        // Then
+        assertEquals(getDefaultWorkmateViewState(), viewStates);
+
+    }
+
+    @Test
+    public void current_user_is_not_added_in_the_list(){
+        // Given
+        workmateListMutableLiveData.setValue(getWorkmateListWithCurrentUserInIt());
+
+        // When
+        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
+
+        // Then
+        assertEquals(3, viewStates.size());
+    }
+
+    @Test
+    public void if_workmates_have_selected_a_restaurant_is_value_is_added_to_their_name_instead_of_hasnt(){
+        workmateListMutableLiveData.setValue(getWorkmateListWithRestaurantSelected());
+
+        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
+
+        assertEquals(getDefaultWorkmateViewStateWithRestaurantSelected(), viewStates);
+
+    }
+
+    // region IN
+    private List<Workmate> getWorkmateList(){
+        List<Workmate> workmateList = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++){
+            workmateList.add(new Workmate(
+                DEFAULT_WORKMATE_ID + i,
+                DEFAULT_WORKMATE_NAME + i,
+                DEFAULT_WORKMATE_EMAIL + i,
+                DEFAULT_WORKMATE_PICTURE_PATH + i,
+                null,
+                null
+            ));
+        }
+        return workmateList;
+    }
+
+    private List<Workmate> getWorkmateListWithRestaurantSelected(){
+        List<Workmate> workmateList = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++){
+            workmateList.add(new Workmate(
+                DEFAULT_WORKMATE_ID + i,
+                DEFAULT_WORKMATE_NAME + i,
+                DEFAULT_WORKMATE_EMAIL + i,
+                DEFAULT_WORKMATE_PICTURE_PATH + i,
+                 DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID + i,
+                DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME + i
+            ));
+        }
+        return workmateList;
+    }
+
+    private List<Workmate> getWorkmateListWithCurrentUserInIt(){
+        List<Workmate> workmateList = new ArrayList<>();
+
+        workmateList.add(new Workmate(
+            DEFAULT_USER_UID ,
+            DEFAULT_WORKMATE_NAME,
+            DEFAULT_WORKMATE_EMAIL,
+            DEFAULT_WORKMATE_PICTURE_PATH,
+            DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID,
+            DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME
+        ));
+
+        for(int i = 0; i < 3; i++){
+            workmateList.add(new Workmate(
+                DEFAULT_WORKMATE_ID + i,
+                DEFAULT_WORKMATE_NAME + i,
+                DEFAULT_WORKMATE_EMAIL + i,
+                DEFAULT_WORKMATE_PICTURE_PATH + i,
+                DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID + i,
+                DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME + i
+            ));
+        }
+        return workmateList;
+    }
+    // endregion IN
+
+    // region OUT
+    private List<WorkmatesViewState> getDefaultWorkmateViewState(){
+        List<WorkmatesViewState> workmateList = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++){
+            workmateList.add(new WorkmatesViewState(
+                DEFAULT_WORKMATE_ID + i,
+                DEFAULT_WORKMATE_NAME + i + " hasn't",
+                DEFAULT_WORKMATE_PICTURE_PATH + i,
+                null,
+                null
+            ));
+        }
+        return workmateList;
+    }
+
+    private List<WorkmatesViewState> getDefaultWorkmateViewStateWithRestaurantSelected(){
+        List<WorkmatesViewState> workmateList = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++){
+            workmateList.add(new WorkmatesViewState(
+                DEFAULT_WORKMATE_ID + i,
+                DEFAULT_WORKMATE_NAME + i + " is",
+                DEFAULT_WORKMATE_PICTURE_PATH + i,
+                DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID + i,
+                DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME + i
+            ));
+        }
+        return workmateList;
+    }
+    // endregion OUT
+
+}

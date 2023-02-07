@@ -1,11 +1,14 @@
 package com.davidvignon.go4lunch.ui.workmates;
 
+import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,13 +24,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class WorkmatesViewModel extends ViewModel {
 
+    private final Application application;
+
     private final LiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData;
 
     @NonNull
     private final FirebaseUser firebaseUser;
 
     @Inject
-    public WorkmatesViewModel(WorkmateRepository workmateRepository, @NonNull FirebaseUser firebaseUser) {
+    public WorkmatesViewModel(Application application, WorkmateRepository workmateRepository, @NonNull FirebaseUser firebaseUser) {
+        this.application = application;
         this.firebaseUser = firebaseUser;
         LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsers();
         workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
@@ -47,8 +53,7 @@ public class WorkmatesViewModel extends ViewModel {
 
                 for (Workmate workmate : workmates) {
                     if (!workmate.getId().equals(firebaseUser.getUid())) {
-                        String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + " hasn't" : workmate.getName() + " is";
-
+                        String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName() + application.getString(R.string.a_restaurant_is_selected);
                         viewStates.add(
                             new WorkmatesViewState(
                                 workmate.getId(),

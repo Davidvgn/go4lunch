@@ -6,12 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +34,38 @@ public class UserRepository {
         this.firebaseFirestore = firebaseFirestore;
         this.firebaseAuth = firebaseAuth;
     }
+
+
+    public LiveData<DocumentSnapshot> getUserPicturePathLiveData() {
+
+        MutableLiveData<DocumentSnapshot> documentSnapshotMutableLiveData = new MutableLiveData<>();
+
+        firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getUid())
+            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        documentSnapshotMutableLiveData.setValue(task.getResult());
+                    } else {
+                        Log.d("DavidVgn", "get failed with ", task.getException());
+                    }
+                }
+            });
+        return documentSnapshotMutableLiveData;
+    }
+
+    public LiveData<List<String>> getUserNameAndEmailLiveData() {
+        MutableLiveData<List<String>> nameAndEmailListMutableLiveData = new MutableLiveData<>();
+
+        List<String> list = new ArrayList<>();
+        list.add(firebaseAuth.getCurrentUser().getDisplayName());
+        list.add(firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
+
+        nameAndEmailListMutableLiveData.setValue(list);
+
+        return nameAndEmailListMutableLiveData;
+    }
+
 
     public LiveData<Boolean> isRestaurantSelectedLiveData(String placeId) {
         MutableLiveData<Boolean> isSelectedLiveData = new MutableLiveData<>();
@@ -134,7 +169,7 @@ public class UserRepository {
                     if (documentSnapshot.get("selectedRestaurant") != null) {
                         String firestoreList = documentSnapshot.get("selectedRestaurant").toString();
                         selectedRestaurantFieldMutable.setValue(firestoreList);
-                    } else{
+                    } else {
                         selectedRestaurantFieldMutable.setValue(null);
                     }
                 }

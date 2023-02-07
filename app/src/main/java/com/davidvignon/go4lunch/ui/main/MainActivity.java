@@ -1,8 +1,10 @@
 package com.davidvignon.go4lunch.ui.main;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +13,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,14 +35,10 @@ import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.utils.EventWrapper;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.facebook.login.LoginManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -57,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     //todo david gérer les couleurs
     //todo david gérer la traduction des strings
     //todo david warnings
-
+//todo david tronquer dans workmateslist si nom e restaurant trop long
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,37 +80,48 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        binding.locationButton.setOnClickListener(new View.OnClickListener() {
+        viewModel.getNotificationDialogSingleLiveEvent().observe(this, new Observer<Void>() {
             @Override
-            public void onClick(View view) {
+            public void onChanged(Void unused) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Notifications disabled");// todo david  all text in strings
+            builder.setMessage("Please enable notifications in the settings to receive updates.");
+            builder.setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
             }
         });
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // TODO By ViewModel
-        DocumentReference docRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        binding.locationButton.setOnClickListener(new View.OnClickListener() {//todo david
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        String userPicturePath = document.get("picturePath").toString();
+            public void onClick(View view) {
 
-                        String fullName = firebaseUser.getDisplayName();
-                        String email = firebaseUser.getProviderData().get(1).getEmail();
+            }
+        });
 
-                        navUsername.setText(fullName);
-                        navUseremail.setText(email);
-                        Glide.with(MainActivity.this)
-                            .load(userPicturePath)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(navUserImage);
-                    } else {
-                        Log.d("DavidVgn", "No such document");
-                    }
-                } else {
-                    Log.d("DavidVgn", "get failed with ", task.getException());
-                }
+        viewModel.getPicturePathLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Glide.with(MainActivity.this)
+                    .load(s)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(navUserImage);
+            }
+        });
+
+        viewModel.getNameAndEmailLiveData().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> stringList) {
+                navUsername.setText(stringList.get(0));
+                navUseremail.setText(stringList.get(1));
             }
         });
 

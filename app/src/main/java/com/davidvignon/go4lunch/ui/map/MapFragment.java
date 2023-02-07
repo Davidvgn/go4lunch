@@ -1,9 +1,13 @@
 package com.davidvignon.go4lunch.ui.map;
 
+import static android.os.Build.VERSION_CODES.R;
+
 import android.Manifest;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -11,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.databinding.MainActivityBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
