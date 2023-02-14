@@ -96,17 +96,8 @@ public class DataModule {
     }
 
     @Provides
-    public FirebaseUser provideCurrentUser() {return FirebaseAuth.getInstance().getCurrentUser();}
-
-    @Provides
     public Looper provideLooper() {
         return Looper.getMainLooper();
-    }
-
-    @Singleton
-    @Provides
-    public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
-        return context.getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE);
     }
 
     @Singleton

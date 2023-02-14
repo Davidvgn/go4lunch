@@ -1,9 +1,11 @@
 package com.davidvignon.go4lunch.data.permission;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.POST_NOTIFICATIONS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 import android.content.Context;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -26,5 +28,13 @@ public class PermissionRepository {
 
     public boolean isLocationPermissionGranted() {
         return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+    }
+
+    public boolean isNotificationPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
     }
 }

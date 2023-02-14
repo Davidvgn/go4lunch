@@ -1,9 +1,7 @@
 package com.davidvignon.go4lunch.ui.settings;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -32,9 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
     //todo david : est ce que mon user a choisi un resto sinon lui dire qu'il n'a pas choisi de resto
     //todo david si user désactive switch -> désactiver worker
 
-    private static final String SWITCH_KEY = "SWITCH_KEY";
-    private static final String SHARED_PREFERENCES = "SHARED_PREFERENCES";
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,17 +39,16 @@ public class SettingsActivity extends AppCompatActivity {
 
         SettingsViewModel viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
 
-        binding.notificationSw.setChecked((sharedPreferences.getBoolean(SWITCH_KEY, false)));
-
-        viewModel.getSwitchValueLiveData().observe(this, aBoolean -> binding.notificationSw.setOnCheckedChangeListener((compoundButton, newSwitchValue) -> {
-            viewModel.getNewSwitchValue(newSwitchValue);
+        binding.notificationSw.setOnCheckedChangeListener((compoundButton, newCheckValue) -> {
+            viewModel.onCheckClicked(newCheckValue);
             test();//todo david
-        }));
+        });
+
+        //noinspection Convert2MethodRef
+        viewModel.getSwitchValueLiveData().observe(this, checked -> binding.notificationSw.setChecked(checked));
     }
 
-    @SuppressLint("MissingPermission")
     public void test() {//todo david
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "name";
@@ -79,6 +73,8 @@ public class SettingsActivity extends AppCompatActivity {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
 
         notificationManager.notify(0, builder.build());
+
+        // TODO David use l
 
         OneTimeWorkRequest myWorkRequest =
             new OneTimeWorkRequest.Builder(NotificationWorker.class)

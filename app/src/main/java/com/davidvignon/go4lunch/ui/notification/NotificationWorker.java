@@ -31,6 +31,8 @@ public class NotificationWorker extends Worker {
     @Override
     public Result doWork() {
         Log.d("NotificationWorker", "Sending notification");
+
+
         return Result.success();
     }
 }

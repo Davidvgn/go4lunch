@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +27,12 @@ public class WorkmatesViewModel extends ViewModel {
     private final LiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData;
 
     @NonNull
-    private final FirebaseUser firebaseUser;
+    private final FirebaseAuth firebaseAuth;
 
     @Inject
-    public WorkmatesViewModel(Application application, WorkmateRepository workmateRepository, @NonNull FirebaseUser firebaseUser) {
+    public WorkmatesViewModel(Application application, WorkmateRepository workmateRepository, @NonNull FirebaseAuth firebaseAuth) {
         this.application = application;
-        this.firebaseUser = firebaseUser;
+        this.firebaseAuth = firebaseAuth;
         LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsers();
         workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
     }
@@ -48,7 +48,7 @@ public class WorkmatesViewModel extends ViewModel {
             List<WorkmatesViewState> viewStates = new ArrayList<>();
 
             for (Workmate workmate : workmates) {
-                if (!workmate.getId().equals(firebaseUser.getUid())) {
+                if (!workmate.getId().equals(firebaseAuth.getCurrentUser().getUid())) {
                     String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName() + application.getString(R.string.a_restaurant_is_selected);
                     viewStates.add(
                         new WorkmatesViewState(

@@ -10,8 +10,8 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.data.chatMessage.ChatMessage;
-import com.davidvignon.go4lunch.data.chatMessage.ChatMessageRepository;
+import com.davidvignon.go4lunch.data.chat_message.ChatMessage;
+import com.davidvignon.go4lunch.data.chat_message.ChatMessageRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,10 +45,13 @@ public class ChatViewModel extends ViewModel {
     private final String workmateId;
 
     @Inject
-    public ChatViewModel(@NonNull FirebaseUser firebaseUser, @NonNull WorkmateRepository workmateRepository, @NonNull ChatMessageRepository chatMessageRepository, @NonNull SavedStateHandle savedStateHandle
+    public ChatViewModel(
+        @NonNull WorkmateRepository workmateRepository,
+        @NonNull ChatMessageRepository chatMessageRepository,
+        @NonNull SavedStateHandle savedStateHandle
     ) {
         this.chatMessageRepository = chatMessageRepository;
-        this.firebaseUser = firebaseUser;
+        this.firebaseAuth=
 
         workmateId = savedStateHandle.get(KEY_WORKMATE_ID);
         LiveData<Workmate> workmateLiveData = workmateRepository.getWorkmateInfo(workmateId);

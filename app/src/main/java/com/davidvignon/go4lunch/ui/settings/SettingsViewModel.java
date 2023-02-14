@@ -1,13 +1,10 @@
 package com.davidvignon.go4lunch.ui.settings;
 
-import android.content.SharedPreferences;
-
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.data.SettingsRepository;
+import com.davidvignon.go4lunch.data.permission.PermissionRepository;
+import com.davidvignon.go4lunch.data.preferences.PreferencesRepository;
 
 import javax.inject.Inject;
 
@@ -15,42 +12,34 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
-    private static final String SWITCH_KEY = "SWITCH_KEY";
-    private final SharedPreferences sharedPreferences;
-    private final MutableLiveData<Boolean> switchStateMutableLiveData = new MutableLiveData<>();
-    private final MediatorLiveData<Boolean> mediatorLiveData = new MediatorLiveData<>();
-
+    private final PreferencesRepository preferencesRepository;
+    private final PermissionRepository permissionRepository;
+    private final LiveData<Boolean> switchStateLiveData;
 
     @Inject
     public SettingsViewModel(
-        SharedPreferences sharedPreferences,
-        SettingsRepository settingsRepository
+        PreferencesRepository preferencesRepository,
+        PermissionRepository permissionRepository
     ) {
-        this.sharedPreferences = sharedPreferences;
+        this.preferencesRepository = preferencesRepository;
+        this.permissionRepository = permissionRepository;
 
-        switchStateMutableLiveData.setValue(settingsRepository.getSwitchValue());
-
-        mediatorLiveData.addSource(switchStateMutableLiveData, switchValue -> combine(switchValue));
-    }
-
-    public void combine(Boolean switchValue) {
-        if (switchValue == null) {
-            switchValue = false;
-        }
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(SWITCH_KEY, switchValue);
-        editor.apply();
-
-        mediatorLiveData.setValue(switchValue);
-
+        switchStateLiveData = preferencesRepository.isLunchNotificationEnabledLiveData();
     }
 
     public LiveData<Boolean> getSwitchValueLiveData() {
-        return mediatorLiveData;
+        return switchStateLiveData;
     }
 
-    public void getNewSwitchValue(boolean value) {
-        switchStateMutableLiveData.setValue(value);
+    public void onCheckClicked(boolean isEnabled) {
+        if (isEnabled) {
+            if (!permissionRepository.isNotificationPermissionGranted()) {
+                // TODO DAVID ASK Notification permission here !
+            } else {
+                preferencesRepository.setLunchNotificationEnabled(true);
+            }
+        } else {
+            preferencesRepository.setLunchNotificationEnabled(false);
+        }
     }
 }

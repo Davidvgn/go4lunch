@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.data.chatMessage;
+package com.davidvignon.go4lunch.data.chat_message;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;

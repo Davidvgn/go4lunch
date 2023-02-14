@@ -55,10 +55,7 @@ public class MapFragment extends SupportMapFragment {
 
             });
             googleMap.setOnInfoWindowClickListener(marker -> Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show());
-            viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> {
-                //noinspection Convert2MethodRef
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-            });
+            viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)));
         });
     }
 }
