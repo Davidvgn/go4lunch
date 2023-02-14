@@ -8,11 +8,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.databinding.AuthActivityBinding;
 import com.davidvignon.go4lunch.ui.main.MainActivity;
 import com.facebook.CallbackManager;
@@ -62,15 +60,10 @@ public class OAuthActivity extends AppCompatActivity {
         binding.authFacebookLoginButton.setPermissions("email", "public_profile", "user_photos");
 
         binding.authFacebookLoginButton.registerCallback(callbackManager,
-            new FacebookCallback<LoginResult>() {
+            new FacebookCallback<>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    viewModel.getFacebookUserInfo(loginResult.getAccessToken()).observe(OAuthActivity.this, new Observer<User>() {
-                        @Override
-                        public void onChanged(User user) {
-                            startActivity(new Intent(OAuthActivity.this, MainActivity.class));
-                        }
-                    });
+                    viewModel.getFacebookUserInfo(loginResult.getAccessToken()).observe(OAuthActivity.this, user -> startActivity(new Intent(OAuthActivity.this, MainActivity.class)));
                 }
 
                 @Override
@@ -87,12 +80,7 @@ public class OAuthActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-        viewModel.getGoogleUserInfo(task).observe(OAuthActivity.this, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                startActivity(new Intent(OAuthActivity.this, MainActivity.class));
-            }
-        });
+        viewModel.getGoogleUserInfo(task).observe(OAuthActivity.this, user -> startActivity(new Intent(OAuthActivity.this, MainActivity.class)));
     });
 
     @Override

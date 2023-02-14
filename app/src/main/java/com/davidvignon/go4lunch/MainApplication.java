@@ -16,7 +16,6 @@ public class MainApplication extends Application implements Configuration.Provid
 
     @Inject
     HiltWorkerFactory workerFactory;
-
     @NonNull
     @Override
     public Configuration getWorkManagerConfiguration() {
@@ -24,5 +23,7 @@ public class MainApplication extends Application implements Configuration.Provid
             .setWorkerFactory(workerFactory)
             .build();
     }
+
+
 }
 

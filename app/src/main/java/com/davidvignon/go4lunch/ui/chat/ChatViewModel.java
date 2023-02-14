@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
@@ -55,19 +54,9 @@ public class ChatViewModel extends ViewModel {
         LiveData<Workmate> workmateLiveData = workmateRepository.getWorkmateInfo(workmateId);
         LiveData<List<ChatMessage>> chatMessagesLiveData = chatMessageRepository.getChatMessagesLiveData(workmateId);
 
-        chatViewStateMediatorLiveData.addSource(workmateLiveData, new Observer<Workmate>() {
-            @Override
-            public void onChanged(Workmate workmate) {
-                combine(workmate, chatMessagesLiveData.getValue());
-            }
-        });
+        chatViewStateMediatorLiveData.addSource(workmateLiveData, workmate -> combine(workmate, chatMessagesLiveData.getValue()));
 
-        chatViewStateMediatorLiveData.addSource(chatMessagesLiveData, new Observer<List<ChatMessage>>() {
-            @Override
-            public void onChanged(List<ChatMessage> sentMessagesList) {
-                combine(workmateLiveData.getValue(), sentMessagesList);
-            }
-        });
+        chatViewStateMediatorLiveData.addSource(chatMessagesLiveData, sentMessagesList -> combine(workmateLiveData.getValue(), sentMessagesList));
     }
 
     public void combine(@Nullable Workmate workmate, @Nullable List<ChatMessage> chatMessages) {

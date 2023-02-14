@@ -1,14 +1,8 @@
 package com.davidvignon.go4lunch.data.user;
 
-import static org.junit.Assert.assertEquals;
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
 
-import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.data.users.UserRepository;
-import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -19,10 +13,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.util.EventListener;
 import java.util.List;
 
 @SuppressWarnings({"rawtypes", "unchecked"})

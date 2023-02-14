@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.workmates;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -74,12 +73,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewState, WorkmatesA
                 .load(item.getPicturePath())
                 .apply(RequestOptions.circleCropTransform())
                 .into(binding.itemListAvatar);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onWorkmateClicked(item.getId());
-                }
-            });
+            itemView.setOnClickListener(view -> listener.onWorkmateClicked(item.getId()));
         }
     }
 

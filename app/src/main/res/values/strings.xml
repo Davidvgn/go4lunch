@@ -45,5 +45,7 @@
     <string name="no_restaurant_selected">No Restaurant Selected</string>
     <string name="no_selected_restaurant">\ hasn\'t\</string>
     <string name="a_restaurant_is_selected">\ is\</string>
+    <string name="settings_title">Settings</string>
+    <string name="lunch_notification">Lunch notification</string>
 
 </resources>

@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.details;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,17 +56,14 @@ public class RestaurantDetailsActivity extends AppCompatActivity implements OnWo
 
                 binding.restaurantDetailsFab.setImageResource(restaurantDetailsViewState.getSelectedButtonIcon());
 
-                binding.restaurantDetailsBtLike.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        viewModel.onLikedButtonClicked();
-                        binding.restaurantDetailsBtLike.setCompoundDrawables(
-                            null,
-                            ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
-                            null,
-                            null
-                        );
-                    }
+                binding.restaurantDetailsBtLike.setOnClickListener(v -> {
+                    viewModel.onLikedButtonClicked();
+                    binding.restaurantDetailsBtLike.setCompoundDrawables(
+                        null,
+                        ResourcesCompat.getDrawable(getResources(), restaurantDetailsViewState.getLikeButtonIcon(), null),
+                        null,
+                        null
+                    );
                 });
 
                 binding.restaurantDetailsBtWebsite.setOnClickListener(view -> {
@@ -77,12 +73,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity implements OnWo
                 });
 
 
-                binding.restaurantDetailsFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        viewModel.selectRestaurant();
-                    }
-                });
+                binding.restaurantDetailsFab.setOnClickListener(view -> viewModel.selectRestaurant());
 
                 adapter.submitList(viewModel.getWorkmatesViewStates().getValue());
 

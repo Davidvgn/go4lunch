@@ -1,16 +1,14 @@
 package com.davidvignon.go4lunch.ui.main;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+
+import android.annotation.SuppressLint;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -18,7 +16,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -31,23 +29,22 @@ import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
+import com.davidvignon.go4lunch.ui.settings.SettingsActivity;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
-import com.davidvignon.go4lunch.ui.utils.EventWrapper;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.facebook.login.LoginManager;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener, OnWorkmateClickedListener {
+public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener,
+    OnWorkmateClickedListener {
 
     private MainActivityBinding binding;
     private MainViewModel viewModel;
+
     //todo david notification
     //todo david redirection vers resto quand click sur marker
     //todo david repositionnement de la carte quand click sur icone + un border why not...
@@ -56,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     //todo david gérer la traduction des strings
     //todo david warnings
 //todo david tronquer dans workmateslist si nom e restaurant trop long
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,44 +75,18 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        viewModel.getNotificationDialogSingleLiveEvent().observe(this, new Observer<Void>() {
-            @Override
-            public void onChanged(Void unused) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Notifications disabled");// todo david  all text in strings
-            builder.setMessage("Please enable notifications in the settings to receive updates.");
-            builder.setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                    startActivity(intent);
-                }
-            });
-            builder.setNegativeButton("Cancel", null);
-            builder.show();
-            }
+        //todo david
+        binding.locationButton.setOnClickListener(view -> {
         });
 
-        binding.locationButton.setOnClickListener(new View.OnClickListener() {//todo david
-            @Override
-            public void onClick(View view) {
+        viewModel.getMainViewStateLiveData().observe(this, state -> {
+            Glide.with(headerBinding.headerIv)
+                .load(state.getImageUrl())
+                .apply(RequestOptions.circleCropTransform())
+                .into(headerBinding.headerIv);
 
-            }
-        });
-
-        viewModel.getMainViewStateLiveData().observe(this, new Observer<MainViewState>() {
-            @Override
-            public void onChanged(MainViewState state) {
-                Glide.with(headerBinding.headerIv)
-                    .load(state.getImageUrl())
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(headerBinding.headerIv);
-
-                headerBinding.headerUserName.setText(state.getName());
-                headerBinding.headerUserEmail.setText(state.getMail());
-            }
+            headerBinding.headerUserName.setText(state.getName());
+            headerBinding.headerUserEmail.setText(state.getMail());
         });
 
         toolbar.setNavigationOnClickListener(view -> binding.mainDrawerLayout.open());
@@ -125,10 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     viewModel.onMyLunchClicked();
                     return true;
                 case (R.id.nav_settings):
-                    Intent intent = new Intent();
-                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+                    Intent intent = new Intent(this, SettingsActivity.class);
                     startActivity(intent);
                     return true;
                 case (R.id.nav_logout):
@@ -166,17 +135,14 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             return true;
         });
 
-        viewModel.getMainActionLiveData().observe(this, new Observer<EventWrapper<MainAction>>() {
-            @Override
-            public void onChanged(EventWrapper<MainAction> wrapper) {
-                MainAction mainAction = wrapper.getContentIfNotHandled();
+        viewModel.getMainActionLiveData().observe(this, wrapper -> {
+            MainAction mainAction = wrapper.getContentIfNotHandled();
 
-                if (mainAction != null) {
-                    if (mainAction instanceof MainAction.Toast) {
-                        Toast.makeText(MainActivity.this, ((MainAction.Toast) mainAction).messageStringRes, Toast.LENGTH_SHORT).show();
-                    } else if (mainAction instanceof MainAction.DetailNavigation) {
-                        startActivity(RestaurantDetailsViewModel.navigate(MainActivity.this, ((MainAction.DetailNavigation) mainAction).placeId));
-                    }
+            if (mainAction != null) {
+                if (mainAction instanceof MainAction.Toast) {
+                    Toast.makeText(MainActivity.this, ((MainAction.Toast) mainAction).messageStringRes, Toast.LENGTH_SHORT).show();
+                } else if (mainAction instanceof MainAction.DetailNavigation) {
+                    startActivity(RestaurantDetailsViewModel.navigate(MainActivity.this, ((MainAction.DetailNavigation) mainAction).placeId));
                 }
             }
         });
@@ -232,4 +198,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     public void onWorkmateClicked(String workmateId) {
         startActivity(ChatViewModel.navigate(this, workmateId));
     }
+
+
 }

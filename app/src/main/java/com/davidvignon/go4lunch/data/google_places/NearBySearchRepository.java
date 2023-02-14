@@ -33,7 +33,7 @@ public class NearBySearchRepository {
             "1500",
             "restaurant",
             "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8" //todo Nino on ne doit pas laisser la clé visible je suppose
-        ).enqueue(new Callback<NearbySearchResponse>() {
+        ).enqueue(new Callback<>() {
 
             @Override
             public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {

@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.workmates;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -11,7 +10,6 @@ import androidx.lifecycle.ViewModel;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -46,27 +44,24 @@ public class WorkmatesViewModel extends ViewModel {
 
     @NonNull
     private LiveData<List<WorkmatesViewState>> bindViewState(LiveData<List<Workmate>> dataBaseUsersLiveData) {
-        return Transformations.map(dataBaseUsersLiveData, new Function<List<Workmate>, List<WorkmatesViewState>>() {
-            @Override
-            public List<WorkmatesViewState> apply(List<Workmate> workmates) {
-                List<WorkmatesViewState> viewStates = new ArrayList<>();
+        return Transformations.map(dataBaseUsersLiveData, workmates -> {
+            List<WorkmatesViewState> viewStates = new ArrayList<>();
 
-                for (Workmate workmate : workmates) {
-                    if (!workmate.getId().equals(firebaseUser.getUid())) {
-                        String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName() + application.getString(R.string.a_restaurant_is_selected);
-                        viewStates.add(
-                            new WorkmatesViewState(
-                                workmate.getId(),
-                                workmateName,
-                                workmate.getPicturePath(),
-                                workmate.getSelectedRestaurant(),
-                                workmate.getSelectedRestaurantName()
-                            )
-                        );
-                    }
+            for (Workmate workmate : workmates) {
+                if (!workmate.getId().equals(firebaseUser.getUid())) {
+                    String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName() + application.getString(R.string.a_restaurant_is_selected);
+                    viewStates.add(
+                        new WorkmatesViewState(
+                            workmate.getId(),
+                            workmateName,
+                            workmate.getPicturePath(),
+                            workmate.getSelectedRestaurant(),
+                            workmate.getSelectedRestaurantName()
+                        )
+                    );
                 }
-                return viewStates;
             }
+            return viewStates;
         });
     }
 }

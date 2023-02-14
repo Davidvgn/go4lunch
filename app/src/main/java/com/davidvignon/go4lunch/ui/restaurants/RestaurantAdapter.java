@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -59,12 +58,7 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
                 .load(restaurantPicture)
                 .into(binding.restaurantItemIvPicture);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onRestaurantClicked(item.getPlaceId());
-                }
-            });
+            itemView.setOnClickListener(view -> listener.onRestaurantClicked(item.getPlaceId()));
         }
     }
 

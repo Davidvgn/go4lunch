@@ -6,15 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,14 +41,11 @@ public class UserRepository {
             .collection("users")
             .document(firebaseAuth.getCurrentUser().getUid())
             .get()
-            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        documentSnapshotMutableLiveData.setValue(task.getResult().toObject(User.class));
-                    } else {
-                        Log.d("DavidVgn", "get failed with ", task.getException());
-                    }
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    documentSnapshotMutableLiveData.setValue(task.getResult().toObject(User.class));
+                } else {
+                    Log.d("DavidVgn", "get failed with ", task.getException());
                 }
             });
         return documentSnapshotMutableLiveData;
@@ -86,25 +80,17 @@ public class UserRepository {
             String selectedRestaurantField = task.getResult().getString("selectedRestaurant");
             if (!Objects.equals(selectedRestaurantField, placeId)) {
                 documentReference.update("selectedRestaurant", (placeId))
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!");
-                    })
+                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
                     .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
                 documentReference.update("selectedRestaurantName", (restaurantName))
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!");
-                    })
+                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
                     .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
             } else {
                 documentReference.update("selectedRestaurant", null)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!");
-                    })
+                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
                     .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
                 documentReference.update("selectedRestaurantName", (null))
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!");
-                    })
+                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
                     .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
             }
         });
@@ -166,5 +152,8 @@ public class UserRepository {
             });
         return selectedRestaurantFieldMutable;
     }
+
+
+
 }
 

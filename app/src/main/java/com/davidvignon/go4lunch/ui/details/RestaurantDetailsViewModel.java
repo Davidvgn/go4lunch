@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
@@ -65,34 +64,13 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         restaurantPlaceId.setValue(placeId);
 
-        mediatorLiveData.addSource(detailsResponseLiveData, new Observer<DetailsResponse>() {
-            @Override
-            public void onChanged(DetailsResponse detailsResponse) {
-                combine(detailsResponse, isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(detailsResponseLiveData, detailsResponse -> combine(detailsResponse, isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue()));
 
-        mediatorLiveData.addSource(isRestaurantLikedLiveData, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isLiked) {
-                combine(detailsResponseLiveData.getValue(), isLiked, isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(isRestaurantLikedLiveData, isLiked -> combine(detailsResponseLiveData.getValue(), isLiked, isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue()));
 
-        mediatorLiveData.addSource(isRestaurantSelectedLiveData, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isSelected) {
-                combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isSelected, workmatesLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(isRestaurantSelectedLiveData, isSelected -> combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isSelected, workmatesLiveData.getValue()));
 
-        mediatorLiveData.addSource(workmatesLiveData, new Observer<List<Workmate>>() {
-            @Override
-            public void onChanged(List<Workmate> workmates) {
-                combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates);
-
-            }
-        });
+        mediatorLiveData.addSource(workmatesLiveData, workmates -> combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates));
     }
 
     //todo david : gérer la couleur du selected qui est black et non blue

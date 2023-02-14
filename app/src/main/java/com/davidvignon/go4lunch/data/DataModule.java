@@ -1,7 +1,10 @@
 package com.davidvignon.go4lunch.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Looper;
+
+import androidx.work.WorkManager;
 
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -99,4 +102,17 @@ public class DataModule {
     public Looper provideLooper() {
         return Looper.getMainLooper();
     }
+
+    @Singleton
+    @Provides
+    public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
+        return context.getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE);
+    }
+
+    @Singleton
+    @Provides
+    public WorkManager provideWorkManager(@ApplicationContext Context context) {
+        return WorkManager.getInstance(context);
+    }
+
 }

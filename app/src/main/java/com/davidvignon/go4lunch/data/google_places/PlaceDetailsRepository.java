@@ -30,16 +30,16 @@ public class PlaceDetailsRepository {
         MutableLiveData<DetailsResponse> detailsResponseMutableLiveData = new MutableLiveData<>();
 
        placesApi.getDetailsResponse(placeId,
-            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8").enqueue(new Callback<DetailsResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<DetailsResponse> call, @NonNull Response<DetailsResponse> response) {
-                detailsResponseMutableLiveData.setValue(response.body());
-            }
+            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8").enqueue(new Callback<>() {
+           @Override
+           public void onResponse(@NonNull Call<DetailsResponse> call, @NonNull Response<DetailsResponse> response) {
+               detailsResponseMutableLiveData.setValue(response.body());
+           }
 
-            @Override
-            public void onFailure(@NonNull Call<DetailsResponse> call, @NonNull Throwable t) {
-            }
-        });
+           @Override
+           public void onFailure(@NonNull Call<DetailsResponse> call, @NonNull Throwable t) {
+           }
+       });
         return detailsResponseMutableLiveData;
     }
 }
