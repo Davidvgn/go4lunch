@@ -14,7 +14,7 @@ import com.davidvignon.go4lunch.data.chat_message.ChatMessage;
 import com.davidvignon.go4lunch.data.chat_message.ChatMessageRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -38,7 +38,7 @@ public class ChatViewModel extends ViewModel {
     }
 
     private final ChatMessageRepository chatMessageRepository;
-    private final FirebaseUser firebaseUser;
+    private final FirebaseAuth firebaseAuth;
 
     private final MediatorLiveData<ChatViewState> chatViewStateMediatorLiveData = new MediatorLiveData<>();
 
@@ -48,13 +48,14 @@ public class ChatViewModel extends ViewModel {
     public ChatViewModel(
         @NonNull WorkmateRepository workmateRepository,
         @NonNull ChatMessageRepository chatMessageRepository,
-        @NonNull SavedStateHandle savedStateHandle
+        @NonNull SavedStateHandle savedStateHandle,
+        FirebaseAuth firebaseAuth
     ) {
         this.chatMessageRepository = chatMessageRepository;
-        this.firebaseAuth=
+        this.firebaseAuth = firebaseAuth;
 
         workmateId = savedStateHandle.get(KEY_WORKMATE_ID);
-        LiveData<Workmate> workmateLiveData = workmateRepository.getWorkmateInfo(workmateId);
+        LiveData<Workmate> workmateLiveData = workmateRepository.getWorkmateInfoLiveData(workmateId);
         LiveData<List<ChatMessage>> chatMessagesLiveData = chatMessageRepository.getChatMessagesLiveData(workmateId);
 
         chatViewStateMediatorLiveData.addSource(workmateLiveData, workmate -> combine(workmate, chatMessagesLiveData.getValue()));
@@ -76,7 +77,7 @@ public class ChatViewModel extends ViewModel {
             chatViewStateItems.add(
                 new ChatViewStateItem(
                     chatMessage.getUuid(),
-                    isFromWorkmate ? workmate.getName() : firebaseUser.getDisplayName(),
+                    isFromWorkmate ? workmate.getName() : firebaseAuth.getCurrentUser().getDisplayName(),
                     chatMessage.getMessage(),
                     Instant.ofEpochMilli(chatMessage.getEpochMilli()).atZone(ZoneId.systemDefault()).format(timeFormatter)
                 )

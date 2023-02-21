@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.data;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Looper;
 
 import androidx.work.WorkManager;
@@ -10,7 +9,6 @@ import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

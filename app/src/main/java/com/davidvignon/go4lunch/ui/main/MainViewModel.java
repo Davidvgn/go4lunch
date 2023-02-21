@@ -43,7 +43,7 @@ public class MainViewModel extends ViewModel {
         this.permissionRepository = permissionRepository;
         this.locationRepository = locationRepository;
 
-        LiveData<String> placeIdLiveData = userRepository.getRestaurantPlaceId();
+        LiveData<String> placeIdLiveData = userRepository.getRestaurantPlaceIdLiveData();
         LiveData<User> userLiveData = userRepository.getUserLiveData();
 
         mainViewStateLiveData = Transformations.map(userLiveData, user -> new MainViewState(

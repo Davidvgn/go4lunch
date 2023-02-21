@@ -53,7 +53,6 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewState, WorkmatesA
 
                 binding.itemListName.setTextColor(Color.BLACK);
 
-//                binding.itemListSentence.setText(R.string.is_eating_at);
                 binding.itemListSentence.setText(R.string.is_eating_at);
 
                 binding.itemListRestaurantName.setText(item.getSelectedRestaurantName());

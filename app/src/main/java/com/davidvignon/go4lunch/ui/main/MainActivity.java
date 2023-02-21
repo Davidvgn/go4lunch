@@ -1,13 +1,10 @@
 package com.davidvignon.go4lunch.ui.main;
 
 
-import android.annotation.SuppressLint;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -46,14 +43,14 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     private MainViewModel viewModel;
 
     //todo david notification
+    //todo david recherche
     //todo david redirection vers resto quand click sur marker
-    //todo david repositionnement de la carte quand click sur icone + un border why not...
     //todo david UNIT TEST
     //todo david gérer les couleurs
     //todo david gérer la traduction des strings
     //todo david warnings
-//todo david tronquer dans workmateslist si nom e restaurant trop long
-    @SuppressLint("MissingPermission")
+    //todo david tronquer dans workmateslist si nom e restaurant trop long
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,10 +71,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-
-        //todo david
-        binding.locationButton.setOnClickListener(view -> {
-        });
 
         viewModel.getMainViewStateLiveData().observe(this, state -> {
             Glide.with(headerBinding.headerIv)
@@ -119,17 +112,14 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                 case (R.id.bottom_nav_map):
                     displayFragment(MapFragment.newInstance());
                     toolbar.setTitle(R.string.restaurantViewTitle);
-                    binding.locationButton.setVisibility(View.VISIBLE);
                     break;
                 case (R.id.bottom_nav_list):
                     displayFragment(RestaurantsFragment.newInstance());
                     toolbar.setTitle(R.string.restaurantViewTitle);
-                    binding.locationButton.setVisibility(View.INVISIBLE);
                     break;
                 case (R.id.bottom_nav_workmates):
                     displayFragment(WorkmatesFragment.newInstance());
                     toolbar.setTitle(R.string.workermatesViewTitle);
-                    binding.locationButton.setVisibility(View.INVISIBLE);
                     break;
             }
             return true;
@@ -198,6 +188,5 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     public void onWorkmateClicked(String workmateId) {
         startActivity(ChatViewModel.navigate(this, workmateId));
     }
-
 
 }

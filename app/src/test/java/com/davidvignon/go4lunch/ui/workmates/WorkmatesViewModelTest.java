@@ -11,7 +11,7 @@ import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,7 +38,7 @@ public class WorkmatesViewModelTest {
 
     private final Application application = Mockito.mock(Application.class);
     private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
-    private final FirebaseUser firebaseUser = Mockito.mock(FirebaseUser.class);
+    private final FirebaseAuth firebaseAuth = Mockito.mock(FirebaseAuth.class);
     private final MutableLiveData <List<Workmate>> workmateListMutableLiveData = new MutableLiveData<>();
 
     private WorkmatesViewModel viewModel;
@@ -47,12 +47,12 @@ public class WorkmatesViewModelTest {
     public void setUp(){
         Mockito.doReturn(" is").when(application).getString(R.string.a_restaurant_is_selected);
         Mockito.doReturn(" hasn't").when(application).getString(R.string.no_selected_restaurant);
-        Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getDataBaseUsers();
+        Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getDataBaseUsersLiveData();
         workmateListMutableLiveData.setValue(getWorkmateList());
 
-        Mockito.doReturn(DEFAULT_USER_UID).when(firebaseUser).getUid();
+        Mockito.doReturn(DEFAULT_USER_UID).when(firebaseAuth).getCurrentUser().getUid();
 
-        viewModel = new WorkmatesViewModel(application, workmateRepository, firebaseUser);
+        viewModel = new WorkmatesViewModel(application, workmateRepository, firebaseAuth);
     }
 
     @Test

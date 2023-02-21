@@ -60,7 +60,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
         LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
-        LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getUserListGoingTo(placeId);
+        LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getUserListGoingToLiveData(placeId);
 
         restaurantPlaceId.setValue(placeId);
 

@@ -1,34 +1,27 @@
 package com.davidvignon.go4lunch.ui.settings;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.os.Build;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.widget.CompoundButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.databinding.NotificationActivityBinding;
 import com.davidvignon.go4lunch.ui.notification.NotificationWorker;
-
-import java.util.concurrent.TimeUnit;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 
 @AndroidEntryPoint
 public class SettingsActivity extends AppCompatActivity {
-
-    //a faire dans worker de manière synchrone car il est déjà sur un background thread (donc pas de onCompleteListener)
-    //todo david notif :  requeter en BDD quel workmate va dans quel resto
-    //todo david : est ce que mon user a choisi un resto sinon lui dire qu'il n'a pas choisi de resto
-    //todo david si user désactive switch -> désactiver worker
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,50 +32,45 @@ public class SettingsActivity extends AppCompatActivity {
 
         SettingsViewModel viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
 
-
-        binding.notificationSw.setOnCheckedChangeListener((compoundButton, newCheckValue) -> {
-            viewModel.onCheckClicked(newCheckValue);
-            test();//todo david
+        binding.notificationSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean newCheckValue) {
+                viewModel.onCheckClicked(newCheckValue);
+            }
         });
 
         //noinspection Convert2MethodRef
-        viewModel.getSwitchValueLiveData().observe(this, checked -> binding.notificationSw.setChecked(checked));
+        viewModel.getSwitchValueLiveData().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean checked) {
+                binding.notificationSw.setChecked(checked);
+            }
+        });
+
+        viewModel.getNotificationDialogSingleLiveEvent().observe(this, new Observer<Void>() {
+            @Override
+            public void onChanged(Void unused) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setTitle("Notifications disabled");// todo david  all text in strings
+                builder.setMessage("Please enable notifications in the settings to receive notification.");
+                builder.setPositiveButton("Allow notification", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                        intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        binding.notificationSw.setChecked(false);
+                    }
+                });
+                builder.setCancelable(false).create();
+                builder.show();
+            }
+        });
     }
-
-    public void test() {//todo david
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "name";
-            String description = "descript";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("CHANNEL_ID", name, importance);
-            channel.setDescription(description);
-            NotificationManager notifManager = getApplicationContext().getSystemService(NotificationManager.class);
-            notifManager.createNotificationChannel(channel);
-        }
-
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "CHANNEL_ID")
-            .setSmallIcon(R.drawable.baseline_notifications_24)
-            .setContentTitle("My notification")
-            .setContentText("Much longer text that cannot fit one line...")
-            .setStyle(new NotificationCompat.BigTextStyle()
-                .bigText("Much longer text that cannot fit one line..."))
-            .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-
-        notificationManager.notify(0, builder.build());
-
-        // TODO David use l
-
-        OneTimeWorkRequest myWorkRequest =
-            new OneTimeWorkRequest.Builder(NotificationWorker.class)
-                .setInitialDelay(30, TimeUnit.SECONDS)
-                .build();
-
-        WorkManager.getInstance(getApplicationContext()).enqueue(myWorkRequest);
-//
-    }
-
 }

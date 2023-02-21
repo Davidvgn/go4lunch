@@ -74,7 +74,7 @@ public class UserRepository {
     public void toggleRestaurantSelected(String placeId, String restaurantName) {
         DocumentReference documentReference = firebaseFirestore
             .collection("users")
-            .document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+            .document((firebaseAuth.getCurrentUser()).getUid());
 
         documentReference.get().addOnCompleteListener(task -> {
             String selectedRestaurantField = task.getResult().getString("selectedRestaurant");
@@ -99,7 +99,7 @@ public class UserRepository {
     public LiveData<Boolean> isRestaurantLikedByUserLiveData(String placeId) {
         MutableLiveData<Boolean> isLiked = new MutableLiveData<>();
         firebaseFirestore.collection("users")
-            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+            .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .addSnapshotListener((documentSnapshot, error) -> {
                 if (documentSnapshot != null) {
                     List<String> firestoreList = (List<String>) documentSnapshot.get("favoritesRestaurants");
@@ -120,7 +120,7 @@ public class UserRepository {
     public void toggleRestaurantLiked(String placeId) {
         DocumentReference documentReference = firebaseFirestore
             .collection("users")
-            .document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+            .document((firebaseAuth.getCurrentUser()).getUid());
 
         documentReference.get().addOnCompleteListener(task -> {
             DocumentSnapshot documentSnapshot = task.getResult();
@@ -136,15 +136,15 @@ public class UserRepository {
         });
     }
 
-    public LiveData<String> getRestaurantPlaceId() {
+    public LiveData<String> getRestaurantPlaceIdLiveData() {
         MutableLiveData<String> selectedRestaurantFieldMutable = new MutableLiveData<>();
         firebaseFirestore.collection("users")
-            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+            .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .addSnapshotListener((documentSnapshot, error) -> {
                 if (documentSnapshot != null) {
                     if (documentSnapshot.get("selectedRestaurant") != null) {
-                        String firestoreList = documentSnapshot.get("selectedRestaurant").toString();
-                        selectedRestaurantFieldMutable.setValue(firestoreList);
+                        String selectedRestaurantId = documentSnapshot.get("selectedRestaurant").toString();
+                        selectedRestaurantFieldMutable.setValue(selectedRestaurantId);
                     } else {
                         selectedRestaurantFieldMutable.setValue(null);
                     }
@@ -152,8 +152,6 @@ public class UserRepository {
             });
         return selectedRestaurantFieldMutable;
     }
-
-
 
 }
 

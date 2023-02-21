@@ -2,6 +2,7 @@ package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class MapFragment extends SupportMapFragment {
         return new MapFragment();
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -52,6 +54,8 @@ public class MapFragment extends SupportMapFragment {
                             .alpha(0.8f)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 }
+                googleMap.setMyLocationEnabled(true);//todo Nino j'ai suppress la permission vu qu'elle est déjà request : code 'requestPermissions' right ?
+                googleMap.setPadding(0, 2300, 0, 0);
 
             });
             googleMap.setOnInfoWindowClickListener(marker -> Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show());

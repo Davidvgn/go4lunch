@@ -33,7 +33,7 @@ public class WorkmatesViewModel extends ViewModel {
     public WorkmatesViewModel(Application application, WorkmateRepository workmateRepository, @NonNull FirebaseAuth firebaseAuth) {
         this.application = application;
         this.firebaseAuth = firebaseAuth;
-        LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsers();
+        LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsersLiveData();
         workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
     }
 
