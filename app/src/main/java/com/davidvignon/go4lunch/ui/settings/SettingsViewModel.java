@@ -11,8 +11,6 @@ import com.davidvignon.go4lunch.data.preferences.PreferencesRepository;
 import com.davidvignon.go4lunch.ui.notification.NotificationWorker;
 import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -21,11 +19,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
+
+    private static final String TAG_NOTIFICATION_WORKER = "TAG_NOTIFICATION_WORKER";
+
     private final PreferencesRepository preferencesRepository;
     private final PermissionRepository permissionRepository;
     private final WorkManager workManager;
     private final LiveData<Boolean> switchStateLiveData;
-    private final SingleLiveEvent<Void> notificationDialogSingleliveEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> notificationDialogSingleLiveEvent = new SingleLiveEvent<>();
 
 
     @Inject
@@ -49,34 +50,30 @@ public class SettingsViewModel extends ViewModel {
 
 
     public void onCheckClicked(boolean isEnabled) {
-
-        OneTimeWorkRequest myWorkRequest =
-            new OneTimeWorkRequest.Builder(NotificationWorker.class)
-                .build();
-
-        PeriodicWorkRequest workRequestTEST = new PeriodicWorkRequest.Builder(NotificationWorker.class, 1, TimeUnit.DAYS )
-            .build();
-
-
-        UUID myWorkRequestId = myWorkRequest.getId();
-
         if (isEnabled) {
             if (!permissionRepository.isNotificationPermissionGranted()) {
-                notificationDialogSingleliveEvent.call();
+                notificationDialogSingleLiveEvent.call();
             } else {
-                preferencesRepository.setLunchNotificationEnabled(true);
-            }
+                OneTimeWorkRequest myWorkRequest =
+                    new OneTimeWorkRequest.Builder(NotificationWorker.class)
+                        .addTag(TAG_NOTIFICATION_WORKER)
+                        .build();
 
-            workManager.enqueue(myWorkRequest);
+                PeriodicWorkRequest workRequestTEST = new PeriodicWorkRequest.Builder(NotificationWorker.class, 1, TimeUnit.DAYS )
+                    //  .setInitialDelay(Duration.between()) // TODO Use LocalDate
+                    .build();
+
+                preferencesRepository.setLunchNotificationEnabled(true);
+                workManager.enqueue(myWorkRequest);
+            }
         } else {
             preferencesRepository.setLunchNotificationEnabled(false);
-            workManager.cancelWorkById(myWorkRequestId);
-
+            workManager.cancelAllWorkByTag(TAG_NOTIFICATION_WORKER);
         }
     }
 
     public SingleLiveEvent<Void> getNotificationDialogSingleLiveEvent() {
-        return notificationDialogSingleliveEvent;
+        return notificationDialogSingleLiveEvent;
     }
 
 

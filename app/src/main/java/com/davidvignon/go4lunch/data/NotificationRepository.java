@@ -1,10 +1,13 @@
 package com.davidvignon.go4lunch.data;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.data.workmate.Workmate;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,9 +28,12 @@ public class NotificationRepository {
     public NotificationRepository(@NonNull FirebaseFirestore firebaseFirestore) {
         this.firebaseFirestore = firebaseFirestore;
     }
-    public LiveData<String> getRestaurantNameLiveData() {
+
+    @WorkerThread
+    public String getRestaurantName() {
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        MutableLiveData<String> selectedRestaurantFieldMutable = new MutableLiveData<>();
+
+        String[] selectedRestaurant = new String[1];
         firebaseFirestore.collection("users")
             .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .get()
@@ -35,23 +41,19 @@ public class NotificationRepository {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        String selectedRestaurantField = document.getString("selectedRestaurantName");
-                        selectedRestaurantFieldMutable.setValue(selectedRestaurantField);
-                    } else {
-                        selectedRestaurantFieldMutable.setValue(null);
+                        selectedRestaurant[0] = document.getString("selectedRestaurantName");
                     }
-                } else {
-                    selectedRestaurantFieldMutable.setValue(null);
                 }
                 countDownLatch.countDown();
-
             });
+
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        return selectedRestaurantFieldMutable;
+
+        return selectedRestaurant[0];
     }
     public LiveData<String> getRestaurantPlaceIdLiveData() {
         CountDownLatch countDownLatch = new CountDownLatch(1);

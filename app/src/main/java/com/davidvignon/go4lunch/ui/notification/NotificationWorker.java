@@ -1,18 +1,18 @@
 package com.davidvignon.go4lunch.ui.notification;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.hilt.work.HiltWorker;
-
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -34,6 +34,7 @@ public class NotificationWorker extends Worker {
 
     private final NotificationRepository notificationRepository;
     private final FirebaseAuth firebaseAuth;
+    private final NotificationManagerCompat notificationManager;
 
 
     @AssistedInject
@@ -47,47 +48,48 @@ public class NotificationWorker extends Worker {
 
         this.notificationRepository = notificationRepository;
         this.firebaseAuth = firebaseAuth;
-
+        this.notificationManager = NotificationManagerCompat.from(getApplicationContext());
     }
 
-    @SuppressLint("MissingPermission")//todo david comment gérer ?
     @NonNull
     @Override
     public Result doWork() {
         Log.d("Dvgn", "Sending notification");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Name";
+            CharSequence name = "Name"; // TODO David strings
             String description = "Description";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(description);
-            NotificationManager notifManager = getApplicationContext().getSystemService(NotificationManager.class);
-            notifManager.createNotificationChannel(channel);
+            notificationManager.createNotificationChannel(channel);
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_notifications_24)
             .setContentTitle(getApplicationContext().getString(R.string.app_name))
-            .setStyle(new NotificationCompat.BigTextStyle()
-                .bigText(getnotificationMessage()))
+            .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationMessage()))
             .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        // TODO David Au click notification, aller sur le detail
 
-        notificationManager.notify(0, builder.build());
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(0, builder.build());
+            return Result.success();
+        }
 
-        return Result.success();
+        return Result.failure();
     }
 
-    public String getnotificationMessage() {
+    public String getNotificationMessage() {
 
         String notificationMessage;
         String workmatesList = "";
         String hereYouEat;
 
+        String restaurantName = notificationRepository.getRestaurantName();
+
         List<String> workmateNameList = new ArrayList<>();
-        if (notificationRepository.getRestaurantNameLiveData().getValue() != null) {
+        if (restaurantName != null) {
             String restaurantId = notificationRepository.getRestaurantPlaceIdLiveData().getValue();
             List<Workmate> workmateGoingThereList = notificationRepository.getUserListGoingToLiveData(restaurantId).getValue();
 
@@ -98,12 +100,12 @@ public class NotificationWorker extends Worker {
                     }
                 }
                 if (!workmateNameList.isEmpty()) {
-                    workmatesList = "Ce(s) collègue(s) mange(nt) ici également : \n"
-                        + "- " + workmateNameList.toString().replace("[","").replace("]","");
+                    workmatesList =  "\n" + "\n" + "Ce(s) collègue(s) mange(nt) ici également : \n" // TODO DAVID String + StringBuilder
+                        + "- " + workmateNameList.toString().replace("[", "").replace("]", "");
                 }
             }
 
-            hereYouEat = "Vous avez prévu de manger ici : " + notificationRepository.getRestaurantNameLiveData().getValue() + "\n" + "\n";
+            hereYouEat = "Vous avez prévu de manger ici : " + restaurantName;
             notificationMessage = hereYouEat + workmatesList;
 
         } else {
