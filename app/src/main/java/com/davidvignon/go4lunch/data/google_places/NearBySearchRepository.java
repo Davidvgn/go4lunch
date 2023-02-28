@@ -1,11 +1,19 @@
 package com.davidvignon.go4lunch.data.google_places;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,10 +27,13 @@ public class NearBySearchRepository {
 
     @NonNull
     private final PlacesApi placesApi;
+    private final FirebaseFirestore firebaseFirestore;
+
 
     @Inject
-    public NearBySearchRepository(@NonNull @DataModule.PlacesAPi PlacesApi placesApi) {
+    public NearBySearchRepository(@NonNull @DataModule.PlacesAPi PlacesApi placesApi, FirebaseFirestore firebaseFirestore) {
         this.placesApi = placesApi;
+        this.firebaseFirestore = firebaseFirestore;
     }
 
     public LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
@@ -47,4 +58,24 @@ public class NearBySearchRepository {
         });
         return nearbySearchResponseMutableLiveData;
     }
+
+    public LiveData<Integer> howManyAreGoingThere(String placeId) {
+        MutableLiveData<Integer> numberOfWorkmatesMutableLiveData = new MutableLiveData<>();
+
+        firebaseFirestore.collection("users")
+            .whereEqualTo("selectedRestaurant", placeId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                int count = queryDocumentSnapshots.size();
+                numberOfWorkmatesMutableLiveData.setValue(count);
+            })
+            .addOnFailureListener(e -> {
+                numberOfWorkmatesMutableLiveData.setValue(0);
+            });
+
+        return numberOfWorkmatesMutableLiveData;
+    }
+
+
+
 }

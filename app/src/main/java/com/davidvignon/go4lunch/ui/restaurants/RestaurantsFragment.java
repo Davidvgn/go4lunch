@@ -2,6 +2,7 @@ package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.databinding.RestaurantsFragmentBinding;
@@ -51,7 +53,15 @@ public class RestaurantsFragment extends Fragment {
         binding.restaurantRv.setAdapter(adapter);
 
         viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), restaurantViewStates -> adapter.submitList(restaurantViewStates));
+
+        viewModel.getPlaceIdLiveData().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+            }
+        });
     }
+
+
 
     @Override
     public void onDestroyView() {

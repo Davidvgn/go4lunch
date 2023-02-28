@@ -1,9 +1,13 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -31,6 +35,7 @@ public class RestaurantViewModel extends ViewModel {
     private final DistanceCalculator distanceCalculator;
 
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
+    MutableLiveData<String> placeIdMutableLiveData = new MutableLiveData<>();
 
     @Inject
     public RestaurantViewModel(
@@ -38,6 +43,7 @@ public class RestaurantViewModel extends ViewModel {
         @NonNull NearBySearchRepository nearBySearchRepository,
         @NonNull DistanceCalculator distanceCalculator
     ) {
+
         this.nearBySearchRepository = nearBySearchRepository;
         this.distanceCalculator = distanceCalculator;
 
@@ -50,8 +56,17 @@ public class RestaurantViewModel extends ViewModel {
         return restaurantViewState;
     }
 
+    public LiveData<String> getPlaceIdLiveData() {
+        return placeIdMutableLiveData;
+    }
+
+    public LiveData<Integer> getsome() {
+        return nearBySearchRepository.howManyAreGoingThere(placeIdMutableLiveData.getValue());
+    }
+
     @NonNull
     private LiveData<List<RestaurantViewState>> bindViewState(LiveData<Location> locationLiveData) {
+
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
             locationLiveData,
             location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
@@ -76,6 +91,7 @@ public class RestaurantViewModel extends ViewModel {
                         && result.getGeometry().getLocation().getLat() != null
                         && result.getGeometry().getLocation().getLng() != null
                     ) {
+
                         final int openOrClosed;
                         if (result.getOpeningHours().isOpenNow()) {
                             openOrClosed = R.string.open;
@@ -86,6 +102,8 @@ public class RestaurantViewModel extends ViewModel {
                         Double initialRating = result.getRating();
 
                         Location userLocation = locationLiveData.getValue();
+
+                        placeIdMutableLiveData.setValue(result.getPlaceId());
 
                         final Integer distanceText;
 
@@ -111,7 +129,8 @@ public class RestaurantViewModel extends ViewModel {
                                 result.getPhotos().get(0).getPhotoReference(),
                                 openOrClosed,
                                 (float) (initialRating * 3 / 5),
-                                distanceText.toString()
+                                distanceText.toString(),
+                              "4" //todo david work on it
                             )
                         );
 
@@ -121,6 +140,4 @@ public class RestaurantViewModel extends ViewModel {
             return viewStates;
         });
     }
-
-
 }

@@ -310,7 +310,8 @@ public class RestaurantsViewModelTest {
                     DEFAULT_PHOTO_REFERENCE + i,
                     i == 1 ? R.string.open : R.string.closed,
                     2.04F,
-                    DEFAULT_DISTANCE
+                    DEFAULT_DISTANCE,
+                    "4" //todo david work on it
                 )
             );
         }

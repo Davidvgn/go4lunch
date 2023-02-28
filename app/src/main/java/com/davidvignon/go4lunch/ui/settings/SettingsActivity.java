@@ -28,7 +28,10 @@ public class SettingsActivity extends AppCompatActivity {
         NotificationActivityBinding binding = NotificationActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         SettingsViewModel viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
+        binding.notificationSw.setChecked(viewModel.getSwitchValue());
+        //todo Nino : getSwitchValueLiveData ne récup pas la valeur au lancement de settings, obliger d'utiliser code above
 
         binding.notificationSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

@@ -78,22 +78,21 @@
             android:id="@+id/restaurant_item_iv_person_icon"
             android:layout_width="0dp"
             android:layout_height="25dp"
-            android:layout_marginBottom="10dp"
             android:contentDescription="@string/people_icon"
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_tv_number"
-            app:layout_constraintTop_toBottomOf="@id/restaurant_item_tv_distance"
-            app:srcCompat="@drawable/ic_baseline_person_outline_24" />
+            app:layout_constraintTop_toTopOf="@id/restaurant_item_tv_adress"
+            app:layout_constraintBottom_toBottomOf="@id/restaurant_item_tv_adress"            app:srcCompat="@drawable/ic_baseline_person_outline_24" />
 
         <TextView
             android:id="@+id/restaurant_item_tv_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_iv_picture"
-            app:layout_constraintTop_toBottomOf="@id/restaurant_item_tv_distance"
+            app:layout_constraintTop_toTopOf="@id/restaurant_item_tv_adress"
+            app:layout_constraintBottom_toBottomOf="@id/restaurant_item_tv_adress"
             tools:text="(3)" />
 
         <TextView

@@ -1,8 +1,9 @@
 package com.davidvignon.go4lunch.ui.settings;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -11,6 +12,9 @@ import com.davidvignon.go4lunch.data.preferences.PreferencesRepository;
 import com.davidvignon.go4lunch.ui.notification.NotificationWorker;
 import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -19,6 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
+    //todo david faire test unit
 
     private static final String TAG_NOTIFICATION_WORKER = "TAG_NOTIFICATION_WORKER";
 
@@ -30,11 +35,7 @@ public class SettingsViewModel extends ViewModel {
 
 
     @Inject
-    public SettingsViewModel(
-        PreferencesRepository preferencesRepository,
-        PermissionRepository permissionRepository,
-        WorkManager workManager
-    ) {
+    public SettingsViewModel(PreferencesRepository preferencesRepository, PermissionRepository permissionRepository, WorkManager workManager) {
         this.preferencesRepository = preferencesRepository;
         this.permissionRepository = permissionRepository;
         this.workManager = workManager;
@@ -46,25 +47,32 @@ public class SettingsViewModel extends ViewModel {
         return switchStateLiveData;
     }
 
-    //todo david worker à 12h everyday
-
-
     public void onCheckClicked(boolean isEnabled) {
         if (isEnabled) {
             if (!permissionRepository.isNotificationPermissionGranted()) {
                 notificationDialogSingleLiveEvent.call();
             } else {
-                OneTimeWorkRequest myWorkRequest =
-                    new OneTimeWorkRequest.Builder(NotificationWorker.class)
-                        .addTag(TAG_NOTIFICATION_WORKER)
-                        .build();
 
-                PeriodicWorkRequest workRequestTEST = new PeriodicWorkRequest.Builder(NotificationWorker.class, 1, TimeUnit.DAYS )
-                    //  .setInitialDelay(Duration.between()) // TODO Use LocalDate
-                    .build();
+
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime targetTime = now.with(LocalTime.NOON);
+                if (now.compareTo(targetTime) > 0) {
+                    targetTime = targetTime.plusDays(1);
+                }
+                Duration duration = Duration.between(now, targetTime);
+                long delayMillis = duration.toMillis();
+
+                PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+                    NotificationWorker.class, 1, TimeUnit.DAYS)
+                    .addTag(TAG_NOTIFICATION_WORKER)
+                    .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS).build();
+//
+//                OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(NotificationWorker.class)//todo david pour test touch notif
+//                    .addTag(TAG_NOTIFICATION_WORKER)
+//                    .build();
 
                 preferencesRepository.setLunchNotificationEnabled(true);
-                workManager.enqueue(myWorkRequest);
+                workManager.enqueue(workRequest);
             }
         } else {
             preferencesRepository.setLunchNotificationEnabled(false);
@@ -76,5 +84,8 @@ public class SettingsViewModel extends ViewModel {
         return notificationDialogSingleLiveEvent;
     }
 
+    public Boolean getSwitchValue() {
+        return preferencesRepository.getSwitchValue();
+    }
 
 }

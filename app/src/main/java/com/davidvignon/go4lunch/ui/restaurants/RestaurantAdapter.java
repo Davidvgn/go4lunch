@@ -53,6 +53,7 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
             binding.restaurantItemTvClosureHour.setText(item.getOpenOrClose());
             binding.restaurantItemRb.setRating(item.getRating());
             binding.restaurantItemTvDistance.setText(item.getDistance());
+            binding.restaurantItemTvNumber.setText(item.getWorkmatesGoingThere());
 
             Glide.with(binding.restaurantItemIvPicture.getContext())
                 .load(restaurantPicture)

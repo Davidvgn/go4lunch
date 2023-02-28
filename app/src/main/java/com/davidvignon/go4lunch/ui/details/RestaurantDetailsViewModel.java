@@ -2,6 +2,7 @@ package com.davidvignon.go4lunch.ui.details;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -32,6 +33,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
 
     public static Intent navigate(@NonNull Context context, @NonNull String placeId) {
+        Log.d("Dvgn", "navigate: " + placeId);
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
         intent.putExtra(KEY_PLACE_ID, placeId);
         return intent;

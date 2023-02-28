@@ -70,6 +70,8 @@
         <activity
             android:name=".ui.details.RestaurantDetailsActivity"
             android:exported="true"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
             android:theme="@style/Theme.Details">
         </activity>
         <activity

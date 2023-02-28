@@ -26,6 +26,7 @@ public class RestaurantViewState {
 
     @NonNull
     private final String distance;
+    private final String workmatesGoingThere;
 
     public RestaurantViewState(
         @NonNull String placeId,
@@ -34,7 +35,8 @@ public class RestaurantViewState {
         @NonNull String photosItemResponse,
         @StringRes int openOrClose,
         float rating,
-        @NonNull String distance
+        @NonNull String distance,
+        String workmatesGoingThere
     ) {
         this.placeId = placeId;
         this.name = name;
@@ -43,6 +45,7 @@ public class RestaurantViewState {
         this.openOrClose = openOrClose;
         this.rating = rating;
         this.distance = distance;
+        this.workmatesGoingThere = workmatesGoingThere;
     }
 
     @NonNull
@@ -79,23 +82,21 @@ public class RestaurantViewState {
         return distance;
     }
 
+    public String getWorkmatesGoingThere() {
+        return workmatesGoingThere;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantViewState that = (RestaurantViewState) o;
-        return openOrClose == that.openOrClose
-            && Float.compare(that.rating, rating) == 0
-            && placeId.equals(that.placeId)
-            && name.equals(that.name)
-            && vicinity.equals(that.vicinity)
-            && photosItemResponse.equals(that.photosItemResponse)
-            && distance.equals(that.distance);
+        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance) && Objects.equals(workmatesGoingThere, that.workmatesGoingThere);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating, distance);
+        return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating, distance, workmatesGoingThere);
     }
 
     @Override
@@ -108,6 +109,7 @@ public class RestaurantViewState {
             ", openOrClose=" + openOrClose +
             ", rating=" + rating +
             ", distance='" + distance + '\'' +
+            ", workmatesGoingThere='" + workmatesGoingThere + '\'' +
             '}';
     }
 }

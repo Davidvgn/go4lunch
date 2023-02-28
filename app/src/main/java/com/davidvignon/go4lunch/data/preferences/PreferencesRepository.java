@@ -3,6 +3,7 @@ package com.davidvignon.go4lunch.data.preferences;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -25,6 +26,10 @@ public class PreferencesRepository {
 
     public void setLunchNotificationEnabled(boolean enabled) {
         sharedPreferences.edit().putBoolean(SWITCH_KEY, enabled).apply();
+    }
+
+    public Boolean getSwitchValue() {
+        return sharedPreferences.getBoolean(SWITCH_KEY, false);
     }
 
     public LiveData<Boolean> isLunchNotificationEnabledLiveData() {

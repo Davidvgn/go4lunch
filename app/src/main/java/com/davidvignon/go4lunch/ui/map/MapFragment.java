@@ -2,13 +2,14 @@ package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
 
-import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,9 +54,14 @@ public class MapFragment extends SupportMapFragment {
                             .alpha(0.8f)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 }
-                googleMap.setMyLocationEnabled(true); // TODO David CheckSelfPermission
-                googleMap.setPadding(0, 2300, 0, 0);
+                if (ActivityCompat.checkSelfPermission(
+                    getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+                } else {
+                    googleMap.setMyLocationEnabled(true);
+                    googleMap.setPadding(0, 2300, 0, 0);
+                }
             });
             googleMap.setOnInfoWindowClickListener(marker -> Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show());
             viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)));

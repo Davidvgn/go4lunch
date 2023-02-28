@@ -2,16 +2,14 @@ package com.davidvignon.go4lunch.data;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.data.workmate.Workmate;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -20,7 +18,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class NotificationRepository {
-
     @NonNull
     private final FirebaseFirestore firebaseFirestore;
 
@@ -55,9 +52,11 @@ public class NotificationRepository {
 
         return selectedRestaurant[0];
     }
-    public LiveData<String> getRestaurantPlaceIdLiveData() {
+
+    @WorkerThread
+    public String getRestaurantPlaceId() {
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        MutableLiveData<String> selectedRestaurantFieldMutable = new MutableLiveData<>();
+        String[] selectedRestaurantField = new String[1];
         firebaseFirestore.collection("users")
             .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .get()
@@ -65,13 +64,8 @@ public class NotificationRepository {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        String selectedRestaurantField = document.getString("selectedRestaurant");
-                        selectedRestaurantFieldMutable.setValue(selectedRestaurantField);
-                    } else {
-                        selectedRestaurantFieldMutable.setValue(null);
+                        selectedRestaurantField[0] = document.getString("selectedRestaurant");
                     }
-                } else {
-                    selectedRestaurantFieldMutable.setValue(null);
                 }
                 countDownLatch.countDown();
 
@@ -81,16 +75,18 @@ public class NotificationRepository {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return selectedRestaurantFieldMutable;
+        return selectedRestaurantField[0];
     }
 
-    public LiveData<List<Workmate>> getUserListGoingToLiveData(String placeId) {
-        MutableLiveData<List<Workmate>> userMutableLiveData = new MutableLiveData<>();
+
+    @WorkerThread
+    public List<Workmate> getUserListWill(String placeId) {
+        List<Workmate> workmateArrayList = new ArrayList<>();
         CountDownLatch countDownLatch = new CountDownLatch(1);
 
         firebaseFirestore.collection("users").whereEqualTo("selectedRestaurant", placeId).addSnapshotListener((value, error) -> {
             if (value != null ) {
-                userMutableLiveData.setValue(value.toObjects(Workmate.class));
+                workmateArrayList.addAll(value.toObjects(Workmate.class));
             }
             countDownLatch.countDown();
         });
@@ -99,6 +95,6 @@ public class NotificationRepository {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return userMutableLiveData;
+        return workmateArrayList;
     }
 }
