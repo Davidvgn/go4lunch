@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -52,7 +54,7 @@ public class SettingsViewModel extends ViewModel {
             if (!permissionRepository.isNotificationPermissionGranted()) {
                 notificationDialogSingleLiveEvent.call();
             } else {
-
+                preferencesRepository.setLunchNotificationEnabled(true);
 
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime targetTime = now.with(LocalTime.NOON);
@@ -65,14 +67,10 @@ public class SettingsViewModel extends ViewModel {
                 PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
                     NotificationWorker.class, 1, TimeUnit.DAYS)
                     .addTag(TAG_NOTIFICATION_WORKER)
-                    .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS).build();
-//
-//                OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(NotificationWorker.class)//todo david pour test touch notif
-//                    .addTag(TAG_NOTIFICATION_WORKER)
-//                    .build();
+                   // .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+                    .build();
 
-                preferencesRepository.setLunchNotificationEnabled(true);
-                workManager.enqueue(workRequest);
+                workManager.enqueueUniquePeriodicWork(TAG_NOTIFICATION_WORKER, ExistingPeriodicWorkPolicy.KEEP, workRequest);
             }
         } else {
             preferencesRepository.setLunchNotificationEnabled(false);
@@ -83,9 +81,4 @@ public class SettingsViewModel extends ViewModel {
     public SingleLiveEvent<Void> getNotificationDialogSingleLiveEvent() {
         return notificationDialogSingleLiveEvent;
     }
-
-    public Boolean getSwitchValue() {
-        return preferencesRepository.getSwitchValue();
-    }
-
 }

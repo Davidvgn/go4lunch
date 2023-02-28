@@ -28,12 +28,10 @@ public class PreferencesRepository {
         sharedPreferences.edit().putBoolean(SWITCH_KEY, enabled).apply();
     }
 
-    public Boolean getSwitchValue() {
-        return sharedPreferences.getBoolean(SWITCH_KEY, false);
-    }
-
     public LiveData<Boolean> isLunchNotificationEnabledLiveData() {
         MutableLiveData<Boolean> isLunchNotificationEnabledMutableLiveData = new MutableLiveData<>();
+
+        isLunchNotificationEnabledMutableLiveData.setValue(sharedPreferences.getBoolean(SWITCH_KEY, false));
 
         SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, key) -> {
             if (key.equals(SWITCH_KEY)) {

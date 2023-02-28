@@ -30,8 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         SettingsViewModel viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-        binding.notificationSw.setChecked(viewModel.getSwitchValue());
-        //todo Nino : getSwitchValueLiveData ne récup pas la valeur au lancement de settings, obliger d'utiliser code above
 
         binding.notificationSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -41,12 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         //noinspection Convert2MethodRef
-        viewModel.getSwitchValueLiveData().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean checked) {
-                binding.notificationSw.setChecked(checked);
-            }
-        });
+        viewModel.getSwitchValueLiveData().observe(this, checked -> binding.notificationSw.setChecked(checked));
 
         viewModel.getNotificationDialogSingleLiveEvent().observe(this, new Observer<Void>() {
             @Override

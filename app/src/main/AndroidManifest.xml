@@ -70,9 +70,11 @@
         <activity
             android:name=".ui.details.RestaurantDetailsActivity"
             android:exported="true"
-            android:taskAffinity=""
-            android:excludeFromRecents="true"
+            android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/Theme.Details">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.chat.ChatActivity"

@@ -6,6 +6,8 @@ import android.view.inputmethod.EditorInfo;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -24,6 +26,9 @@ public class ChatActivity extends AppCompatActivity {
         ChatMessageAdapter adapter = new ChatMessageAdapter();
         binding.chatRv.setAdapter(adapter);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, true);
+        binding.chatRv.setLayoutManager(layoutManager);
+
         ChatViewModel viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
 
         viewModel.getChatViewStateLiveData().observe(this, chatViewState -> {
@@ -31,7 +36,6 @@ public class ChatActivity extends AppCompatActivity {
 
             binding.chatIb.setOnClickListener(view -> {
                 viewModel.sendMessage(binding.chatEtMessage.getText().toString());
-                binding.chatEtMessage.onEditorAction(EditorInfo.IME_ACTION_DONE);
                 binding.chatEtMessage.getText().clear();
             });
 

@@ -59,7 +59,7 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
                 .load(restaurantPicture)
                 .into(binding.restaurantItemIvPicture);
 
-            itemView.setOnClickListener(view -> listener.onRestaurantClicked(item.getPlaceId()));
+            binding.restaurantItemClRoot.setOnClickListener(view -> listener.onRestaurantClicked(item.getPlaceId()));
         }
     }
 

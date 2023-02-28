@@ -39,6 +39,7 @@ public class ChatViewModel extends ViewModel {
 
     private final ChatMessageRepository chatMessageRepository;
     private final FirebaseAuth firebaseAuth;
+    private final DateTimeFormatter timeFormatter;
 
     private final MediatorLiveData<ChatViewState> chatViewStateMediatorLiveData = new MediatorLiveData<>();
 
@@ -53,6 +54,8 @@ public class ChatViewModel extends ViewModel {
     ) {
         this.chatMessageRepository = chatMessageRepository;
         this.firebaseAuth = firebaseAuth;
+
+        timeFormatter = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy à HH:mm");
 
         workmateId = savedStateHandle.get(KEY_WORKMATE_ID);
         LiveData<Workmate> workmateLiveData = workmateRepository.getWorkmateInfoLiveData(workmateId);
@@ -69,7 +72,6 @@ public class ChatViewModel extends ViewModel {
         }
 
         List<ChatViewStateItem> chatViewStateItems = new ArrayList<>();
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy à HH:mm");
 
         for (ChatMessage chatMessage : chatMessages) {
             boolean isFromWorkmate = chatMessage.getSenderId().equals(workmateId);
@@ -79,7 +81,8 @@ public class ChatViewModel extends ViewModel {
                     chatMessage.getUuid(),
                     isFromWorkmate ? workmate.getName() : firebaseAuth.getCurrentUser().getDisplayName(),
                     chatMessage.getMessage(),
-                    Instant.ofEpochMilli(chatMessage.getEpochMilli()).atZone(ZoneId.systemDefault()).format(timeFormatter)
+                    Instant.ofEpochMilli(chatMessage.getEpochMilli()).atZone(ZoneId.systemDefault()).format(timeFormatter),
+                    !isFromWorkmate
                 )
             );
         }

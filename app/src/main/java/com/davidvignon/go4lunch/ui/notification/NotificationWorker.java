@@ -5,7 +5,6 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +14,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.hilt.work.HiltWorker;
 import androidx.work.Worker;
@@ -23,12 +23,8 @@ import androidx.work.WorkerParameters;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.NotificationRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
-import com.davidvignon.go4lunch.ui.details.RestaurantDetailsActivity;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
-import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.google.firebase.auth.FirebaseAuth;
-
-import org.checkerframework.common.returnsreceiver.qual.This;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,43 +56,42 @@ public class NotificationWorker extends Worker {
         this.application = application;
         this.notificationRepository = notificationRepository;
         this.firebaseAuth = firebaseAuth;
-        this.notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        this.notificationManager = NotificationManagerCompat.from(context);
     }
 
     @NonNull
     @Override
     public Result doWork() {
         Log.d("Dvgn", "Sending notification");
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, application.getString(R.string.notification_name), NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription(application.getString(R.string.notification_description));
+                notificationManager.createNotificationChannel(channel);
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, application.getString(R.string.notification_name), NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(application.getString(R.string.notification_description));
-            notificationManager.createNotificationChannel(channel);
-        }
+            Intent intent = RestaurantDetailsViewModel.navigate(getApplicationContext(), "ChIJMxOToCnq9EcREuoX_SlbSJY") //todo nino : aller sur le restaurantViewModel en utilisant le navigate
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        Intent intent = new Intent(getApplicationContext(), RestaurantDetailsActivity.class); //todo nino : aller sur le restaurantViewModel en utilisant le navigate
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = TaskStackBuilder.create(getApplicationContext())
+                .addNextIntentWithParentStack(intent)
+                .getPendingIntent(
+                    0,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                );
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.baseline_notifications_24)
+                .setContentTitle(getApplicationContext().getString(R.string.app_name))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationMessage()))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-            .setSmallIcon(R.drawable.baseline_notifications_24)
-            .setContentTitle(getApplicationContext().getString(R.string.app_name))
-            .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationMessage()))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true);
-
-
-        // TODO David Au click notification, aller sur le detail
-
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return Result.failure();
-
-        } else {
             notificationManager.notify(0, builder.build());
-            return Result.success();
         }
+
+        return Result.success();
     }
 
     public String getNotificationMessage() {

@@ -10,17 +10,19 @@ public class ChatViewStateItem {
     private final String id;
     @NonNull
     private final String workmateName;
-
     @NonNull
     private final String message;
     @NonNull
     private final String time;
 
-    public ChatViewStateItem(@NonNull String id, @NonNull String workmateName, @NonNull String message, @NonNull String time) {
+    private final boolean isFromCurrentUser;
+
+    public ChatViewStateItem(@NonNull String id, @NonNull String workmateName, @NonNull String message, @NonNull String time, boolean isFromCurrentUser) {
         this.id = id;
         this.workmateName = workmateName;
         this.message = message;
         this.time = time;
+        this.isFromCurrentUser = isFromCurrentUser;
     }
 
     @NonNull
@@ -43,27 +45,31 @@ public class ChatViewStateItem {
         return time;
     }
 
+    public boolean isFromCurrentUser() {
+        return isFromCurrentUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatViewStateItem that = (ChatViewStateItem) o;
-        return id.equals(that.id) && workmateName.equals(that.workmateName) && message.equals(that.message) && time.equals(that.time);
+        return isFromCurrentUser == that.isFromCurrentUser && id.equals(that.id) && workmateName.equals(that.workmateName) && message.equals(that.message) && time.equals(that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, workmateName, message, time);
+        return Objects.hash(id, workmateName, message, time, isFromCurrentUser);
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return "ChatMessageViewState{" +
+        return "ChatViewStateItem{" +
             "id='" + id + '\'' +
             ", workmateName='" + workmateName + '\'' +
             ", message='" + message + '\'' +
             ", time='" + time + '\'' +
+            ", isFromCurrentUser=" + isFromCurrentUser +
             '}';
     }
 }

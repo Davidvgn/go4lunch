@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsActivity">
+    tools:context=".ui.settings.SettingsActivity"
+    android:padding="16dp"
+    >
 
     <TextView
         android:id="@+id/notification_tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:padding="16dp"
         android:text="@string/settings_title"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/notification_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:gravity="start"
         android:text="@string/lunch_notification"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:padding="16dp"
+        app:layout_constraintEnd_toStartOf="@id/notification_sw"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/notification_tv_title"
-        app:layout_constraintEnd_toStartOf="@id/notification_sw"/>
-
+        />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/notification_sw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/notification_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/notification_tv"
-        app:layout_constraintBottom_toBottomOf="@id/notification_tv"
-
         />
 
 

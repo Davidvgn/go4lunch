@@ -68,7 +68,6 @@ public class NotificationRepository {
                     }
                 }
                 countDownLatch.countDown();
-
             });
         try {
             countDownLatch.await();

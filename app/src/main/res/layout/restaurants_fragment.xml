@@ -6,7 +6,11 @@
     android:id="@+id/restaurant_Rv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="4dp"
     android:paddingTop="?attr/actionBarSize"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    tools:listitem="@layout/restaurants_itemview" />
+    tools:listitem="@layout/restaurants_itemview"
+    />
 
