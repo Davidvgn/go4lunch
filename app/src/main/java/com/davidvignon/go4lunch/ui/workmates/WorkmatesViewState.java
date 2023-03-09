@@ -17,9 +17,9 @@ public class WorkmatesViewState {
     private final String picturePath;
 
     @Nullable
-    private  String selectedRestaurant;
-    @NonNull
-    private  String selectedRestaurantName;
+    private final String selectedRestaurant;
+    @Nullable
+    private final String selectedRestaurantName;
 
     public WorkmatesViewState(@NonNull String id, @NonNull String name, @NonNull String picturePath, @Nullable String selectedRestaurant, @Nullable String selectedRestaurantName) {
         this.id =id;
@@ -51,6 +51,7 @@ public class WorkmatesViewState {
         return selectedRestaurant;
     }
 
+    @Nullable
     public String getSelectedRestaurantName() {
         return selectedRestaurantName;
     }
@@ -68,6 +69,7 @@ public class WorkmatesViewState {
         return Objects.hash(id, name, picturePath, selectedRestaurant, selectedRestaurantName);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "WorkmatesViewState{" +

@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.data.preferences;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;

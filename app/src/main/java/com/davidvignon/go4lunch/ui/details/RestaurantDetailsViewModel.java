@@ -2,7 +2,6 @@ package com.davidvignon.go4lunch.ui.details;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -11,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
@@ -33,7 +33,6 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private static final String KEY_PLACE_ID = "KEY_PLACE_ID";
 
     public static Intent navigate(@NonNull Context context, @NonNull String placeId) {
-        Log.d("Dvgn", "navigate: " + placeId);
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
         intent.putExtra(KEY_PLACE_ID, placeId);
         return intent;
@@ -120,7 +119,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                     if (workmatesList != null) {
                         for (Workmate workmate : workmatesList) {
                             if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())) {
-                                String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";
+                                String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";//todo david stringbuilder
 
                                 viewStates.add(new WorkmatesViewState(
                                     workmate.getId(),
@@ -164,7 +163,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
     public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState) {
-        String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
+        String API_KEY = BuildConfig.NEARBY_API_KEY;
         return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
             + restaurantDetailsViewState.getPhotoUrl() +
             "&key=" + API_KEY;

@@ -14,6 +14,7 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.GeometryR
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.LocationResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
+import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -36,17 +37,25 @@ public class MapViewModelTest {
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
+    private final PermissionRepository permissionRepository = Mockito.mock(PermissionRepository.class);
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
+    private final NearBySearchRepository nearBySearchRepository = Mockito.mock(NearBySearchRepository.class);
     private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
 
-    private final NearBySearchRepository nearBySearchRepository = Mockito.mock(NearBySearchRepository.class);
+    private final MutableLiveData<Boolean> permissionMutableLiveData = new MutableLiveData<>();
+
     private final MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
 
     private MapViewModel viewModel;
 
     @Before
     public void setUp() {
+
+        permissionMutableLiveData.setValue(true);
+        //todo david faire un test avec false
+
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
+        Mockito.doReturn(permissionMutableLiveData).when(permissionRepository).isUserLocationGrantedLiveData();
         Location location = Mockito.mock(Location.class);
         Mockito.doReturn(DEFAULT_LATITUDE).when(location).getLatitude();
         Mockito.doReturn(DEFAULT_LONGITUDE).when(location).getLongitude();
@@ -55,7 +64,7 @@ public class MapViewModelTest {
         Mockito.doReturn(nearbySearchResponseMutableLiveData).when(nearBySearchRepository).getNearbySearchResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
         nearbySearchResponseMutableLiveData.setValue(getDefaultNearbySearchResponse());
 
-        viewModel = new MapViewModel(locationRepository, nearBySearchRepository);
+        viewModel = new MapViewModel(permissionRepository, locationRepository, nearBySearchRepository);
     }
 
     @Test

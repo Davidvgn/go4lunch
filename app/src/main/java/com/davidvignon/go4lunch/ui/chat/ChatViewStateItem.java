@@ -62,6 +62,7 @@ public class ChatViewStateItem {
         return Objects.hash(id, workmateName, message, time, isFromCurrentUser);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ChatViewStateItem{" +

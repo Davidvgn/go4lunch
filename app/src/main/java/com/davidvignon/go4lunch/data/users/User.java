@@ -79,6 +79,8 @@ public class User {
         return Objects.hash(id, name, picturePath, email, favoritesRestaurants, selectedRestaurant);
     }
 
+
+    @NonNull
     @Override
     public String toString() {
         return "User{" +

@@ -42,15 +42,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     private MainActivityBinding binding;
     private MainViewModel viewModel;
 
-    //todo david notification
-    //todo david recherche
-    //todo david redirection vers resto quand click sur marker
-    //todo david UNIT TEST
-    //todo david gérer les couleurs
-    //todo david gérer la traduction des strings
-    //todo david warnings
-    //todo david tronquer dans workmateslist si nom e restaurant trop long
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    app:cardCornerRadius="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/restaurant_item_cl_root"
@@ -113,7 +114,7 @@
             android:layout_height="wrap_content"
             android:numStars="3"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:progressTint="#FFDE17"
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_iv_picture"
             app:layout_constraintTop_toBottomOf="@id/restaurant_item_iv_person_icon"

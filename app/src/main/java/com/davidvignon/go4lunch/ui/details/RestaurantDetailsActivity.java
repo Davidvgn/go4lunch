@@ -28,6 +28,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity implements OnWo
         setContentView(binding.getRoot());
         WorkmatesAdapter adapter = new WorkmatesAdapter(this);
         binding.workmatesRv.setAdapter(adapter);
+        setSupportActionBar(binding.restaurantDetailsToolbar);
 
         RestaurantDetailsViewModel viewModel = new ViewModelProvider(this).get(RestaurantDetailsViewModel.class);
 
@@ -84,5 +85,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity implements OnWo
     @Override
     public void onWorkmateClicked(String workmateId) {
         startActivity(ChatViewModel.navigate(this, workmateId));
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

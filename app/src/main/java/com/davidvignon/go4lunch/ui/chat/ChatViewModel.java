@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.chat;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
@@ -7,13 +8,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.chat_message.ChatMessage;
 import com.davidvignon.go4lunch.data.chat_message.ChatMessageRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
+import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.Instant;
@@ -37,33 +42,50 @@ public class ChatViewModel extends ViewModel {
         return intent;
     }
 
+    private final Application application;
+
     private final ChatMessageRepository chatMessageRepository;
     private final FirebaseAuth firebaseAuth;
     private final DateTimeFormatter timeFormatter;
 
     private final MediatorLiveData<ChatViewState> chatViewStateMediatorLiveData = new MediatorLiveData<>();
+    private final SingleLiveEvent<String> showToastSingleLiveEvent = new SingleLiveEvent<>();
+    private final MutableLiveData<Boolean> isMessageSentMutableLiveData = new MutableLiveData<>();
 
     private final String workmateId;
 
     @Inject
     public ChatViewModel(
+        Application application,
         @NonNull WorkmateRepository workmateRepository,
         @NonNull ChatMessageRepository chatMessageRepository,
         @NonNull SavedStateHandle savedStateHandle,
         FirebaseAuth firebaseAuth
     ) {
+        this.application = application;
         this.chatMessageRepository = chatMessageRepository;
         this.firebaseAuth = firebaseAuth;
 
-        timeFormatter = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy à HH:mm");
+        timeFormatter = DateTimeFormatter.ofPattern(application.getString(R.string.date_time_formater));
 
         workmateId = savedStateHandle.get(KEY_WORKMATE_ID);
         LiveData<Workmate> workmateLiveData = workmateRepository.getWorkmateInfoLiveData(workmateId);
         LiveData<List<ChatMessage>> chatMessagesLiveData = chatMessageRepository.getChatMessagesLiveData(workmateId);
 
-        chatViewStateMediatorLiveData.addSource(workmateLiveData, workmate -> combine(workmate, chatMessagesLiveData.getValue()));
+        isMessageSentMutableLiveData.setValue(false);
+        chatViewStateMediatorLiveData.addSource(workmateLiveData, new Observer<Workmate>() {
+            @Override
+            public void onChanged(Workmate workmate) {
+                ChatViewModel.this.combine(workmate, chatMessagesLiveData.getValue());
+            }
+        });
 
-        chatViewStateMediatorLiveData.addSource(chatMessagesLiveData, sentMessagesList -> combine(workmateLiveData.getValue(), sentMessagesList));
+        chatViewStateMediatorLiveData.addSource(chatMessagesLiveData, new Observer<List<ChatMessage>>() {
+            @Override
+            public void onChanged(List<ChatMessage> sentMessagesList) {
+                ChatViewModel.this.combine(workmateLiveData.getValue(), sentMessagesList);
+            }
+        });
     }
 
     public void combine(@Nullable Workmate workmate, @Nullable List<ChatMessage> chatMessages) {
@@ -101,8 +123,21 @@ public class ChatViewModel extends ViewModel {
         return chatViewStateMediatorLiveData;
     }
 
+    public SingleLiveEvent<String> getShowToastSingleLiveEvent() {
+        return showToastSingleLiveEvent;
+    }
+
     public void sendMessage(String message) {
-        chatMessageRepository.sendMessage(message, workmateId);
+        if (!message.isEmpty()) {
+            chatMessageRepository.sendMessage(message, workmateId);
+            isMessageSentMutableLiveData.setValue(true);
+        } else {
+            showToastSingleLiveEvent.setValue(application.getString(R.string.message_is_empty));
+        }
+    }
+
+    public LiveData<Boolean> getIsMessageSentValueLiveData(){
+        return isMessageSentMutableLiveData;
     }
 
 }

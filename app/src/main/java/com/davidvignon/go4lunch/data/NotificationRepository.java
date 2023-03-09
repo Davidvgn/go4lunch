@@ -2,7 +2,6 @@ package com.davidvignon.go4lunch.data;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.google.firebase.auth.FirebaseAuth;

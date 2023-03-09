@@ -66,6 +66,7 @@
             android:layout_width="200dp"
             android:layout_height="150dp"
             android:layout_gravity="bottom|center"
+            android:contentDescription="@string/small_application_logo"
             app:srcCompat="@drawable/ic_baseline_ramen_dining_24"
             />
 

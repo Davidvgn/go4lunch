@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places.place_details;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -56,6 +58,7 @@ public class PhotosItem{
         return Objects.hash(photoReference, width, htmlAttributions, height);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PhotosItem{" +

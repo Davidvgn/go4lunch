@@ -16,6 +16,7 @@
         android:id="@+id/header_background"
         android:layout_width="0dp"
         android:layout_height="200dp"
+        android:contentDescription="@string/header_menu_picture"
         android:background="@drawable/restaurant_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -42,6 +43,8 @@
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
+        android:contentDescription="@string/user_picture"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_app_name"
         tools:src="@tools:sample/avatars"

@@ -34,7 +34,6 @@ import dagger.assisted.AssistedInject;
 
 @HiltWorker
 public class NotificationWorker extends Worker {
-    //todo david pas besoin de tester le worker
 
     private static final String CHANNEL_ID = "CHANNEL_ID";
 
@@ -70,7 +69,7 @@ public class NotificationWorker extends Worker {
                 notificationManager.createNotificationChannel(channel);
             }
 
-            Intent intent = RestaurantDetailsViewModel.navigate(getApplicationContext(), "ChIJMxOToCnq9EcREuoX_SlbSJY") //todo nino : aller sur le restaurantViewModel en utilisant le navigate
+            Intent intent = RestaurantDetailsViewModel.navigate(getApplicationContext(), notificationRepository.getRestaurantPlaceId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             PendingIntent pendingIntent = TaskStackBuilder.create(getApplicationContext())

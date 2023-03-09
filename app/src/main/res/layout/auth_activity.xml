@@ -12,10 +12,12 @@
         android:layout_width="0dp"
         android:layout_height="180dp"
         android:layout_marginTop="128dp"
+        android:contentDescription="@string/app_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_ramen_dining_24" />
+        app:srcCompat="@drawable/ic_baseline_ramen_dining_24"
+        />
 
     <TextView
         android:id="@+id/auth_tv_title"
@@ -50,10 +52,10 @@
         android:id="@+id/auth_Facebook_LoginButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="64dp"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="128dp"
-        android:layout_marginRight="64dp"
-        android:textSize="16dp"
+        android:layout_marginEnd="64dp"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/auth_tv_text" />

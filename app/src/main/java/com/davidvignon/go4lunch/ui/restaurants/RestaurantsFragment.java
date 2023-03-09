@@ -2,7 +2,6 @@ package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +15,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.davidvignon.go4lunch.databinding.RestaurantsFragmentBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 
+import java.util.List;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class RestaurantsFragment extends Fragment {
-//todo david gérer le nombre de gens qui vont à se restaurant
+
     @NonNull
     public static RestaurantsFragment newInstance() {
         return new RestaurantsFragment();
@@ -52,11 +53,10 @@ public class RestaurantsFragment extends Fragment {
         RestaurantAdapter adapter = new RestaurantAdapter(onRestaurantClickedListener);
         binding.restaurantRv.setAdapter(adapter);
 
-        viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), restaurantViewStates -> adapter.submitList(restaurantViewStates));
-
-        viewModel.getPlaceIdLiveData().observe(getViewLifecycleOwner(), new Observer<String>() {
+        viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantViewState>>() {
             @Override
-            public void onChanged(String s) {
+            public void onChanged(List<RestaurantViewState> restaurantViewStates) {
+                adapter.submitList(restaurantViewStates);
             }
         });
     }

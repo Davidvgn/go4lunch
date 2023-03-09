@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="facebook_app_id">425200889605289</string>
+    <string name="fb_login_protocol_scheme">fb425200889605289</string>
+
+    <string name="facebook_client_token">be5791110e46a23539b7625b09d3c16b</string>
+    <string name="auth_text">Trouvez un bon restaurant et invitez vos collègues à déjeuner !</string>
+
+    <string name="map">Carte</string>
+    <string name="list">Liste</string>
+    <string name="workmate">Collègeus</string>
+    <string name="your_web_client_id">157511151080-i8dqn6e8bljp2rmcr02s1v837i1ml1j2.apps.googleusercontent.com</string>
+
+    <string name="nav_open">Ouvert</string>
+    <string name="nav_close">Fermé</string>
+
+    <string name="type_your_search">Tapez votre recherche ...</string>
+    <string name="Restaurant_picture">Photo du restaurant</string>
+    <string name="upperscore">-</string>
+    <string name="people_icon">Icone personnage</string>
+    <string name="restaurantViewTitle">J\'ai Faim !</string>
+    <string name="workermatesViewTitle">Collègues</string>
+
+    <string name="restaurant_dtls_iv_header_descrip">Restaurant photo</string>
+    <string name="call_restaurant">Appeler</string>
+    <string name="like_restaurant">AIMER</string>
+    <string name="unlike_restaurant">UNLIKE</string>
+    <string name="restaurant_website">SITE</string>
+    <string name="open">Ouvert</string>
+    <string name="closed">Fermé</string>
+    <string name="your_lunch">Votre déjeuner</string>
+    <string name="settings">Paramètres</string>
+    <string name="logout">Déconnexion</string>
+    <string name="meters">m</string>
+
+    <string name="googleLogin">S\'identifier avec Google</string>
+
+    <string name="message_field">Tapez votre message ici...</string>
+    <string name="chat_activity_title">Messages</string>
+    <string name="chat_iv_description">Photo du destinataire</string>
+    <string name="chat_ib_description">Send icon</string>
+    <string name="hasnt_decide_yet"> encore décidé</string>
+    <string name="is_eating_at"> mange à </string>
+    <string name="no_restaurant_selected">Aucun Restaurant Selectionné</string>
+    <string name="no_selected_restaurant">\ n\'a pas\</string>
+    <string name="a_restaurant_is_selected">\ est\</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="lunch_notification">Notification du déjeuner</string>
+
+    <string name="notification_name">Notification du Restaurant Sélectionné</string>
+    <string name="notification_description">Permet de recevoir une notification à 12h du restaurant sélectionné et des collaborateurs qui ont sélectionné le même restaurant que vous</string>
+    <string name="message_is_empty">Le message est vide</string>
+    <string name="date_time_formater">"dd/MM/yyyy \'à'\ HH:mm"</string>
+
+    <string name="notifications_disabled">Notifications désactivées</string>
+    <string name="please_enable_notifications">Merci d\'\authoriser les notifications dans les paramètres</string>
+    <string name="allow_notification">Authoriser les notifications</string>
+    <string name="cancel">Annuler</string>
+
+
+    <string name="app_logo">Application Logo</string>
+    <string name="header_menu_picture">Header menu picture</string>
+    <string name="user_picture">User picture</string>
+    <string name="small_application_logo">Small Application Logo</string>
+    <string name="select_restaurant_button">Select restaurant button</string>
+    <string name="workmate_picture">Workmate picture</string>
+    <string name="search">Search</string>
+</resources>

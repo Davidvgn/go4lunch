@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -65,6 +67,7 @@ public class NearbySearchResponse {
         return Objects.hash(nextPageToken, htmlAttributions, results, status);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return

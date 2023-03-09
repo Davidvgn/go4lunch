@@ -48,6 +48,7 @@ public class ChatViewState {
         return Objects.hash(workmateName, workmatePicture, messages);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Chat{" +

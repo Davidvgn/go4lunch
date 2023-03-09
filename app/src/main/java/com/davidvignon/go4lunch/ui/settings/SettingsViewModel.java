@@ -1,11 +1,9 @@
 package com.davidvignon.go4lunch.ui.settings;
 
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -25,7 +23,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
-    //todo david faire test unit
 
     private static final String TAG_NOTIFICATION_WORKER = "TAG_NOTIFICATION_WORKER";
 
@@ -67,7 +64,7 @@ public class SettingsViewModel extends ViewModel {
                 PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
                     NotificationWorker.class, 1, TimeUnit.DAYS)
                     .addTag(TAG_NOTIFICATION_WORKER)
-                   // .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+                    .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
                     .build();
 
                 workManager.enqueueUniquePeriodicWork(TAG_NOTIFICATION_WORKER, ExistingPeriodicWorkPolicy.KEEP, workRequest);

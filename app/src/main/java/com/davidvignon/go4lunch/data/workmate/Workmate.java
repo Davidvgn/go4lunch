@@ -79,6 +79,7 @@ public class Workmate {
         return Objects.hash(id, name, email, picturePath, selectedRestaurant, selectedRestaurantName);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Workmate{" +

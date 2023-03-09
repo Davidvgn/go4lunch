@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -29,7 +31,6 @@ public class PhotosItemResponse {
         return photoReference;
     }
 
-    @Nullable
     public int getWidth() {
         return width;
     }
@@ -39,11 +40,11 @@ public class PhotosItemResponse {
         return htmlAttributions;
     }
 
-    @Nullable
     public int getHeight() {
         return height;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return

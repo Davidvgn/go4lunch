@@ -11,6 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/restaurant_details_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            />
+
+
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/restaurant_details_ctl"
             android:layout_width="match_parent"
@@ -24,8 +33,7 @@
                 android:contentDescription="@string/restaurant_dtls_iv_header_descrip"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="pin"
-                tools:src="@tools:sample/avatars"
-                />
+                tools:src="@tools:sample/avatars" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -39,39 +47,37 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/restaurant_details_tv_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/dominantRed"
+                android:ellipsize="end"
+                android:maxLength="30"
+                android:maxLines="1"
                 android:padding="8dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:maxLines="1"
-                android:maxLength="30"
-                android:ellipsize="end"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Nom du restaurant"/>
+                tools:text="Nom du restaurant" />
 
             <RatingBar
                 android:id="@+id/restaurant_details_rb"
+                style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@color/dominantRed"
                 android:numStars="3"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:progressTint="#FFDE17"
-                android:background="@color/dominantRed"
-                app:layout_constraintStart_toEndOf="@id/restaurant_details_tv_name"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/restaurant_details_tv_address"
-                style="?android:attr/ratingBarStyleSmall"
-                />
+                app:layout_constraintStart_toEndOf="@id/restaurant_details_tv_name"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="0dp"
@@ -83,10 +89,9 @@
                 android:paddingBottom="8dp"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/restaurant_details_rb"
                 app:layout_constraintEnd_toEndOf="parent"
-                />
+                app:layout_constraintStart_toEndOf="@id/restaurant_details_rb"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <TextView
@@ -94,13 +99,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/dominantRed"
+                android:ellipsize="end"
+                android:maxLength="50"
+                android:maxLines="1"
                 android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:paddingBottom="16dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:maxLines="1"
-                android:maxLength="50"
-                android:ellipsize="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/restaurant_details_tv_name"
@@ -117,8 +123,8 @@
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="32dp"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="32dp"
                     android:backgroundTint="@color/white"
                     android:drawableTop="@drawable/ic_baseline_phone_24"
                     android:paddingTop="8dp"
@@ -135,16 +141,15 @@
                     android:drawableTop="@drawable/ic_baseline_star_outline_24"
                     android:paddingTop="8dp"
                     android:text="@string/like_restaurant"
-                    android:textColor="@color/dominantRed"
-                    />
+                    android:textColor="@color/dominantRed" />
 
                 <Button
                     android:id="@+id/restaurant_details_bt_website"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="32dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="32dp"
                     android:backgroundTint="@color/white"
                     android:drawableTop="@drawable/ic_globe_24"
                     android:paddingTop="8dp"
@@ -173,6 +178,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:backgroundTint="@color/white"
+        android:contentDescription="@string/select_restaurant_button"
         app:layout_anchor="@id/restaurant_details_app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_baseline_check_circle_outline_24" />

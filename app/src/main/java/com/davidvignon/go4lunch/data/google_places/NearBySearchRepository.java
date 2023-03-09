@@ -1,19 +1,13 @@
 package com.davidvignon.go4lunch.data.google_places;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,13 +31,15 @@ public class NearBySearchRepository {
     }
 
     public LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
+
+        String nearBySearchApiKey = BuildConfig.NEARBY_API_KEY;
         MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
 
         placesApi.getNearbySearchResponse(
             latitude + "," + longitude,
-            "1500",
+            "1500",         //todo Nino dans strings ?
             "restaurant",
-            "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8" //todo Nino on ne doit pas laisser la clé visible je suppose
+            nearBySearchApiKey
         ).enqueue(new Callback<>() {
 
             @Override
@@ -59,8 +55,9 @@ public class NearBySearchRepository {
         return nearbySearchResponseMutableLiveData;
     }
 
-    public LiveData<Integer> howManyAreGoingThere(String placeId) {
+        public LiveData<Integer> howManyAreGoingThere(String placeId) {
         MutableLiveData<Integer> numberOfWorkmatesMutableLiveData = new MutableLiveData<>();
+
 
         firebaseFirestore.collection("users")
             .whereEqualTo("selectedRestaurant", placeId)
@@ -75,7 +72,5 @@ public class NearBySearchRepository {
 
         return numberOfWorkmatesMutableLiveData;
     }
-
-
 
 }

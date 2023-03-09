@@ -110,6 +110,7 @@ public class RestaurantDetailsViewState {
         return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, isSelected, likeButtonText, likeButtonIcon);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetailsViewState{" +

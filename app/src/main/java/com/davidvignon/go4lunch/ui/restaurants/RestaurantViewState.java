@@ -99,7 +99,8 @@ public class RestaurantViewState {
         return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating, distance, workmatesGoingThere);
     }
 
-    @Override
+   @NonNull
+   @Override
     public String toString() {
         return "RestaurantViewState{" +
             "placeId='" + placeId + '\'' +

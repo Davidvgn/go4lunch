@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 import com.google.gson.annotations.SerializedName;
@@ -25,6 +26,7 @@ public class OpeningHoursResponse {
         this.openNow = openNow;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return

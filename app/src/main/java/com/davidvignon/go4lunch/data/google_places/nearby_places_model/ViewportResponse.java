@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
@@ -22,6 +24,7 @@ public class ViewportResponse {
         return northeastResponse;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return

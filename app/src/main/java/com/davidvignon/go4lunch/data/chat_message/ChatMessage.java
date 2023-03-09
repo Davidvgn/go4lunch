@@ -1,5 +1,7 @@
 package com.davidvignon.go4lunch.data.chat_message;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class ChatMessage {
@@ -54,6 +56,8 @@ public class ChatMessage {
         return Objects.hash(uuid, senderId, receiverId, message, epochMilli);
     }
 
+
+    @NonNull
     @Override
     public String toString() {
         return "ChatMessage{" +

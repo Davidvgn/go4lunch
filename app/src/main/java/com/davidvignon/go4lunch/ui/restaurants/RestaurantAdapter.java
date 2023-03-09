@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.databinding.RestaurantsItemviewBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 
@@ -43,7 +44,7 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
 
         public void bind(RestaurantViewState item, OnRestaurantClickedListener listener) {
             String photoReference = item.getPhotosItemResponse();
-            String API_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8"; //todo david to hide
+            String API_KEY = BuildConfig.NEARBY_API_KEY;
             String restaurantPicture = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
                 + photoReference +
                 "&key=" + API_KEY;

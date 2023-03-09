@@ -14,6 +14,7 @@ import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
+import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -31,15 +32,20 @@ public class MapViewModel extends ViewModel {
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
 
+    @NonNull
+    private final PermissionRepository permissionRepository;
+
     private final LiveData<List<MapPoiViewState>> mapPoiViewStatesLiveData;
     private final SingleLiveEvent<LatLng> cameraUpdateSingleLiveEvent = new SingleLiveEvent<>();
 
     @Inject
     public MapViewModel(
+        @NonNull PermissionRepository permissionRepository,
         @NonNull LocationRepository locationRepository,
         @NonNull NearBySearchRepository nearBySearchRepository
     ) {
         this.nearBySearchRepository = nearBySearchRepository;
+        this.permissionRepository = permissionRepository;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         bindCameraUpdate(locationLiveData);
@@ -56,7 +62,12 @@ public class MapViewModel extends ViewModel {
         return cameraUpdateSingleLiveEvent;
     }
 
-    @NonNull
+
+    public LiveData<Boolean> isLocationGrantedLiveData() {
+        return permissionRepository.isUserLocationGrantedLiveData();
+    }
+
+        @NonNull
     private LiveData<List<MapPoiViewState>> bindViewState(LiveData<Location> locationLiveData) {
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
             locationLiveData,

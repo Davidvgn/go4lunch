@@ -1,13 +1,11 @@
+
 package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.location.Location;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -17,6 +15,7 @@ import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
+import com.facebook.internal.Mutable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,9 @@ public class RestaurantViewModel extends ViewModel {
     private final DistanceCalculator distanceCalculator;
 
     private final LiveData<List<RestaurantViewState>> restaurantViewState;
-    MutableLiveData<String> placeIdMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> workmatesGoingThereMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> placeIdMutableLiveData = new MutableLiveData<>();
+
 
     @Inject
     public RestaurantViewModel(
@@ -49,6 +50,8 @@ public class RestaurantViewModel extends ViewModel {
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = bindViewState(locationLiveData);
+
+        workmatesGoingThereMutableLiveData.setValue(nearBySearchRepository.howManyAreGoingThere(placeIdMutableLiveData.getValue()).getValue());
     }
 
     @NonNull
@@ -56,12 +59,12 @@ public class RestaurantViewModel extends ViewModel {
         return restaurantViewState;
     }
 
-    public LiveData<String> getPlaceIdLiveData() {
-        return placeIdMutableLiveData;
+    public LiveData<Integer> getNumberOfWorkmatesLiveData() {
+        return workmatesGoingThereMutableLiveData;
     }
 
-    public LiveData<Integer> getsome() {
-        return nearBySearchRepository.howManyAreGoingThere(placeIdMutableLiveData.getValue());
+    public LiveData<String> getPlaceId() {
+        return placeIdMutableLiveData;
     }
 
     @NonNull
@@ -92,6 +95,8 @@ public class RestaurantViewModel extends ViewModel {
                         && result.getGeometry().getLocation().getLng() != null
                     ) {
 
+                        placeIdMutableLiveData.setValue(result.getPlaceId());
+
                         final int openOrClosed;
                         if (result.getOpeningHours().isOpenNow()) {
                             openOrClosed = R.string.open;
@@ -103,18 +108,15 @@ public class RestaurantViewModel extends ViewModel {
 
                         Location userLocation = locationLiveData.getValue();
 
-                        placeIdMutableLiveData.setValue(result.getPlaceId());
-
                         final Integer distanceText;
 
                         if (userLocation != null) {
-                            Integer distanceInt = distanceCalculator.distanceBetween(
+                            distanceText = (distanceCalculator.distanceBetween(
                                 result.getGeometry().getLocation().getLat(),
                                 result.getGeometry().getLocation().getLng(),
                                 userLocation.getLatitude(),
                                 userLocation.getLongitude()
-                            );
-                            distanceText = (distanceInt);
+                            ));
 
                         } else {
                             distanceText = null;
@@ -130,7 +132,7 @@ public class RestaurantViewModel extends ViewModel {
                                 openOrClosed,
                                 (float) (initialRating * 3 / 5),
                                 distanceText.toString(),
-                              "4" //todo david work on it
+                                "4" //todo david work on it voir fonction dans NearBy
                             )
                         );
 
