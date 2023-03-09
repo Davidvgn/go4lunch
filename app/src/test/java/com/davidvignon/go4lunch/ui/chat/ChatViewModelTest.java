@@ -65,12 +65,11 @@ public class ChatViewModelTest {
         Mockito.doReturn(DEFAULT_WORKMATE_ID).when(savedStateHandle).get("KEY_WORKMATE_ID");
         Mockito.doReturn(chatMessageMutableLiveData).when(chatMessageRepository).getChatMessagesLiveData(DEFAULT_WORKMATE_ID);
         Mockito.doReturn(workmateMutableLiveData).when(workmateRepository).getWorkmateInfoLiveData(DEFAULT_WORKMATE_ID);
-        //todo david PLS
 
         Mockito.doReturn("user").when(firebaseUser).getDisplayName();
         Mockito.doReturn("user123").when(firebaseUser).getUid();
         Mockito.doReturn("user123@gmail.com").when(firebaseUser).getEmail();
-        Mockito.doReturn(firebaseUser).when(firebaseAuth).getCurrentUser().getDisplayName();
+        Mockito.doReturn(firebaseUser).when(firebaseAuth).getCurrentUser();
 
         viewModel = new ChatViewModel(
             application,
