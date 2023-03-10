@@ -71,23 +71,21 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         restaurantPlaceId.setValue(placeId);
 
-        mediatorLiveData.addSource(detailsResponseLiveData, new Observer<DetailsResponse>() {
-            @Override
-            public void onChanged(DetailsResponse detailsResponse) {
-                RestaurantDetailsViewModel.this.combine(detailsResponse, isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(detailsResponseLiveData, detailsResponse ->
+            combine(detailsResponse, isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue())
+        );
 
-        mediatorLiveData.addSource(isRestaurantLikedLiveData, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isLiked) {
-                RestaurantDetailsViewModel.this.combine(detailsResponseLiveData.getValue(), isLiked, isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(isRestaurantLikedLiveData, isLiked ->
+            combine(detailsResponseLiveData.getValue(), isLiked, isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue())
+        );
 
-        mediatorLiveData.addSource(isRestaurantSelectedLiveData, isSelected -> combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isSelected, workmatesLiveData.getValue()));
+        mediatorLiveData.addSource(isRestaurantSelectedLiveData, isSelected ->
+            combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isSelected, workmatesLiveData.getValue())
+        );
 
-        mediatorLiveData.addSource(workmatesLiveData, workmates -> combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates));
+        mediatorLiveData.addSource(workmatesLiveData, workmates ->
+            combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates)
+        );
     }
 
     public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmate> workmatesList) {

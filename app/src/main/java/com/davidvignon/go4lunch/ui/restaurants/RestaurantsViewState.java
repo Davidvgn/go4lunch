@@ -5,7 +5,7 @@ import androidx.annotation.StringRes;
 
 import java.util.Objects;
 
-public class RestaurantViewState {
+public class RestaurantsViewState {
 
     @NonNull
     private final String placeId;
@@ -26,9 +26,11 @@ public class RestaurantViewState {
 
     @NonNull
     private final String distance;
-    private final int workmatesGoingThere;
 
-    public RestaurantViewState(
+    @NonNull
+    private final String workmatesGoingThere;
+
+    public RestaurantsViewState(
         @NonNull String placeId,
         @NonNull String name,
         @NonNull String vicinity,
@@ -36,7 +38,7 @@ public class RestaurantViewState {
         @StringRes int openOrClose,
         float rating,
         @NonNull String distance,
-        int workmatesGoingThere
+        @NonNull String workmatesGoingThere
     ) {
         this.placeId = placeId;
         this.name = name;
@@ -82,16 +84,16 @@ public class RestaurantViewState {
         return distance;
     }
 
-    public int getWorkmatesGoingThere() {
+    @NonNull
+    public String getWorkmatesGoingThere() {
         return workmatesGoingThere;
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RestaurantViewState that = (RestaurantViewState) o;
+        RestaurantsViewState that = (RestaurantsViewState) o;
         return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && workmatesGoingThere == that.workmatesGoingThere && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance);
     }
 

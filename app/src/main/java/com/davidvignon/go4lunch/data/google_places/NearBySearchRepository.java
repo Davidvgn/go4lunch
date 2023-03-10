@@ -18,6 +18,9 @@ import retrofit2.Response;
 @Singleton
 public class NearBySearchRepository {
 
+    private static final String RADIUS_METERS = "1500";
+    private static final String TYPE = "restaurant";
+
     @NonNull
     private final PlacesApi placesApi;
 
@@ -28,14 +31,13 @@ public class NearBySearchRepository {
 
     public LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
 
-        String nearBySearchApiKey = BuildConfig.NEARBY_API_KEY;
         MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
 
         placesApi.getNearbySearchResponse(
             latitude + "," + longitude,
-            "1500",
-            "restaurant",
-            nearBySearchApiKey
+            RADIUS_METERS,
+            TYPE,
+            BuildConfig.NEARBY_API_KEY
         ).enqueue(new Callback<>() {
 
             @Override
@@ -45,7 +47,7 @@ public class NearBySearchRepository {
 
             @Override
             public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
-
+                t.printStackTrace();
             }
         });
         return nearbySearchResponseMutableLiveData;

@@ -13,12 +13,12 @@ import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.databinding.RestaurantsItemviewBinding;
 import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
 
-public class RestaurantAdapter extends ListAdapter<RestaurantViewState, RestaurantAdapter.ViewHolder> {
+public class RestaurantsAdapter extends ListAdapter<RestaurantsViewState, RestaurantsAdapter.ViewHolder> {
 
     @NonNull
     private final OnRestaurantClickedListener listener;
 
-    public RestaurantAdapter(@NonNull OnRestaurantClickedListener listener) {
+    public RestaurantsAdapter(@NonNull OnRestaurantClickedListener listener) {
         super(new ListRestaurantItemCallBack());
         this.listener = listener;
     }
@@ -42,7 +42,7 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
             this.binding = binding;
         }
 
-        public void bind(RestaurantViewState item, OnRestaurantClickedListener listener) {
+        public void bind(RestaurantsViewState item, OnRestaurantClickedListener listener) {
             String photoReference = item.getPhotosItemResponse();
             String API_KEY = BuildConfig.NEARBY_API_KEY;
             String restaurantPicture = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
@@ -64,14 +64,14 @@ public class RestaurantAdapter extends ListAdapter<RestaurantViewState, Restaura
         }
     }
 
-    private static class ListRestaurantItemCallBack extends DiffUtil.ItemCallback<RestaurantViewState> {
+    private static class ListRestaurantItemCallBack extends DiffUtil.ItemCallback<RestaurantsViewState> {
         @Override
-        public boolean areItemsTheSame(@NonNull RestaurantViewState oldItem, @NonNull RestaurantViewState newItem) {
+        public boolean areItemsTheSame(@NonNull RestaurantsViewState oldItem, @NonNull RestaurantsViewState newItem) {
             return oldItem.getPlaceId().equals(newItem.getPlaceId());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull RestaurantViewState oldItem, @NonNull RestaurantViewState newItem) {
+        public boolean areContentsTheSame(@NonNull RestaurantsViewState oldItem, @NonNull RestaurantsViewState newItem) {
             return oldItem.equals(newItem);
         }
     }

@@ -21,8 +21,8 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosIte
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
-import com.davidvignon.go4lunch.ui.restaurants.RestaurantViewModel;
-import com.davidvignon.go4lunch.ui.restaurants.RestaurantViewState;
+import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewModel;
+import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewState;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 
 import org.junit.Before;
@@ -31,7 +31,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RestaurantsViewModelTest {
 
@@ -56,10 +58,10 @@ public class RestaurantsViewModelTest {
     private final DistanceCalculator distanceCalculator = Mockito.mock(DistanceCalculator.class);
     private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Integer> howManyWorkmatesAreGoingThereMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Map<String, Integer>> placeIdUserCountMapMutableLiveData = new MutableLiveData<>();
 
 
-    private RestaurantViewModel viewModel;
+    private RestaurantsViewModel viewModel;
 
     @Before
     public void setUp() {
@@ -71,21 +73,23 @@ public class RestaurantsViewModelTest {
 
         locationMutableLiveData.setValue(location);
 
-        howManyWorkmatesAreGoingThereMutableLiveData.setValue(DEFAULT_WORKMATES_GOING_THERE);
+        placeIdUserCountMapMutableLiveData.setValue(new HashMap<>() {{
+            put(DEFAULT_RESTAURANT_RESPONSE_PLACE_ID, DEFAULT_WORKMATES_GOING_THERE);
+        }});
 
-        Mockito.doReturn(howManyWorkmatesAreGoingThereMutableLiveData).when(workmateRepository).howManyAreGoingThere(DEFAULT_RESTAURANT_RESPONSE_PLACE_ID);
+        Mockito.doReturn(placeIdUserCountMapMutableLiveData).when(workmateRepository).getPlaceIdUserCountMapLiveData();
 
         Mockito.doReturn(nearbySearchResponseMutableLiveData).when(nearBySearchRepository).getNearbySearchResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
         nearbySearchResponseMutableLiveData.setValue(getDefaultNearbySearchResponse());
 
 
-        viewModel = new RestaurantViewModel(locationRepository, nearBySearchRepository, workmateRepository, distanceCalculator);
+        viewModel = new RestaurantsViewModel(locationRepository, nearBySearchRepository, workmateRepository, distanceCalculator);
     }
 
     @Test
     public void initial_case() {
         // When
-        List<RestaurantViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantViewStateLiveData());
+        List<RestaurantsViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantViewStateLiveData());
 
         // Then
         assertEquals(getDefaultRestaurantViewState(), viewStates);
@@ -97,7 +101,7 @@ public class RestaurantsViewModelTest {
         nearbySearchResponseMutableLiveData.setValue(getDefaultNearbySearchResponseWithElementsMissing());
 
         // When
-        List<RestaurantViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantViewStateLiveData());
+        List<RestaurantsViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantViewStateLiveData());
 
         // Then
         assertTrue(viewStates.isEmpty());
@@ -304,12 +308,12 @@ public class RestaurantsViewModelTest {
     //endregion IN
 
     // region OUT
-    private List<RestaurantViewState> getDefaultRestaurantViewState() {
-        List<RestaurantViewState> result = new ArrayList<>();
+    private List<RestaurantsViewState> getDefaultRestaurantViewState() {
+        List<RestaurantsViewState> result = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
             result.add(
-                new RestaurantViewState(
+                new RestaurantsViewState(
                     DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
                     DEFAULT_RESTAURANT_RESPONSE_NAME + i,
                     DEFAULT_VICINITY + i,
@@ -317,7 +321,7 @@ public class RestaurantsViewModelTest {
                     i == 1 ? R.string.open : R.string.closed,
                     2.04F,
                     DEFAULT_DISTANCE,
-                    DEFAULT_WORKMATES_GOING_THERE
+                    "" + DEFAULT_WORKMATES_GOING_THERE
                 )
             );
         }

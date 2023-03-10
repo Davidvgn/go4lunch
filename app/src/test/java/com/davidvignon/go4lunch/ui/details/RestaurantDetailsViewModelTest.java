@@ -49,9 +49,10 @@ public class RestaurantDetailsViewModelTest {
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
     private final SavedStateHandle savedStateHandle = Mockito.mock(SavedStateHandle.class);
-    private final RestaurantDetailsResponse restaurantDetailsResponse = Mockito.mock(RestaurantDetailsResponse.class);
-    MutableLiveData<DetailsResponse> detailsResponseMutableLiveData = new MutableLiveData<>();
-    MutableLiveData<List<Workmate>> workmateListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<DetailsResponse> detailsResponseMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isRestaurantLikedMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isRestaurantSelectedMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Workmate>> workmateListMutableLiveData = new MutableLiveData<>();
 
     private RestaurantDetailsViewModel viewModel;
 
@@ -59,20 +60,16 @@ public class RestaurantDetailsViewModelTest {
     public void setUp() {
 
         detailsResponseMutableLiveData.setValue(getDefaultDetailsResponse());
-
+        isRestaurantLikedMutableLiveData.setValue(true);
+        isRestaurantSelectedMutableLiveData.setValue(true);
         workmateListMutableLiveData.setValue(getAWorkmateList());
 
-        Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(savedStateHandle)
-            .get("KEY_PLACE_ID");
+        Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(savedStateHandle).get("KEY_PLACE_ID");
 
-        Mockito.doReturn(detailsResponseMutableLiveData).when(placeDetailsRepository)
-            .getDetailsResponseLiveData(DEFAULT_KEY_PLACE_ID);
-        Mockito.doReturn(detailsResponseMutableLiveData).when(userRepository)
-            .isRestaurantLikedByUserLiveData(DEFAULT_KEY_PLACE_ID);
-        Mockito.doReturn(detailsResponseMutableLiveData).when(userRepository)
-            .isRestaurantSelectedLiveData(DEFAULT_KEY_PLACE_ID);
-        Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository)
-            .getUserListGoingToLiveData(DEFAULT_KEY_PLACE_ID);
+        Mockito.doReturn(detailsResponseMutableLiveData).when(placeDetailsRepository).getDetailsResponseLiveData(DEFAULT_KEY_PLACE_ID);
+        Mockito.doReturn(isRestaurantLikedMutableLiveData).when(userRepository).isRestaurantLikedByUserLiveData(DEFAULT_KEY_PLACE_ID);
+        Mockito.doReturn(isRestaurantSelectedMutableLiveData).when(userRepository).isRestaurantSelectedLiveData(DEFAULT_KEY_PLACE_ID);
+        Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getUserListGoingToLiveData(DEFAULT_KEY_PLACE_ID);
 
         viewModel = new RestaurantDetailsViewModel(application, placeDetailsRepository, userRepository, workmateRepository, savedStateHandle);
     }
@@ -174,18 +171,18 @@ public class RestaurantDetailsViewModelTest {
     private DetailsResponse getDefaultDetailsResponse() {
 
         RestaurantDetailsResponse response = Mockito.mock(RestaurantDetailsResponse.class);
-        Mockito.doReturn(DEFAULT_RATING).when(restaurantDetailsResponse).getRating();
-        Mockito.doReturn(getDefaultPhotos()).when(restaurantDetailsResponse).getPhotos();
-        Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(restaurantDetailsResponse).getPlaceId();
-        Mockito.doReturn(DEFAULT_WEBSITE).when(restaurantDetailsResponse).getWebsite();
-        Mockito.doReturn(DEFAULT_NAME).when(restaurantDetailsResponse).getName();
-        Mockito.doReturn(DEFAULT_VICINITY).when(restaurantDetailsResponse).getVicinity();
-        Mockito.doReturn(DEFAULT_NUMBER).when(restaurantDetailsResponse).getInternationalPhoneNumber();
+        Mockito.doReturn(DEFAULT_RATING).when(response).getRating();
+        Mockito.doReturn(getDefaultPhotos()).when(response).getPhotos();
+        Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(response).getPlaceId();
+        Mockito.doReturn(DEFAULT_WEBSITE).when(response).getWebsite();
+        Mockito.doReturn(DEFAULT_NAME).when(response).getName();
+        Mockito.doReturn(DEFAULT_VICINITY).when(response).getVicinity();
+        Mockito.doReturn(DEFAULT_NUMBER).when(response).getInternationalPhoneNumber();
 
-        return new DetailsResponse(response,
+        return new DetailsResponse(
+            response,
             null,
             null
-
         );
     }
 

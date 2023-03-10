@@ -49,14 +49,14 @@ public class RestaurantsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RestaurantViewModel viewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
-        RestaurantAdapter adapter = new RestaurantAdapter(onRestaurantClickedListener);
+        RestaurantsViewModel viewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
+        RestaurantsAdapter adapter = new RestaurantsAdapter(onRestaurantClickedListener);
         binding.restaurantRv.setAdapter(adapter);
 
-        viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantViewState>>() {
+        viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantsViewState>>() {
             @Override
-            public void onChanged(List<RestaurantViewState> restaurantViewStates) {
-                adapter.submitList(restaurantViewStates);
+            public void onChanged(List<RestaurantsViewState> restaurantsViewStates) {
+                adapter.submitList(restaurantsViewStates);
             }
         });
     }

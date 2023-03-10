@@ -5,8 +5,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,31 +45,42 @@ public class WorkmateRepository {
         return workmateMutableLiveData;
     }
 
-
     public LiveData<List<Workmate>> getUserListGoingToLiveData(String placeId) {
         MutableLiveData<List<Workmate>> userMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("users").whereEqualTo("selectedRestaurant", placeId).addSnapshotListener((value, error) -> {
-            if (value != null) {
-                userMutableLiveData.setValue(value.toObjects(Workmate.class));
-            }
-        });
-        return userMutableLiveData;
-    }
-    public LiveData<Integer> howManyAreGoingThere(String placeId) {
-        MutableLiveData<Integer> numberOfWorkmatesMutableLiveData = new MutableLiveData<>();
-
-
         firebaseFirestore.collection("users")
             .whereEqualTo("selectedRestaurant", placeId)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                int count = queryDocumentSnapshots.size();
-                numberOfWorkmatesMutableLiveData.setValue(count);
-            })
-            .addOnFailureListener(e -> {
-                numberOfWorkmatesMutableLiveData.setValue(0);
+            .addSnapshotListener((value, error) -> {
+                if (value != null) {
+                    userMutableLiveData.setValue(value.toObjects(Workmate.class));
+                }
+            });
+        return userMutableLiveData;
+    }
+
+    public LiveData<Map<String, Integer>> getPlaceIdUserCountMapLiveData() {
+        MutableLiveData<Map<String, Integer>> placeIdUserCountMapMutableLiveData = new MutableLiveData<>();
+
+        firebaseFirestore.collection("users")
+            .addSnapshotListener((queryDocumentSnapshots, error) -> {
+                if (queryDocumentSnapshots != null) {
+                    Map<String, Integer> placeIdUserCountMap = new HashMap<>();
+
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                        String placeId = queryDocumentSnapshot.getString("selectedRestaurant");
+
+                        Integer previousCount = placeIdUserCountMap.get(placeId);
+
+                        if (previousCount == null) {
+                            previousCount = 0;
+                        }
+
+                        placeIdUserCountMap.put(placeId, previousCount + 1);
+                    }
+
+                    placeIdUserCountMapMutableLiveData.setValue(placeIdUserCountMap);
+                }
             });
 
-        return numberOfWorkmatesMutableLiveData;
+        return placeIdUserCountMapMutableLiveData;
     }
 }
