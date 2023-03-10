@@ -1,6 +1,10 @@
 package com.davidvignon.go4lunch.ui.chat;
 
-import static net.bytebuddy.matcher.ElementMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import android.app.Application;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -21,21 +25,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatViewModelTest {
 
-
     private static final String DEFAULT_CHAT_ID = "DEFAULT_CHAT_ID";
-    private static final String DEFAULT_USER_NAME = "DEFAULT_USER_NAME";
+    private static final String DEFAULT_MESSAGE_ID = "DEFAULT_MESSAGE_ID";
+    private static final String DEFAULT_MESSAGE = "DEFAULT_MESSAGE";
+    private static final String DEFAULT_TIME = "DEFAULT_TIME";
     private static final String DEFAULT_WORKMATE_ID = "DEFAULT_WORKMATE_ID";
     private static final String DEFAULT_WORKMATE_NAME = "DEFAULT_WORKMATE_NAME";
     private static final String DEFAULT_WORKMATE_EMAIL = "DEFAULT_WORKMATE_EMAIL";
     private static final String DEFAULT_WORKMATE_PICTURE_PATH = "DEFAULT_WORKMATE_PICTURE_PATH";
     private static final String DEFAULT_USER_ID = "DEFAULT_USER_ID";
-    private static final String DEFAULT_MESSAGE_ID = "DEFAULT_MESSAGE_ID";
+    private static final String DEFAULT_USER_NAME = "DEFAULT_USER_NAME";
+    private static final String DEFAULT_USER_EMAIL = "DEFAULT_USER_EMAIL";
+
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -56,7 +62,7 @@ public class ChatViewModelTest {
     @Before
     public void setUp() {
 
-        chatViewState.setValue(getChatVS());
+        chatViewState.setValue(getChatViewState());
         workmateMutableLiveData.setValue(getWorkmateInfo());
         chatMessageMutableLiveData.setValue(getDefaultMessages());
 
@@ -66,9 +72,9 @@ public class ChatViewModelTest {
         Mockito.doReturn(chatMessageMutableLiveData).when(chatMessageRepository).getChatMessagesLiveData(DEFAULT_WORKMATE_ID);
         Mockito.doReturn(workmateMutableLiveData).when(workmateRepository).getWorkmateInfoLiveData(DEFAULT_WORKMATE_ID);
 
-        Mockito.doReturn("user").when(firebaseUser).getDisplayName();
-        Mockito.doReturn("user123").when(firebaseUser).getUid();
-        Mockito.doReturn("user123@gmail.com").when(firebaseUser).getEmail();
+        Mockito.doReturn(DEFAULT_USER_NAME).when(firebaseUser).getDisplayName();
+        Mockito.doReturn(DEFAULT_USER_ID).when(firebaseUser).getUid();
+        Mockito.doReturn(DEFAULT_USER_EMAIL).when(firebaseUser).getEmail();
         Mockito.doReturn(firebaseUser).when(firebaseAuth).getCurrentUser();
 
         viewModel = new ChatViewModel(
@@ -83,6 +89,75 @@ public class ChatViewModelTest {
     public void initial_case() {
 
         ChatViewState viewState = LiveDataTestUtils.getValueForTesting(viewModel.getChatViewStateLiveData());
+
+        assertNotNull(viewState);
+
+    }
+
+    @Test
+    public void no_message_viewState_is_null() {
+        // When
+        workmateMutableLiveData.setValue(null);
+        ChatViewState viewState = LiveDataTestUtils.getValueForTesting(viewModel.getChatViewStateLiveData());
+
+        // Then
+        assertNull(viewState);
+    }
+
+    @Test
+    public void no_workmate_viewState_is_null() {
+        // When
+        chatMessageMutableLiveData.setValue(null);
+        ChatViewState viewState = LiveDataTestUtils.getValueForTesting(viewModel.getChatViewStateLiveData());
+
+        // Then
+        assertNull(viewState);
+    }
+
+    @Test
+    public void message_sender_name_depends_of_boolean() {
+        boolean isFromWorkmate = true;
+        String name;
+        if (isFromWorkmate) {
+            name = DEFAULT_WORKMATE_NAME;
+        } else {
+            name = DEFAULT_USER_NAME;
+        }
+
+        ChatViewStateItem viewStateItem = new ChatViewStateItem(
+            DEFAULT_MESSAGE_ID,
+            DEFAULT_WORKMATE_NAME,
+            DEFAULT_MESSAGE,
+            DEFAULT_TIME,
+            isFromWorkmate
+        );
+        ChatViewStateItem viewStateItemFromWorkmate = new ChatViewStateItem(
+            DEFAULT_MESSAGE_ID,
+            name,
+            DEFAULT_MESSAGE,
+            DEFAULT_TIME,
+            isFromWorkmate
+        );
+
+        ChatViewStateItem viewStateItemFromUser = new ChatViewStateItem(
+            DEFAULT_MESSAGE_ID,
+            name,
+            DEFAULT_MESSAGE,
+            DEFAULT_TIME,
+            !isFromWorkmate
+        );
+
+        assertEquals(viewStateItem, viewStateItemFromWorkmate);
+        assertNotEquals(viewStateItem, viewStateItemFromUser);
+    }
+
+    @Test
+    public void send_message_only_if_not_empty() {
+        viewModel.sendMessage(DEFAULT_MESSAGE);
+        Mockito.verify(chatMessageRepository).sendMessage(DEFAULT_MESSAGE, DEFAULT_WORKMATE_ID);
+
+        viewModel.sendMessage("");
+        Mockito.verify(chatMessageRepository, Mockito.never()).sendMessage("", DEFAULT_WORKMATE_ID);
 
     }
 
@@ -103,40 +178,45 @@ public class ChatViewModelTest {
     }
 
     public Workmate getWorkmateInfo() {
-        Workmate workmate = new Workmate(
+        return new Workmate(
             DEFAULT_WORKMATE_ID,
             DEFAULT_WORKMATE_NAME,
             DEFAULT_WORKMATE_EMAIL,
             DEFAULT_WORKMATE_PICTURE_PATH,
-            null,
-            null
+            "",
+            ""
         );
-        return workmate;
     }
 
-    public ChatViewState getChatVS() {
-        ChatViewState viewState = new ChatViewState(
+    public ChatViewState getChatViewState() {
+        return new ChatViewState(
             DEFAULT_WORKMATE_NAME,
             DEFAULT_WORKMATE_PICTURE_PATH,
             getDefaultMessagesViewSate()
         );
-
-        return viewState;
     }
 
     public List<ChatViewStateItem> getDefaultMessagesViewSate() {
+
         List<ChatViewStateItem> viewStateItems = new ArrayList<>();
 
         viewStateItems.add(new ChatViewStateItem(
-            "ID",
+            DEFAULT_MESSAGE_ID,
             DEFAULT_WORKMATE_NAME,
-            "DEFAULT_MESSAGE",
-            "time",
+            DEFAULT_MESSAGE,
+            DEFAULT_TIME,
             true
         ));
 
-        return viewStateItems;
+        viewStateItems.add(new ChatViewStateItem(
+            DEFAULT_MESSAGE_ID + DEFAULT_USER_ID,
+            DEFAULT_USER_NAME,
+            DEFAULT_MESSAGE,
+            DEFAULT_TIME,
+            false
+        ));
 
+        return viewStateItems;
     }
 
 }

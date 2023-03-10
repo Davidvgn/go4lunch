@@ -73,7 +73,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity implements OnWo
                     startActivity(i);
                 });
 
-
                 binding.restaurantDetailsFab.setOnClickListener(view -> viewModel.selectRestaurant());
 
                 adapter.submitList(viewModel.getWorkmatesViewStates().getValue());

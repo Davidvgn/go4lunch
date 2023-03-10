@@ -19,10 +19,10 @@ import javax.inject.Singleton;
 public class ChatMessageRepository {
 
     @NonNull
+    private final FirebaseAuth firebaseAuth;
+    @NonNull
     private final FirebaseFirestore firebaseFirestore;
 
-    @NonNull
-    private final FirebaseAuth firebaseAuth;
 
     @Inject
     public ChatMessageRepository(@NonNull FirebaseAuth firebaseAuth, @NonNull FirebaseFirestore firebaseFirestore) {

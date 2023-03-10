@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,13 +20,10 @@ public class NearBySearchRepository {
 
     @NonNull
     private final PlacesApi placesApi;
-    private final FirebaseFirestore firebaseFirestore;
-
 
     @Inject
-    public NearBySearchRepository(@NonNull @DataModule.PlacesAPi PlacesApi placesApi, FirebaseFirestore firebaseFirestore) {
+    public NearBySearchRepository(@NonNull @DataModule.PlacesAPi PlacesApi placesApi) {
         this.placesApi = placesApi;
-        this.firebaseFirestore = firebaseFirestore;
     }
 
     public LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
@@ -37,7 +33,7 @@ public class NearBySearchRepository {
 
         placesApi.getNearbySearchResponse(
             latitude + "," + longitude,
-            "1500",         //todo Nino dans strings ?
+            "1500",
             "restaurant",
             nearBySearchApiKey
         ).enqueue(new Callback<>() {
@@ -54,23 +50,4 @@ public class NearBySearchRepository {
         });
         return nearbySearchResponseMutableLiveData;
     }
-
-        public LiveData<Integer> howManyAreGoingThere(String placeId) {
-        MutableLiveData<Integer> numberOfWorkmatesMutableLiveData = new MutableLiveData<>();
-
-
-        firebaseFirestore.collection("users")
-            .whereEqualTo("selectedRestaurant", placeId)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                int count = queryDocumentSnapshots.size();
-                numberOfWorkmatesMutableLiveData.setValue(count);
-            })
-            .addOnFailureListener(e -> {
-                numberOfWorkmatesMutableLiveData.setValue(0);
-            });
-
-        return numberOfWorkmatesMutableLiveData;
-    }
-
 }

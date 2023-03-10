@@ -15,6 +15,7 @@ import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
+import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.facebook.internal.Mutable;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class RestaurantViewModel extends ViewModel {
 
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
+    private final WorkmateRepository workmateRepository;
 
     @NonNull
     private final DistanceCalculator distanceCalculator;
@@ -42,16 +44,16 @@ public class RestaurantViewModel extends ViewModel {
     public RestaurantViewModel(
         @NonNull LocationRepository locationRepository,
         @NonNull NearBySearchRepository nearBySearchRepository,
+        @NonNull WorkmateRepository workmateRepository,
         @NonNull DistanceCalculator distanceCalculator
     ) {
 
         this.nearBySearchRepository = nearBySearchRepository;
+        this.workmateRepository = workmateRepository;
         this.distanceCalculator = distanceCalculator;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = bindViewState(locationLiveData);
-
-        workmatesGoingThereMutableLiveData.setValue(nearBySearchRepository.howManyAreGoingThere(placeIdMutableLiveData.getValue()).getValue());
     }
 
     @NonNull
@@ -132,7 +134,7 @@ public class RestaurantViewModel extends ViewModel {
                                 openOrClosed,
                                 (float) (initialRating * 3 / 5),
                                 distanceText.toString(),
-                                "4" //todo david work on it voir fonction dans NearBy
+                                4 //todo david travailler là dessus fonction dans workmateRepo
                             )
                         );
 

@@ -52,7 +52,6 @@ public class MapViewModelTest {
     public void setUp() {
 
         permissionMutableLiveData.setValue(true);
-        //todo david faire un test avec false
 
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
         Mockito.doReturn(permissionMutableLiveData).when(permissionRepository).isUserLocationGrantedLiveData();
@@ -92,7 +91,7 @@ public class MapViewModelTest {
     }
 
     @Test
-    public void nomical_case_getFocusOnUser(){
+    public void nominal_case_getFocusOnUser(){
         // When
         LatLng latLng = LiveDataTestUtils.getValueForTesting(viewModel.getFocusOnUser());
 

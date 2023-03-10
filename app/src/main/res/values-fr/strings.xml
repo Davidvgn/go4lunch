@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Go4Lunch</string>
-    <string name="facebook_app_id">425200889605289</string>
-    <string name="fb_login_protocol_scheme">fb425200889605289</string>
-
-    <string name="facebook_client_token">be5791110e46a23539b7625b09d3c16b</string>
     <string name="auth_text">Trouvez un bon restaurant et invitez vos collègues à déjeuner !</string>
 
     <string name="map">Carte</string>
     <string name="list">Liste</string>
     <string name="workmate">Collègeus</string>
-    <string name="your_web_client_id">157511151080-i8dqn6e8bljp2rmcr02s1v837i1ml1j2.apps.googleusercontent.com</string>
 
     <string name="nav_open">Ouvert</string>
     <string name="nav_close">Fermé</string>

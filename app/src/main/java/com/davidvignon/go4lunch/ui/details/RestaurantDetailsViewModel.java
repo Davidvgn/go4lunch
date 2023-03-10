@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.details;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
@@ -7,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
@@ -38,43 +40,55 @@ public class RestaurantDetailsViewModel extends ViewModel {
         return intent;
     }
 
+    private final Application application;
+
     @NonNull
     private final UserRepository userRepository;
 
     private final MutableLiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<String> restaurantPlaceId = new MutableLiveData<>();
-    private String restaurantName;
 
     private final MediatorLiveData<RestaurantDetailsViewState> mediatorLiveData = new MediatorLiveData<>();
+    private String restaurantName;
 
     @Inject
     public RestaurantDetailsViewModel(
+        Application application,
         @NonNull PlaceDetailsRepository placeDetailsRepository,
         @NonNull UserRepository userRepository,
         @NonNull WorkmateRepository workmateRepository,
         @NonNull SavedStateHandle savedStateHandle
     ) {
+        this.application = application;
         this.userRepository = userRepository;
 
         String placeId = savedStateHandle.get(KEY_PLACE_ID);
-        LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
-        LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
+        LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
+        LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
         LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getUserListGoingToLiveData(placeId);
 
         restaurantPlaceId.setValue(placeId);
 
-        mediatorLiveData.addSource(detailsResponseLiveData, detailsResponse -> combine(detailsResponse, isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue()));
+        mediatorLiveData.addSource(detailsResponseLiveData, new Observer<DetailsResponse>() {
+            @Override
+            public void onChanged(DetailsResponse detailsResponse) {
+                RestaurantDetailsViewModel.this.combine(detailsResponse, isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue());
+            }
+        });
 
-        mediatorLiveData.addSource(isRestaurantLikedLiveData, isLiked -> combine(detailsResponseLiveData.getValue(), isLiked, isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue()));
+        mediatorLiveData.addSource(isRestaurantLikedLiveData, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isLiked) {
+                RestaurantDetailsViewModel.this.combine(detailsResponseLiveData.getValue(), isLiked, isRestaurantSelectedLiveData.getValue(), workmatesLiveData.getValue());
+            }
+        });
 
         mediatorLiveData.addSource(isRestaurantSelectedLiveData, isSelected -> combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isSelected, workmatesLiveData.getValue()));
 
         mediatorLiveData.addSource(workmatesLiveData, workmates -> combine(detailsResponseLiveData.getValue(), isRestaurantLikedLiveData.getValue(), isRestaurantSelectedLiveData.getValue(), workmates));
     }
-
-    //todo david : gérer la couleur du selected qui est black et non blue
 
     public void combine(DetailsResponse response, Boolean isLiked, Boolean isSelected, List<Workmate> workmatesList) {
         List<WorkmatesViewState> viewStates = new ArrayList<>();
@@ -132,15 +146,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
                         }
                         workmatesViewStatesLiveData.setValue(viewStates);
                     }
-
-
                     mediatorLiveData.setValue(restaurantDetailsViewState);
                 }
             }
 
         }
-
-
     }
 
     @NonNull
@@ -164,7 +174,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public String getRestaurantPicture(RestaurantDetailsViewState restaurantDetailsViewState) {
         String API_KEY = BuildConfig.NEARBY_API_KEY;
-        return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
+        return application.getString(R.string.maps_google_api)
             + restaurantDetailsViewState.getPhotoUrl() +
             "&key=" + API_KEY;
     }

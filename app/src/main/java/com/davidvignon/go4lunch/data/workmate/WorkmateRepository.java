@@ -52,4 +52,21 @@ public class WorkmateRepository {
         });
         return userMutableLiveData;
     }
+    public LiveData<Integer> howManyAreGoingThere(String placeId) {
+        MutableLiveData<Integer> numberOfWorkmatesMutableLiveData = new MutableLiveData<>();
+
+
+        firebaseFirestore.collection("users")
+            .whereEqualTo("selectedRestaurant", placeId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                int count = queryDocumentSnapshots.size();
+                numberOfWorkmatesMutableLiveData.setValue(count);
+            })
+            .addOnFailureListener(e -> {
+                numberOfWorkmatesMutableLiveData.setValue(0);
+            });
+
+        return numberOfWorkmatesMutableLiveData;
+    }
 }

@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 
+import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 
@@ -24,7 +25,7 @@ import retrofit2.Response;
 public class PlaceDetailsRepositoryTest {
 
     private static final String PLACE_ID = "PLACE_ID";
-    private static final String DEFAULT_KEY = "AIzaSyDkT_c3oskPdGbt3FhUgX_ykrpv5eXOBa8";
+    private static final String DEFAULT_KEY = BuildConfig.NEARBY_API_KEY;
 
 
     @Rule

@@ -26,7 +26,7 @@ public class RestaurantViewState {
 
     @NonNull
     private final String distance;
-    private final String workmatesGoingThere;
+    private final int workmatesGoingThere;
 
     public RestaurantViewState(
         @NonNull String placeId,
@@ -36,7 +36,7 @@ public class RestaurantViewState {
         @StringRes int openOrClose,
         float rating,
         @NonNull String distance,
-        String workmatesGoingThere
+        int workmatesGoingThere
     ) {
         this.placeId = placeId;
         this.name = name;
@@ -82,16 +82,17 @@ public class RestaurantViewState {
         return distance;
     }
 
-    public String getWorkmatesGoingThere() {
+    public int getWorkmatesGoingThere() {
         return workmatesGoingThere;
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantViewState that = (RestaurantViewState) o;
-        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance) && Objects.equals(workmatesGoingThere, that.workmatesGoingThere);
+        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && workmatesGoingThere == that.workmatesGoingThere && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance);
     }
 
     @Override
@@ -99,8 +100,7 @@ public class RestaurantViewState {
         return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating, distance, workmatesGoingThere);
     }
 
-   @NonNull
-   @Override
+    @Override
     public String toString() {
         return "RestaurantViewState{" +
             "placeId='" + placeId + '\'' +
@@ -110,7 +110,7 @@ public class RestaurantViewState {
             ", openOrClose=" + openOrClose +
             ", rating=" + rating +
             ", distance='" + distance + '\'' +
-            ", workmatesGoingThere='" + workmatesGoingThere + '\'' +
+            ", workmatesGoingThere=" + workmatesGoingThere +
             '}';
     }
 }

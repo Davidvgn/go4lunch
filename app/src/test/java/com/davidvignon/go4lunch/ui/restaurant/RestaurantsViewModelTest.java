@@ -20,6 +20,7 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.OpeningHo
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
+import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantViewModel;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantViewState;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
@@ -40,22 +41,23 @@ public class RestaurantsViewModelTest {
     private static final String DEFAULT_PHOTO_REFERENCE = "DEFAULT_PHOTO_REFERENCE";
     private static final String DEFAULT_DISTANCE = "50";
     private static final double DEFAULT_RATING = 3.4;
-
     private static final double DEFAULT_LATITUDE = 45.757830302;
     private static final double DEFAULT_LONGITUDE = 4.823496706;
     private static final double DEFAULT_LONGITUDE_OFFSET = 5.0;
+    private static final int DEFAULT_WORKMATES_GOING_THERE = 4;
 
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-
     private final NearBySearchRepository nearBySearchRepository = Mockito.mock(NearBySearchRepository.class);
-    private final MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
-
+    private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
     private final DistanceCalculator distanceCalculator = Mockito.mock(DistanceCalculator.class);
+    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> howManyWorkmatesAreGoingThereMutableLiveData = new MutableLiveData<>();
+
 
     private RestaurantViewModel viewModel;
 
@@ -69,11 +71,15 @@ public class RestaurantsViewModelTest {
 
         locationMutableLiveData.setValue(location);
 
+        howManyWorkmatesAreGoingThereMutableLiveData.setValue(DEFAULT_WORKMATES_GOING_THERE);
+
+        Mockito.doReturn(howManyWorkmatesAreGoingThereMutableLiveData).when(workmateRepository).howManyAreGoingThere(DEFAULT_RESTAURANT_RESPONSE_PLACE_ID);
+
         Mockito.doReturn(nearbySearchResponseMutableLiveData).when(nearBySearchRepository).getNearbySearchResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
         nearbySearchResponseMutableLiveData.setValue(getDefaultNearbySearchResponse());
 
 
-        viewModel = new RestaurantViewModel(locationRepository, nearBySearchRepository, distanceCalculator);
+        viewModel = new RestaurantViewModel(locationRepository, nearBySearchRepository, workmateRepository, distanceCalculator);
     }
 
     @Test
@@ -311,7 +317,7 @@ public class RestaurantsViewModelTest {
                     i == 1 ? R.string.open : R.string.closed,
                     2.04F,
                     DEFAULT_DISTANCE,
-                    "4" //todo david work on it
+                    DEFAULT_WORKMATES_GOING_THERE
                 )
             );
         }
