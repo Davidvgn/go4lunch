@@ -2,11 +2,13 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -18,6 +20,7 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySea
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +32,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class RestaurantsViewModel extends ViewModel {
-
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
     private final WorkmateRepository workmateRepository;
-
     @NonNull
     private final DistanceCalculator distanceCalculator;
 
     private final LiveData<List<RestaurantsViewState>> restaurantViewState;
+    MutableLiveData<String> queryMutable = new MutableLiveData<>();
+
 
     @Inject
     public RestaurantsViewModel(
@@ -55,9 +58,15 @@ public class RestaurantsViewModel extends ViewModel {
         restaurantViewState = getViewStateLiveData(locationLiveData);
     }
 
+
     @NonNull
     public LiveData<List<RestaurantsViewState>> getRestaurantViewStateLiveData() {
         return restaurantViewState;
+    }
+
+
+    public LiveData<String> getQueryLiveData() {
+        return queryMutable;
     }
 
     @NonNull
@@ -68,24 +77,38 @@ public class RestaurantsViewModel extends ViewModel {
             location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
         );
 
+
+        LiveData<List<AutocompletePrediction>> autocompletePredictionLiveData = Transformations.switchMap(
+            locationLiveData,
+            location -> nearBySearchRepository.getAutocompletePredictionListLiveData(location.getLatitude(), location.getLongitude(), queryMutable.getValue())
+        );
+
+
         LiveData<Map<String, Integer>> placeIdUserCountMapLiveData = workmateRepository.getPlaceIdUserCountMapLiveData();
+
 
         MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData = new MediatorLiveData<>();
 
         mediatorLiveData.addSource(nearbySearchResponsesLiveData, new Observer<NearbySearchResponse>() {
             @Override
             public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue());
+                combine(mediatorLiveData, locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue(), autocompletePredictionLiveData.getValue());
             }
         });
 
         mediatorLiveData.addSource(placeIdUserCountMapLiveData, new Observer<Map<String, Integer>>() {
             @Override
             public void onChanged(Map<String, Integer> placeIdUserCountMap) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap);
+                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap, autocompletePredictionLiveData.getValue());
             }
         });
 
+        mediatorLiveData.addSource(autocompletePredictionLiveData, new Observer<List<AutocompletePrediction>>() {
+            @Override
+            public void onChanged(List<AutocompletePrediction> autocompletePredictions) {
+                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMapLiveData.getValue(), autocompletePredictions);
+            }
+        });
         return mediatorLiveData;
     }
 
@@ -93,10 +116,15 @@ public class RestaurantsViewModel extends ViewModel {
         @NonNull MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData,
         @NonNull LiveData<Location> locationLiveData,
         @Nullable NearbySearchResponse response,
-        @Nullable Map<String, Integer> placeIdUserCountMap
+        @Nullable Map<String, Integer> placeIdUserCountMap,
+        List<AutocompletePrediction> autocompletePredictions
     ) {
         if (response == null) {
             return;
+        }
+
+        if( autocompletePredictions != null){
+            Log.d("Dvgn", "combine: " + autocompletePredictions);
         }
 
         List<RestaurantsViewState> viewStates = new ArrayList<>();
@@ -143,7 +171,7 @@ public class RestaurantsViewModel extends ViewModel {
                         distanceText = null;
                     }
 
-                    String usersGoingToThisRestaurantText = "";
+                    String usersGoingToThisRestaurantText = "0";
 
                     if (placeIdUserCountMap != null) {
                         Integer usersGoingToThisRestaurant = placeIdUserCountMap.get(result.getPlaceId());
@@ -171,6 +199,11 @@ public class RestaurantsViewModel extends ViewModel {
             }
         }
 
+
         mediatorLiveData.setValue(viewStates);
+    }
+
+    public void setSearchQuery(String query) {
+        queryMutable.setValue(query);
     }
 }

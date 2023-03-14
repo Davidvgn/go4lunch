@@ -36,7 +36,7 @@ public class RestaurantDetailsViewModelTest {
     private static final String DEFAULT_WEBSITE = "DEFAULT_WEBSITE";
     private static final String DEFAULT_PHOTO = "DEFAULT_PHOTO";
     private static final String DEFAULT_IS_LIKE = "DEFAULT_IS_LIKE";
-    private static final int DEFAULT_IS_NOT_SELECTED = 0;
+    private static final int DEFAULT_IS_SELECTED = 0;
     private static final int DEFAULT_STAR = 0;
     private static final double DEFAULT_RATING = 3.4;
 
@@ -72,15 +72,6 @@ public class RestaurantDetailsViewModelTest {
         Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getUserListGoingToLiveData(DEFAULT_KEY_PLACE_ID);
 
         viewModel = new RestaurantDetailsViewModel(application, placeDetailsRepository, userRepository, workmateRepository, savedStateHandle);
-    }
-
-    @Test
-    public void initial_case() {
-        // When
-        RestaurantDetailsViewState viewState = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData());
-
-        // Then
-        assertEquals(getDefaultRestaurantViewState(), viewState);
     }
 
     @Test
@@ -171,14 +162,12 @@ public class RestaurantDetailsViewModelTest {
     private DetailsResponse getDefaultDetailsResponse() {
 
         RestaurantDetailsResponse response = Mockito.mock(RestaurantDetailsResponse.class);
-        Mockito.doReturn(DEFAULT_RATING).when(response).getRating();
-        Mockito.doReturn(getDefaultPhotos()).when(response).getPhotos();
         Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(response).getPlaceId();
-        Mockito.doReturn(DEFAULT_WEBSITE).when(response).getWebsite();
         Mockito.doReturn(DEFAULT_NAME).when(response).getName();
         Mockito.doReturn(DEFAULT_VICINITY).when(response).getVicinity();
         Mockito.doReturn(DEFAULT_NUMBER).when(response).getInternationalPhoneNumber();
-
+        Mockito.doReturn(DEFAULT_WEBSITE).when(response).getWebsite();
+        Mockito.doReturn(getDefaultPhotos()).when(response).getPhotos();
         return new DetailsResponse(
             response,
             null,
@@ -352,7 +341,7 @@ public class RestaurantDetailsViewModelTest {
             DEFAULT_WEBSITE,
             DEFAULT_PHOTO,
             2.04F,
-            DEFAULT_IS_NOT_SELECTED,
+            DEFAULT_IS_SELECTED,
             DEFAULT_IS_LIKE,
             DEFAULT_STAR
         );

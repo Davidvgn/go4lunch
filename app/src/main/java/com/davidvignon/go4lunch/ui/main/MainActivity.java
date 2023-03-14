@@ -26,10 +26,13 @@ import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
+import com.davidvignon.go4lunch.ui.map.MapViewModel;
+import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.davidvignon.go4lunch.ui.settings.SettingsActivity;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
+import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewModel;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -38,9 +41,11 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity implements OnRestaurantClickedListener,
     OnWorkmateClickedListener {
-
     private MainActivityBinding binding;
     private MainViewModel viewModel;
+    private MapViewModel mapViewModel;
+    private RestaurantsViewModel restaurantsViewModel;
+    private WorkmatesViewModel workmatesViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        restaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
+        workmatesViewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
 
         HeaderBinding headerBinding = HeaderBinding.bind(binding.mainNavigationView.getHeaderView(0));
 
@@ -140,7 +148,9 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         getMenuInflater().inflate(R.menu.search_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.clearFocus();
         searchView.setQueryHint(getString(R.string.type_your_search));
+        searchView.setIconifiedByDefault(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -148,8 +158,16 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
+            public boolean onQueryTextChange(String text) {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_FrameLayout_fragment_container);
+                if (fragment instanceof MapFragment) {
+                    mapViewModel.setSearchQuery(text);
+                } else if (fragment instanceof RestaurantsFragment) {
+                    restaurantsViewModel.setSearchQuery(text);
+                } else if (fragment instanceof WorkmatesFragment) {
+//                    workmatesViewModel.setSearchQuery(text);
+                }
+                return true;
             }
         });
         return super.onCreateOptionsMenu(menu);

@@ -1,13 +1,17 @@
 package com.davidvignon.go4lunch.data;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Looper;
 
 import androidx.work.WorkManager;
 
+import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -103,5 +107,15 @@ public class DataModule {
     public WorkManager provideWorkManager(@ApplicationContext Context context) {
         return WorkManager.getInstance(context);
     }
+
+    @Singleton
+    @Provides
+    public PlacesClient providePlacesClient(Application application) {
+        if (!Places.isInitialized()) {
+            Places.initialize(application, BuildConfig.MAPS_API_KEY);
+        }
+        return Places.createClient(application);
+    }
+
 
 }
