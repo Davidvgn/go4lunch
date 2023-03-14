@@ -1,28 +1,23 @@
 package com.davidvignon.go4lunch.data.chat_message;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
-import com.facebook.bolts.Task;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.time.Instant;
-import java.util.UUID;
-
-public class chatMessageRepositoryTest {
+public class ChatMessageRepositoryTest {
 
     private static final String DEFAULT_USER_ID = "DEFAULT_USER_ID";
     private static final String DEFAULT_USER_NAME = "DEFAULT_USER_NAME";
@@ -53,10 +48,25 @@ public class chatMessageRepositoryTest {
 
     @Test
     public void test() {
+        // Given
+        CollectionReference chatCollectionReference = Mockito.mock(CollectionReference.class);
+        DocumentReference roomDocumentReference = Mockito.mock(DocumentReference.class);
+        CollectionReference messagesCollectionReference = Mockito.mock(CollectionReference.class);
+        Task addTask = Mockito.mock(Task.class);
+        Mockito.doReturn(chatCollectionReference).when(firebaseFirestore).collection("chat");
+        Mockito.doReturn(roomDocumentReference).when(chatCollectionReference).document(anyString());
+        Mockito.doReturn(messagesCollectionReference).when(roomDocumentReference).collection("messages");
+        Mockito.doReturn(addTask).when(messagesCollectionReference).add(any());
+
+        // When
         chatMessageRepository.sendMessage("test", "userReceiverId");
 
+        // Then
+        Mockito.verify(firebaseFirestore).collection("chat");
+        Mockito.verify(chatCollectionReference).document(anyString());
+        Mockito.verify(roomDocumentReference).collection("messages");
+        Mockito.verify(messagesCollectionReference).add(any());
     }
-
 }
 
 

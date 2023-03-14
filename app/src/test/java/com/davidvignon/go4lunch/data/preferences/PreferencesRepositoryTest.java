@@ -32,31 +32,39 @@ public class PreferencesRepositoryTest {
     private PreferencesRepository preferencesRepository;
 
     @Before
-    public void Setup() {
-
+    public void setup() {
         Mockito.doReturn(sharedPreferences).when(application).getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        Mockito.doReturn(sharedPreferencesEditor).when(sharedPreferences).edit();
-
-        Mockito.doReturn(sharedPreferencesEditor).when(sharedPreferencesEditor).putBoolean(any(), anyBoolean());
-
-        Mockito.doNothing().when(sharedPreferencesEditor).apply();
 
         preferencesRepository = new PreferencesRepository(application);
     }
 
     @Test
-    public void if_true_and_then_set_to_false_it_returns_false() {
+    public void verify_setLunchNotificationEnabled_true() {
         // Given
-        boolean sharedValue = false;
-        Mockito.doReturn(sharedValue).when(sharedPreferences).getBoolean(SWITCH_KEY, false);
+        Mockito.doReturn(sharedPreferencesEditor).when(sharedPreferences).edit();
+        Mockito.doReturn(sharedPreferencesEditor).when(sharedPreferencesEditor).putBoolean(any(), anyBoolean());
+        Mockito.doNothing().when(sharedPreferencesEditor).apply();
 
         // when
-        sharedValue = true;
-        preferencesRepository.setLunchNotificationEnabled(!sharedValue);
+        preferencesRepository.setLunchNotificationEnabled(true);
+
+        // then
+        Mockito.verify(sharedPreferencesEditor).putBoolean(SWITCH_KEY, true);
+        Mockito.verify(sharedPreferencesEditor).apply();
+    }
+
+    @Test
+    public void if_true_and_then_set_to_false_it_returns_false() {
+        // Given
+        Mockito.doReturn(true).when(sharedPreferences).getBoolean(SWITCH_KEY, false);
+
+        // when
         Boolean sharedPreferencesValue = LiveDataTestUtils.getValueForTesting(preferencesRepository.isLunchNotificationEnabledLiveData());
 
         // then
-        assertFalse(sharedPreferencesValue);
+        assertTrue(sharedPreferencesValue);
+        Mockito.verify(sharedPreferences).getBoolean(SWITCH_KEY, false);
+        Mockito.verify(sharedPreferences).registerOnSharedPreferenceChangeListener(any());
     }
 
 

@@ -82,7 +82,6 @@ public class MapFragment extends SupportMapFragment {
                     @Override
                     public void onChanged(Boolean aBoolean) {
                         googleMap.setMyLocationEnabled(aBoolean);
-                        googleMap.setPadding(0, 2100, 0, 0);
                     }
                 });
 

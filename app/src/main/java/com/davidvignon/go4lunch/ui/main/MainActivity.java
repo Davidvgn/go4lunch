@@ -43,9 +43,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     OnWorkmateClickedListener {
     private MainActivityBinding binding;
     private MainViewModel viewModel;
-    private MapViewModel mapViewModel;
-    private RestaurantsViewModel restaurantsViewModel;
-    private WorkmatesViewModel workmatesViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,9 +52,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
-        restaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
-        workmatesViewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
 
         HeaderBinding headerBinding = HeaderBinding.bind(binding.mainNavigationView.getHeaderView(0));
 
@@ -159,14 +153,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
             @Override
             public boolean onQueryTextChange(String text) {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_FrameLayout_fragment_container);
-                if (fragment instanceof MapFragment) {
-                    mapViewModel.setSearchQuery(text);
-                } else if (fragment instanceof RestaurantsFragment) {
-                    restaurantsViewModel.setSearchQuery(text);
-                } else if (fragment instanceof WorkmatesFragment) {
-//                    workmatesViewModel.setSearchQuery(text);
-                }
                 return true;
             }
         });

@@ -111,7 +111,4 @@ public class MapViewModel extends ViewModel {
             }
         });
     }
-
-    public void setSearchQuery(String text) {
-    }
 }

@@ -202,8 +202,4 @@ public class RestaurantsViewModel extends ViewModel {
 
         mediatorLiveData.setValue(viewStates);
     }
-
-    public void setSearchQuery(String query) {
-        queryMutable.setValue(query);
-    }
 }
