@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +28,9 @@ import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
 import com.davidvignon.go4lunch.ui.map.MapViewModel;
+import com.davidvignon.go4lunch.ui.predictions.PredictionViewState;
+import com.davidvignon.go4lunch.ui.predictions.PredictionsAdapter;
+import com.davidvignon.go4lunch.ui.restaurants.RestaurantsAdapter;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.davidvignon.go4lunch.ui.settings.SettingsActivity;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
@@ -36,6 +40,8 @@ import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewModel;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -43,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     OnWorkmateClickedListener {
     private MainActivityBinding binding;
     private MainViewModel viewModel;
+
+    private OnRestaurantClickedListener onRestaurantClickedListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+        PredictionsAdapter adapter = new PredictionsAdapter(onRestaurantClickedListener);
+        binding.predictionsRv.setAdapter(adapter);
 
         viewModel.getMainViewStateLiveData().observe(this, state -> {
             Glide.with(headerBinding.headerIv)
@@ -75,6 +85,12 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             headerBinding.headerUserEmail.setText(state.getMail());
         });
 
+        viewModel.getPredictionsViewStateLiveData().observe(this, new Observer<List<PredictionViewState>>() {
+            @Override
+            public void onChanged(List<PredictionViewState> predictionViewStates) {
+                adapter.submitList(predictionViewStates);
+            }
+        });
         toolbar.setNavigationOnClickListener(view -> binding.mainDrawerLayout.open());
 
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
@@ -153,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
             @Override
             public boolean onQueryTextChange(String text) {
+                viewModel.getSearchQueryText(text);
                 return true;
             }
         });

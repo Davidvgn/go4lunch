@@ -5,6 +5,7 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 
 import androidx.lifecycle.Transformations;
@@ -67,39 +68,42 @@ public class MapViewModel extends ViewModel {
         return permissionRepository.isUserLocationGrantedLiveData();
     }
 
-        @NonNull
+    @NonNull
     private LiveData<List<MapPoiViewState>> bindViewState(LiveData<Location> locationLiveData) {
         LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
             locationLiveData,
             location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
         );
 
-        return Transformations.map(nearbySearchResponseLiveData, response -> {
-            List<MapPoiViewState> viewStates = new ArrayList<>();
+        return Transformations.map(nearbySearchResponseLiveData, new Function<NearbySearchResponse, List<MapPoiViewState>>() {
+            @Override
+            public List<MapPoiViewState> apply(NearbySearchResponse response) {
+                List<MapPoiViewState> viewStates = new ArrayList<>();
 
-            if (response.getResults() != null) {
-                for (RestaurantResponse result : response.getResults()) {
-                    if (
-                        result != null
-                            && result.getName() != null
-                            && result.getPlaceId() != null
-                            && result.getGeometry() != null
-                            && result.getGeometry().getLocation() != null
-                            && result.getGeometry().getLocation().getLat() != null
-                            && result.getGeometry().getLocation().getLng() != null
-                    ) {
-                        viewStates.add(
-                            new MapPoiViewState(
-                                result.getPlaceId(),
-                                result.getName(),
-                                result.getGeometry().getLocation().getLat(),
-                                result.getGeometry().getLocation().getLng()
-                            )
-                        );
+                if (response.getResults() != null) {
+                    for (RestaurantResponse result : response.getResults()) {
+                        if (
+                            result != null
+                                && result.getName() != null
+                                && result.getPlaceId() != null
+                                && result.getGeometry() != null
+                                && result.getGeometry().getLocation() != null
+                                && result.getGeometry().getLocation().getLat() != null
+                                && result.getGeometry().getLocation().getLng() != null
+                        ) {
+                            viewStates.add(
+                                new MapPoiViewState(
+                                    result.getPlaceId(),
+                                    result.getName(),
+                                    result.getGeometry().getLocation().getLat(),
+                                    result.getGeometry().getLocation().getLng()
+                                )
+                            );
+                        }
                     }
                 }
+                return viewStates;
             }
-            return viewStates;
         });
     }
 

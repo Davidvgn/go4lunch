@@ -37,12 +37,10 @@ public class NearBySearchRepository {
 
     @NonNull
     private final PlacesApi placesApi;
-    private final PlacesClient placesClient;
 
     @Inject
-    public NearBySearchRepository(@NonNull @DataModule.PlacesAPi PlacesApi placesApi, PlacesClient placesClient) {
+    public NearBySearchRepository(@NonNull @DataModule.PlacesApi PlacesApi placesApi) {
         this.placesApi = placesApi;
-        this.placesClient = placesClient;
     }
 
     public LiveData<NearbySearchResponse> getNearbySearchResponse(double latitude, double longitude) {
@@ -67,36 +65,5 @@ public class NearBySearchRepository {
             }
         });
         return nearbySearchResponseMutableLiveData;
-    }
-
-    public LiveData<List<AutocompletePrediction>> getAutocompletePredictionListLiveData(double latitude, double longitude, String query) {
-
-        MutableLiveData<List<AutocompletePrediction>> searchValueMutableLiveData = new MutableLiveData<>();
-
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-        RectangularBounds bounds = RectangularBounds.newInstance(
-            new LatLng(latitude -0.01, longitude -0.01),
-            new LatLng(latitude +0.01, longitude +0.01)
-        );
-
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-            .setLocationBias(bounds)
-            .setCountries("FR")
-            .setTypeFilter(TypeFilter.ESTABLISHMENT)
-            .setSessionToken(token)
-            .setQuery(query)
-            .build();
-
-        placesClient.findAutocompletePredictions(request)
-            .addOnSuccessListener(new OnSuccessListener<FindAutocompletePredictionsResponse>() {
-                @Override
-                public void onSuccess(FindAutocompletePredictionsResponse response) {
-                    searchValueMutableLiveData.setValue(response.getAutocompletePredictions());
-                    Log.d("Dvgn", "getAuto: " + response.getAutocompletePredictions());
-                }
-            })
-            .addOnFailureListener(e -> searchValueMutableLiveData.setValue(Collections.emptyList()));
-        return searchValueMutableLiveData;
     }
 }
