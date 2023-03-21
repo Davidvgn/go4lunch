@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.ui.predictions;
+package com.davidvignon.go4lunch.ui.main.predictions;
 
 import androidx.annotation.NonNull;
 

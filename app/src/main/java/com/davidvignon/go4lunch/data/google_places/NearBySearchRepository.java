@@ -1,26 +1,11 @@
 package com.davidvignon.go4lunch.data.google_places;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.BuildConfig;
-import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
-
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,7 +24,7 @@ public class NearBySearchRepository {
     private final PlacesApi placesApi;
 
     @Inject
-    public NearBySearchRepository(@NonNull @DataModule.PlacesApi PlacesApi placesApi) {
+    public NearBySearchRepository(@NonNull PlacesApi placesApi) {
         this.placesApi = placesApi;
     }
 

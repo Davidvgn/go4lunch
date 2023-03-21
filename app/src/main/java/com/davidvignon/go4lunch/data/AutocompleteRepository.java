@@ -1,8 +1,5 @@
 package com.davidvignon.go4lunch.data;
 
-
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -28,12 +25,12 @@ public class AutocompleteRepository {
     private final PlacesApi placesApi;
 
     @Inject
-    public AutocompleteRepository(@NonNull @DataModule.AutoCompleteApi PlacesApi placesApi) {
+    public AutocompleteRepository(@NonNull PlacesApi placesApi) {
         this.placesApi = placesApi;
     }
 
 
-    public LiveData<PredictionsResponse> getPredictionsResponse(double latitude, double longitude, String input){
+    public LiveData<PredictionsResponse> getPredictionsResponse(double latitude, double longitude, String input) {
 
         MutableLiveData<PredictionsResponse> predictionsResponseMutableLiveData = new MutableLiveData<>();
 
@@ -43,7 +40,7 @@ public class AutocompleteRepository {
             RADIUS_METERS,
             TYPE,
             BuildConfig.AUTOCOMPLETE_API_KEY
-        ).enqueue(new Callback<PredictionsResponse>() {
+        ).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<PredictionsResponse> call, @NonNull Response<PredictionsResponse> response) {
                 predictionsResponseMutableLiveData.setValue(response.body());

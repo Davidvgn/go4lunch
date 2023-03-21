@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -27,16 +30,12 @@ import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
-import com.davidvignon.go4lunch.ui.map.MapViewModel;
-import com.davidvignon.go4lunch.ui.predictions.PredictionViewState;
-import com.davidvignon.go4lunch.ui.predictions.PredictionsAdapter;
-import com.davidvignon.go4lunch.ui.restaurants.RestaurantsAdapter;
-import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewModel;
+import com.davidvignon.go4lunch.ui.main.predictions.PredictionViewState;
+import com.davidvignon.go4lunch.ui.main.predictions.PredictionsAdapter;
 import com.davidvignon.go4lunch.ui.settings.SettingsActivity;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
-import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewModel;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         actionBarDrawerToggle.syncState();
         PredictionsAdapter adapter = new PredictionsAdapter(onRestaurantClickedListener);
         binding.predictionsRv.setAdapter(adapter);
+        binding.predictionsRv.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
 
         viewModel.getMainViewStateLiveData().observe(this, state -> {
             Glide.with(headerBinding.headerIv)

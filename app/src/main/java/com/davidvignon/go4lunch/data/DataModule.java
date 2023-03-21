@@ -7,6 +7,7 @@ import android.os.Looper;
 import androidx.work.WorkManager;
 
 import com.davidvignon.go4lunch.BuildConfig;
+import com.davidvignon.go4lunch.data.google_places.PlacesApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.libraries.places.api.Places;
@@ -16,10 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -36,18 +33,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @InstallIn(SingletonComponent.class)
 public class DataModule {
 
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface PlacesApi {}
-
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface DetailsPlacesApi {}
-
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface AutoCompleteApi {}
-
     @Singleton
     @Provides
     public FusedLocationProviderClient provideFusedLocationProviderClient(@ApplicationContext Context context) {
@@ -62,8 +47,7 @@ public class DataModule {
 
     @Singleton
     @Provides
-    @PlacesApi
-    public com.davidvignon.go4lunch.data.google_places.PlacesApi providePlacesApi() {
+    public PlacesApi providePlacesApi() {
         Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient httpClient = new OkHttpClient.Builder().build();
         String baseUrl = "https://maps.googleapis.com/";
@@ -74,42 +58,9 @@ public class DataModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
-        return retrofit.create(com.davidvignon.go4lunch.data.google_places.PlacesApi.class);
+        return retrofit.create(PlacesApi.class);
     }
 
-    @Singleton
-    @Provides
-    @DetailsPlacesApi
-    public com.davidvignon.go4lunch.data.google_places.PlacesApi providePlaceDetailsApi() {
-        Gson gson = new GsonBuilder().setLenient().create();
-        OkHttpClient httpClient = new OkHttpClient.Builder().build();
-        String baseUrl = "https://maps.googleapis.com/";
-
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build();
-
-        return retrofit.create(com.davidvignon.go4lunch.data.google_places.PlacesApi.class);
-    }
-
-    @Singleton
-    @Provides
-    @AutoCompleteApi
-    public com.davidvignon.go4lunch.data.google_places.PlacesApi provideAutoCompleteApi() {
-        Gson gson = new GsonBuilder().setLenient().create();
-        OkHttpClient httpClient = new OkHttpClient.Builder().build();
-        String baseUrl = "https://maps.googleapis.com/";
-
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build();
-
-        return retrofit.create(com.davidvignon.go4lunch.data.google_places.PlacesApi.class);
-    }
     @Singleton
     @Provides
     public FirebaseFirestore provideFirestoreDb() {

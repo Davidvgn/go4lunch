@@ -3,7 +3,6 @@ package com.davidvignon.go4lunch.ui.main;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,12 +18,10 @@ import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.AutocompleteRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.autocomplete.PredictionsItem;
-import com.davidvignon.go4lunch.data.google_places.autocomplete.PredictionsResponse;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.data.users.User;
 import com.davidvignon.go4lunch.data.users.UserRepository;
-import com.davidvignon.go4lunch.ui.map.MapPoiViewState;
-import com.davidvignon.go4lunch.ui.predictions.PredictionViewState;
+import com.davidvignon.go4lunch.ui.main.predictions.PredictionViewState;
 import com.davidvignon.go4lunch.ui.utils.EventWrapper;
 
 import java.util.ArrayList;
@@ -40,16 +37,15 @@ public class MainViewModel extends ViewModel {
     private final PermissionRepository permissionRepository;
     @NonNull
     private final LocationRepository locationRepository;
-    private final AutocompleteRepository autocompleteRepository;
 
     private final MutableLiveData<Boolean> onMyLunchClickedMutableLiveData = new MutableLiveData<>();
     private final LiveData<MainViewState> mainViewStateLiveData;
 
     private final MediatorLiveData<EventWrapper<MainAction>> mainActionsMediatorLiveData = new MediatorLiveData<>();
-    private final MediatorLiveData<List<PredictionViewState>> predictionViewStateMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<UserQueryAndLocation> userQueryAndLocationMediatorLiveData = new MediatorLiveData<>();
+    private final LiveData<List<PredictionViewState>> predictionViewStateLiveData;
 
-
-    private MutableLiveData<String> queryMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> queryMutableLiveData = new MutableLiveData<>();
 
     @Inject
     public MainViewModel(
@@ -60,27 +56,11 @@ public class MainViewModel extends ViewModel {
     ) {
         this.permissionRepository = permissionRepository;
         this.locationRepository = locationRepository;
-        this.autocompleteRepository = autocompleteRepository;
 
         LiveData<String> placeIdLiveData = userRepository.getRestaurantPlaceIdLiveData();
         LiveData<User> userLiveData = userRepository.getUserLiveData();
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        LiveData<String> queryLiveData = queryMutableLiveData;
-
-            predictionViewStateMediatorLiveData.addSource(locationLiveData, new Observer<Location>() {
-                @Override
-                public void onChanged(Location location) {
-                    combine(location, queryLiveData.getValue());
-                }
-            });
-
-            predictionViewStateMediatorLiveData.addSource(queryLiveData, new Observer<String>() {
-                @Override
-                public void onChanged(String s) {
-                    combine(locationLiveData.getValue(), s);
-                }
-            });
 
         mainViewStateLiveData = Transformations.map(userLiveData, new Function<User, MainViewState>() {
             @Override
@@ -94,33 +74,51 @@ public class MainViewModel extends ViewModel {
         });
 
         mainActionsMediatorLiveData.addSource(placeIdLiveData, placeId -> combineEvent(placeId, onMyLunchClickedMutableLiveData.getValue()));
-
         mainActionsMediatorLiveData.addSource(onMyLunchClickedMutableLiveData, onMyLunchClicked -> combineEvent(placeIdLiveData.getValue(), onMyLunchClicked));
 
+        userQueryAndLocationMediatorLiveData.addSource(locationLiveData, new Observer<Location>() {
+            @Override
+            public void onChanged(Location location) {
+                combine(location, queryMutableLiveData.getValue());
+            }
+        });
+        userQueryAndLocationMediatorLiveData.addSource(queryMutableLiveData, new Observer<String>() {
+            @Override
+            public void onChanged(String query) {
+                combine(locationLiveData.getValue(), query);
+            }
+        });
+        predictionViewStateLiveData = Transformations.map(
+            Transformations.switchMap(
+                userQueryAndLocationMediatorLiveData,
+                userQueryAndLocation -> autocompleteRepository.getPredictionsResponse(
+                    userQueryAndLocation.location.getLatitude(),
+                    userQueryAndLocation.location.getLongitude(),
+                    userQueryAndLocation.query
+                )
+            ),
+            predictionsResponse -> {
+                List<PredictionViewState> predictionViewStateList = new ArrayList<>();
+                for (PredictionsItem response : predictionsResponse.getPredictions()) {
+                    predictionViewStateList.add(
+                        new PredictionViewState(
+                            response.getPlaceId(),
+                            response.getDescription()
+                        )
+                    );
+                }
+                return predictionViewStateList;
+            }
+        );
     }
 
     @NonNull
     public LiveData<List<PredictionViewState>> getPredictionsViewStateLiveData() {
-        return predictionViewStateMediatorLiveData;
+        return predictionViewStateLiveData;
     }
 
     private void combine(Location location, String query) {
-
-        LiveData<List<PredictionViewState>> predictionsResponseLiveData = Transformations.map(
-            autocompleteRepository.getPredictionsResponse(location.getLatitude(), location.getLongitude(), query),
-            new Function<PredictionsResponse, List<PredictionViewState>>() {
-                @Override
-                public List<PredictionViewState> apply(PredictionsResponse input) {
-                    List<PredictionViewState> predictionViewStateList = new ArrayList<>();
-                    for (PredictionsItem response : input.getPredictions()) {
-                        predictionViewStateList.add(
-                            new PredictionViewState(
-                                response.getPlaceId(),
-                                response.getDescription()));
-                    }
-                    return predictionViewStateList;
-                }
-            });
+        userQueryAndLocationMediatorLiveData.setValue(new UserQueryAndLocation(location, query));
     }
 
     private void combineEvent(@Nullable String placeId, @Nullable Boolean onMyLunchClicked) {
@@ -158,5 +156,15 @@ public class MainViewModel extends ViewModel {
 
     public void getSearchQueryText(String text) {
         queryMutableLiveData.setValue(text);
+    }
+
+    private static class UserQueryAndLocation {
+        private final Location location;
+        private final String query;
+
+        private UserQueryAndLocation(Location location, String query) {
+            this.location = location;
+            this.query = query;
+        }
     }
 }

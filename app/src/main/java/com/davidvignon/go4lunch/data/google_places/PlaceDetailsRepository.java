@@ -23,7 +23,7 @@ public class PlaceDetailsRepository {
     private final PlacesApi placesApi;
 
     @Inject
-    public PlaceDetailsRepository(@NonNull @DataModule.DetailsPlacesApi PlacesApi placesApi) {
+    public PlaceDetailsRepository(@NonNull PlacesApi placesApi) {
         this.placesApi = placesApi;
     }
 

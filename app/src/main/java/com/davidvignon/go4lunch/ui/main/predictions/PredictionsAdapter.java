@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.ui.predictions;
+package com.davidvignon.go4lunch.ui.main.predictions;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -42,7 +42,7 @@ public class PredictionsAdapter extends ListAdapter<PredictionViewState, Predict
         }
 
         public void bind(PredictionViewState item, OnRestaurantClickedListener listener) {
-            binding.itemListDescription.setText(item.getDescription());
+            binding.predictionItemTextViewName.setText(item.getDescription());
         }
     }
 
