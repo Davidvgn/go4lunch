@@ -14,12 +14,16 @@ public class MapPoiViewState {
     private final double latitude;
 
     private final double longitude;
+    private final float colour;
 
-    public MapPoiViewState(@NonNull String placeId, @NonNull String title, double latitude, double longitude) {
+
+
+    public MapPoiViewState(@NonNull String placeId, @NonNull String title, double latitude, double longitude, float colour) {
         this.placeId = placeId;
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.colour = colour;
     }
 
     @NonNull
@@ -40,20 +44,23 @@ public class MapPoiViewState {
         return longitude;
     }
 
+    public float getColour() {
+        return colour;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MapPoiViewState that = (MapPoiViewState) o;
-        return Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0 && Objects.equals(placeId, that.placeId) && Objects.equals(title, that.title);
+        return Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0 && Float.compare(that.colour, colour) == 0 && placeId.equals(that.placeId) && title.equals(that.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(placeId, title, latitude, longitude);
+        return Objects.hash(placeId, title, latitude, longitude, colour);
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "MapPoiViewState{" +
@@ -61,6 +68,7 @@ public class MapPoiViewState {
             ", title='" + title + '\'' +
             ", latitude=" + latitude +
             ", longitude=" + longitude +
+            ", colour=" + colour +
             '}';
     }
 }

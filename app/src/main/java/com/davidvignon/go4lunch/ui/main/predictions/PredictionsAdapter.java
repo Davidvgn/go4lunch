@@ -1,6 +1,8 @@
 package com.davidvignon.go4lunch.ui.main.predictions;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -9,15 +11,15 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.davidvignon.go4lunch.databinding.PredictionItemviewBinding;
-import com.davidvignon.go4lunch.ui.OnRestaurantClickedListener;
+import com.davidvignon.go4lunch.ui.OnPredictionClickedListener;
 
 
 public class PredictionsAdapter extends ListAdapter<PredictionViewState, PredictionsAdapter.ViewHolder> {
 
     @NonNull
-    private final OnRestaurantClickedListener listener;
+    private final OnPredictionClickedListener listener;
 
-    public PredictionsAdapter(@NonNull OnRestaurantClickedListener listener) {
+    public PredictionsAdapter(@NonNull OnPredictionClickedListener listener) {
         super(new ListPredictionItemCallBack());
         this.listener = listener;
     }
@@ -29,7 +31,7 @@ public class PredictionsAdapter extends ListAdapter<PredictionViewState, Predict
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PredictionsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position), listener);
     }
 
@@ -41,8 +43,16 @@ public class PredictionsAdapter extends ListAdapter<PredictionViewState, Predict
             this.binding = binding;
         }
 
-        public void bind(PredictionViewState item, OnRestaurantClickedListener listener) {
+        public void bind(PredictionViewState item, OnPredictionClickedListener listener) {
             binding.predictionItemTextViewName.setText(item.getDescription());
+            binding.predictionItemClRoot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("Dvgn", "onClick: " + item.getPlaceId() + ", " + item.getDescription());
+                    listener.onPredictionClickedListener(item.getPlaceId(), item.getDescription());
+                }
+            });
+
         }
     }
 

@@ -8,19 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.data.CurrentSearchRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,38 +34,32 @@ public class RestaurantsViewModel extends ViewModel {
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
     private final WorkmateRepository workmateRepository;
+    private final CurrentSearchRepository currentSearchRepository;
     @NonNull
     private final DistanceCalculator distanceCalculator;
-
     private final LiveData<List<RestaurantsViewState>> restaurantViewState;
-    MutableLiveData<String> queryMutable = new MutableLiveData<>();
-
 
     @Inject
     public RestaurantsViewModel(
         @NonNull LocationRepository locationRepository,
         @NonNull NearBySearchRepository nearBySearchRepository,
         @NonNull WorkmateRepository workmateRepository,
+        CurrentSearchRepository currentSearchRepository,
         @NonNull DistanceCalculator distanceCalculator
     ) {
 
         this.nearBySearchRepository = nearBySearchRepository;
         this.workmateRepository = workmateRepository;
         this.distanceCalculator = distanceCalculator;
+        this.currentSearchRepository = currentSearchRepository;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = getViewStateLiveData(locationLiveData);
     }
 
-
     @NonNull
     public LiveData<List<RestaurantsViewState>> getRestaurantViewStateLiveData() {
         return restaurantViewState;
-    }
-
-
-    public LiveData<String> getQueryLiveData() {
-        return queryMutable;
     }
 
     @NonNull
@@ -79,20 +72,29 @@ public class RestaurantsViewModel extends ViewModel {
 
         LiveData<Map<String, Integer>> placeIdUserCountMapLiveData = workmateRepository.getPlaceIdUserCountMapLiveData();
 
+        LiveData<String> currentOnSearchedLiveData = currentSearchRepository.getOnSearchRestaurantSelected();
 
         MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData = new MediatorLiveData<>();
 
         mediatorLiveData.addSource(nearbySearchResponsesLiveData, new Observer<NearbySearchResponse>() {
             @Override
             public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue());
+                combine(mediatorLiveData, locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue(), currentOnSearchedLiveData.getValue());
             }
         });
 
         mediatorLiveData.addSource(placeIdUserCountMapLiveData, new Observer<Map<String, Integer>>() {
             @Override
             public void onChanged(Map<String, Integer> placeIdUserCountMap) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap);
+                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap, currentOnSearchedLiveData.getValue());
+            }
+        });
+
+        mediatorLiveData.addSource(currentOnSearchedLiveData, new Observer<String>() {
+            @Override
+            public void onChanged(String query) {
+                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMapLiveData.getValue(), query);
+
             }
         });
 
@@ -103,7 +105,8 @@ public class RestaurantsViewModel extends ViewModel {
         @NonNull MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData,
         @NonNull LiveData<Location> locationLiveData,
         @Nullable NearbySearchResponse response,
-        @Nullable Map<String, Integer> placeIdUserCountMap
+        @Nullable Map<String, Integer> placeIdUserCountMap,
+        @Nullable String searchedQuery
     ) {
         if (response == null) {
             return;
@@ -163,25 +166,49 @@ public class RestaurantsViewModel extends ViewModel {
                         }
                     }
 
-                    //noinspection ConstantConditions
-                    viewStates.add(
-                        new RestaurantsViewState(
-                            result.getPlaceId(),
-                            result.getName(),
-                            result.getVicinity(),
-                            result.getPhotos().get(0).getPhotoReference(),
-                            openOrClosed,
-                            (float) (initialRating * 3 / 5),
-                            distanceText.toString(),
-                            usersGoingToThisRestaurantText
-                        )
-                    );
-
+                    if (searchedQuery != null) {
+                        if (compareNameAndQuery(result.getName(), searchedQuery)) {
+                            viewStates.add(
+                                new RestaurantsViewState(
+                                    result.getPlaceId(),
+                                    result.getName(),
+                                    result.getVicinity(),
+                                    result.getPhotos().get(0).getPhotoReference(),
+                                    openOrClosed,
+                                    (float) (initialRating * 3 / 5),
+                                    distanceText.toString(),
+                                    usersGoingToThisRestaurantText
+                                ));
+                        }
+                    } else {
+                        viewStates.add(
+                            new RestaurantsViewState(
+                                result.getPlaceId(),
+                                result.getName(),
+                                result.getVicinity(),
+                                result.getPhotos().get(0).getPhotoReference(),
+                                openOrClosed,
+                                (float) (initialRating * 3 / 5),
+                                distanceText.toString(),
+                                usersGoingToThisRestaurantText
+                            )
+                        );
+                    }
                 }
             }
         }
-
-
         mediatorLiveData.setValue(viewStates);
+    }
+
+    private boolean compareNameAndQuery(String restaurantName, String query) {
+        restaurantName = restaurantName.toLowerCase();
+        query = query.toLowerCase();
+        int i = 0;
+        for (int j = 0; j < restaurantName.length() && i < query.length(); j++) {
+            if (restaurantName.charAt(j) == query.charAt(i)) {
+                i++;
+            }
+        }
+        return i == query.length();
     }
 }

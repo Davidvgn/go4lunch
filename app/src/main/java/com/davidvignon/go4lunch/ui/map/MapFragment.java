@@ -3,7 +3,11 @@ package com.davidvignon.go4lunch.ui.map;
 import android.Manifest;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -11,11 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -47,15 +53,13 @@ public class MapFragment extends SupportMapFragment {
 
         getMapAsync(googleMap -> {
             viewModel.getMapPoiViewStateLiveData().observe(getViewLifecycleOwner(), mapPoiViewStates -> {
-
                 for (MapPoiViewState result : mapPoiViewStates) {
                     googleMap.addMarker(
                         new MarkerOptions()
                             .position(new LatLng(result.getLatitude(), result.getLongitude()))
                             .title(result.getTitle())
                             .alpha(0.8f)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
+                            .icon(BitmapDescriptorFactory.defaultMarker(result.getColour())));
                     googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                         @Override
                         public void onInfoWindowClick(@NonNull Marker marker) {
@@ -74,22 +78,13 @@ public class MapFragment extends SupportMapFragment {
                         }
                     });
                 }
-
-
-                //todo NINO : est ce que la bonne méthode ou je reste sur la partie commentée
-                viewModel.isLocationGrantedLiveData().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), new Observer<Boolean>() {
                     @SuppressLint("MissingPermission") //checked in PermissionRepository
                     @Override
                     public void onChanged(Boolean aBoolean) {
                         googleMap.setMyLocationEnabled(aBoolean);
                     }
                 });
-
-//                if (ActivityCompat.checkSelfPermission(
-//                    getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-//                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                    googleMap.setMyLocationEnabled(viewModel.onLocationButtonClicked());
-//                }
             });
 
             viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)));

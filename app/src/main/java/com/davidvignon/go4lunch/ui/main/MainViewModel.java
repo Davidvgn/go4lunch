@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.AutocompleteRepository;
+import com.davidvignon.go4lunch.data.CurrentSearchRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.autocomplete.PredictionsItem;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
@@ -26,6 +27,7 @@ import com.davidvignon.go4lunch.ui.utils.EventWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -37,6 +39,7 @@ public class MainViewModel extends ViewModel {
     private final PermissionRepository permissionRepository;
     @NonNull
     private final LocationRepository locationRepository;
+    private final CurrentSearchRepository currentSearchRepository;
 
     private final MutableLiveData<Boolean> onMyLunchClickedMutableLiveData = new MutableLiveData<>();
     private final LiveData<MainViewState> mainViewStateLiveData;
@@ -52,10 +55,12 @@ public class MainViewModel extends ViewModel {
         @NonNull UserRepository userRepository,
         @NonNull PermissionRepository permissionRepository,
         @NonNull LocationRepository locationRepository,
-        AutocompleteRepository autocompleteRepository
+        AutocompleteRepository autocompleteRepository,
+        CurrentSearchRepository currentSearchRepository
     ) {
         this.permissionRepository = permissionRepository;
         this.locationRepository = locationRepository;
+        this.currentSearchRepository = currentSearchRepository;
 
         LiveData<String> placeIdLiveData = userRepository.getRestaurantPlaceIdLiveData();
         LiveData<User> userLiveData = userRepository.getUserLiveData();
@@ -99,15 +104,15 @@ public class MainViewModel extends ViewModel {
             ),
             predictionsResponse -> {
                 List<PredictionViewState> predictionViewStateList = new ArrayList<>();
-                for (PredictionsItem response : predictionsResponse.getPredictions()) {
-                    predictionViewStateList.add(
-                        new PredictionViewState(
-                            response.getPlaceId(),
-                            response.getDescription()
-                        )
-                    );
-                }
-                return predictionViewStateList;
+                    for (PredictionsItem response : predictionsResponse.getPredictions()) {
+                        predictionViewStateList.add(
+                            new PredictionViewState(
+                                response.getPlaceId(),
+                                response.getDescription()
+                            )
+                        );
+                    }
+                    return predictionViewStateList;
             }
         );
     }
@@ -158,6 +163,10 @@ public class MainViewModel extends ViewModel {
         queryMutableLiveData.setValue(text);
     }
 
+    public void OnSearchedRestaurantSelected(String query) {
+        currentSearchRepository.setOnSearchRestaurantSelected(query);
+    }
+
     private static class UserQueryAndLocation {
         private final Location location;
         private final String query;
@@ -165,6 +174,27 @@ public class MainViewModel extends ViewModel {
         private UserQueryAndLocation(Location location, String query) {
             this.location = location;
             this.query = query;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            UserQueryAndLocation that = (UserQueryAndLocation) o;
+            return Objects.equals(location, that.location) && Objects.equals(query, that.query);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(location, query);
+        }
+
+        @Override
+        public String toString() {
+            return "UserQueryAndLocation{" +
+                "location=" + location +
+                ", query='" + query + '\'' +
+                '}';
         }
     }
 }
