@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.main.predictions;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +47,6 @@ public class PredictionsAdapter extends ListAdapter<PredictionViewState, Predict
             binding.predictionItemClRoot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d("Dvgn", "onClick: " + item.getPlaceId() + ", " + item.getDescription());
                     listener.onPredictionClickedListener(item.getPlaceId(), item.getDescription());
                 }
             });

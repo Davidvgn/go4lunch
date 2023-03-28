@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     SearchView searchView;
     PredictionsAdapter adapter;
 
-    private OnPredictionClickedListener onPredictionClickedListener;
+    private OnPredictionClickedListener onPredictionClickedListener = this;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
     @Override
     public void onPredictionClickedListener(String placeId, String description) {
+        startActivity(RestaurantDetailsViewModel.navigate(this, placeId));
     }
 
 }
