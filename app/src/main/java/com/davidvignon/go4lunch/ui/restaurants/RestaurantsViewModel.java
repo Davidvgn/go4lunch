@@ -2,7 +2,6 @@
 package com.davidvignon.go4lunch.ui.restaurants;
 
 import android.location.Location;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +12,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.CurrentSearchRepository;
+import com.davidvignon.go4lunch.data.CurrentQueryRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
@@ -34,7 +33,7 @@ public class RestaurantsViewModel extends ViewModel {
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
     private final WorkmateRepository workmateRepository;
-    private final CurrentSearchRepository currentSearchRepository;
+    private final CurrentQueryRepository currentQueryRepository;
     @NonNull
     private final DistanceCalculator distanceCalculator;
     private final LiveData<List<RestaurantsViewState>> restaurantViewState;
@@ -44,14 +43,14 @@ public class RestaurantsViewModel extends ViewModel {
         @NonNull LocationRepository locationRepository,
         @NonNull NearBySearchRepository nearBySearchRepository,
         @NonNull WorkmateRepository workmateRepository,
-        CurrentSearchRepository currentSearchRepository,
+        @NonNull CurrentQueryRepository currentQueryRepository,
         @NonNull DistanceCalculator distanceCalculator
     ) {
 
         this.nearBySearchRepository = nearBySearchRepository;
         this.workmateRepository = workmateRepository;
         this.distanceCalculator = distanceCalculator;
-        this.currentSearchRepository = currentSearchRepository;
+        this.currentQueryRepository = currentQueryRepository;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         restaurantViewState = getViewStateLiveData(locationLiveData);
@@ -72,7 +71,7 @@ public class RestaurantsViewModel extends ViewModel {
 
         LiveData<Map<String, Integer>> placeIdUserCountMapLiveData = workmateRepository.getPlaceIdUserCountMapLiveData();
 
-        LiveData<String> currentOnSearchedLiveData = currentSearchRepository.getOnSearchRestaurantSelected();
+        LiveData<String> currentOnSearchedLiveData = currentQueryRepository.getCurrentRestaurantQuery();
 
         MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData = new MediatorLiveData<>();
 
@@ -166,21 +165,7 @@ public class RestaurantsViewModel extends ViewModel {
                         }
                     }
 
-                    if (searchedQuery != null) {
-                        if (compareNameAndQuery(result.getName(), searchedQuery)) {
-                            viewStates.add(
-                                new RestaurantsViewState(
-                                    result.getPlaceId(),
-                                    result.getName(),
-                                    result.getVicinity(),
-                                    result.getPhotos().get(0).getPhotoReference(),
-                                    openOrClosed,
-                                    (float) (initialRating * 3 / 5),
-                                    distanceText.toString(),
-                                    usersGoingToThisRestaurantText
-                                ));
-                        }
-                    } else {
+                    if (searchedQuery == null || isRestaurantNamePartialMatchForQuery(result.getName(), searchedQuery)) {
                         viewStates.add(
                             new RestaurantsViewState(
                                 result.getPlaceId(),
@@ -200,15 +185,15 @@ public class RestaurantsViewModel extends ViewModel {
         mediatorLiveData.setValue(viewStates);
     }
 
-    private boolean compareNameAndQuery(String restaurantName, String query) {
-        restaurantName = restaurantName.toLowerCase();
-        query = query.toLowerCase();
+    private boolean isRestaurantNamePartialMatchForQuery(final @NonNull String restaurantName, final @NonNull String query) {
+        String restaurantNameLowercase = restaurantName.toLowerCase();
+        String queryLowercase = query.toLowerCase();
         int i = 0;
-        for (int j = 0; j < restaurantName.length() && i < query.length(); j++) {
-            if (restaurantName.charAt(j) == query.charAt(i)) {
+        for (int j = 0; j < restaurantNameLowercase.length() && i < queryLowercase.length(); j++) {
+            if (restaurantNameLowercase.charAt(j) == queryLowercase.charAt(i)) {
                 i++;
             }
         }
-        return i == query.length();
+        return i == queryLowercase.length();
     }
 }

@@ -47,38 +47,29 @@ public class MapFragment extends SupportMapFragment {
 
         getMapAsync(googleMap -> {
             viewModel.getMapPoiViewStateLiveData().observe(getViewLifecycleOwner(), mapPoiViewStates -> {
+                googleMap.clear();
                 for (MapPoiViewState result : mapPoiViewStates) {
                     googleMap.addMarker(
                         new MarkerOptions()
                             .position(new LatLng(result.getLatitude(), result.getLongitude()))
                             .title(result.getTitle())
                             .alpha(0.8f)
-                            .icon(BitmapDescriptorFactory.defaultMarker(result.getColour())));
+                            .icon(BitmapDescriptorFactory.defaultMarker(result.getHue())));
                     googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                         @Override
                         public void onInfoWindowClick(@NonNull Marker marker) {
-                            for (MapPoiViewState result : mapPoiViewStates) {
-                                int compareLat = Double.compare(marker.getPosition().longitude, result.getLongitude());
-                                int compareLong = Double.compare(marker.getPosition().latitude, result.getLatitude());
-
-                                if (compareLat == 0 && compareLong == 0) {
-                                    if (getContext() != null) {
-                                        startActivity(RestaurantDetailsViewModel.navigate(getContext(), result.getPlaceId()));
-                                    }
-                                    break;
-
-                                }
-                            }
+                            startActivity(RestaurantDetailsViewModel.navigate(requireContext(), result.getPlaceId()));
                         }
                     });
                 }
-                viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), new Observer<Boolean>() {
-                    @SuppressLint("MissingPermission") //checked in PermissionRepository
-                    @Override
-                    public void onChanged(Boolean aBoolean) {
-                        googleMap.setMyLocationEnabled(aBoolean);
-                    }
-                });
+            });
+
+            viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), new Observer<Boolean>() {
+                @SuppressLint("MissingPermission") //checked in PermissionRepository
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    googleMap.setMyLocationEnabled(aBoolean);
+                }
             });
 
             viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)));

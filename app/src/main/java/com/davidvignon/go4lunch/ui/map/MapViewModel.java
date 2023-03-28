@@ -4,23 +4,19 @@ package com.davidvignon.go4lunch.ui.map;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.davidvignon.go4lunch.data.CurrentSearchRepository;
-import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
+import com.davidvignon.go4lunch.data.CurrentQueryRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
+import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.ui.utils.SingleLiveEvent;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -33,11 +29,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class MapViewModel extends ViewModel {
     @NonNull
-    private final NearBySearchRepository nearBySearchRepository;
-    @NonNull
     private final PermissionRepository permissionRepository;
-    private final CurrentSearchRepository currentSearchRepository;
-    private final LiveData<List<MapPoiViewState>> mapPoiViewStatesLiveData;
+
+    private final MediatorLiveData<List<MapPoiViewState>> mapPoiViewStatesLiveData = new MediatorLiveData<>();
     private final SingleLiveEvent<LatLng> cameraUpdateSingleLiveEvent = new SingleLiveEvent<>();
 
     @Inject
@@ -45,16 +39,33 @@ public class MapViewModel extends ViewModel {
         @NonNull PermissionRepository permissionRepository,
         @NonNull LocationRepository locationRepository,
         @NonNull NearBySearchRepository nearBySearchRepository,
-        CurrentSearchRepository currentSearchRepository
+        CurrentQueryRepository currentQueryRepository
     ) {
-        this.nearBySearchRepository = nearBySearchRepository;
         this.permissionRepository = permissionRepository;
-        this.currentSearchRepository = currentSearchRepository;
-
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        bindCameraUpdate(locationLiveData);
-        mapPoiViewStatesLiveData = getViewStateLiveData(locationLiveData);
+
+        cameraUpdateSingleLiveEvent.addSource(locationLiveData, location -> {
+            if (location != null) {
+                cameraUpdateSingleLiveEvent.removeSource(locationLiveData);
+                cameraUpdateSingleLiveEvent.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
+            }
+        });
+
+        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
+            locationLiveData,
+            location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
+        );
+
+        LiveData<String> currentRestaurantQueryLiveData = currentQueryRepository.getCurrentRestaurantQuery();
+
+        mapPoiViewStatesLiveData.addSource(nearbySearchResponseLiveData, nearbySearchResponse ->
+            combine(nearbySearchResponse, currentRestaurantQueryLiveData.getValue())
+        );
+
+        mapPoiViewStatesLiveData.addSource(currentRestaurantQueryLiveData, query ->
+            combine(nearbySearchResponseLiveData.getValue(), query)
+        );
     }
 
     @NonNull
@@ -71,38 +82,7 @@ public class MapViewModel extends ViewModel {
         return permissionRepository.isUserLocationGrantedLiveData();
     }
 
-    @NonNull
-    private LiveData<List<MapPoiViewState>> getViewStateLiveData(LiveData<Location> locationLiveData) {
-
-        LiveData<NearbySearchResponse> nearbySearchResponseLiveData = Transformations.switchMap(
-            locationLiveData,
-            location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
-        );
-
-        LiveData<String> currentOnSearchedLiveData = currentSearchRepository.getOnSearchRestaurantSelected();
-
-        MediatorLiveData<List<MapPoiViewState>> mediatorLiveData = new MediatorLiveData<>();
-
-        mediatorLiveData.addSource(nearbySearchResponseLiveData, new Observer<NearbySearchResponse>() {
-            @Override
-            public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                combine(mediatorLiveData, nearbySearchResponse, currentOnSearchedLiveData.getValue());
-            }
-        });
-
-        mediatorLiveData.addSource(currentOnSearchedLiveData, new Observer<String>() {
-            @Override
-            public void onChanged(String query) {
-                combine(mediatorLiveData, nearbySearchResponseLiveData.getValue(), query);
-
-            }
-        });
-
-        return mediatorLiveData;
-    }
-
     private void combine(
-        @NonNull MediatorLiveData<List<MapPoiViewState>> mediatorLiveData,
         @Nullable NearbySearchResponse response,
         @Nullable String searchedQuery
     ) {
@@ -123,61 +103,41 @@ public class MapViewModel extends ViewModel {
                         && result.getGeometry().getLocation().getLng() != null
                 ) {
 
-                    if (searchedQuery != null) {
-                        if (compareNameAndQuery(result.getName(), searchedQuery)) {
-                            viewStates.add(
-                                new MapPoiViewState(
-                                    result.getPlaceId(),
-                                    result.getName(),
-                                    result.getGeometry().getLocation().getLat(),
-                                    result.getGeometry().getLocation().getLng(),
-                                    0.0F
-                                ));
-                        } else {
-                            viewStates.add(
-                                new MapPoiViewState(
-                                    result.getPlaceId(),
-                                    result.getName(),
-                                    result.getGeometry().getLocation().getLat(),
-                                    result.getGeometry().getLocation().getLng(),
-                                    60.0F
-                                ));
-                        }
-                    } else {
-                        viewStates.add(
-                            new MapPoiViewState(
-                                result.getPlaceId(),
-                                result.getName(),
-                                result.getGeometry().getLocation().getLat(),
-                                result.getGeometry().getLocation().getLng(),
-                                0.0F
-                            )
-                        );
-                    }
+                    float hue = getHue(searchedQuery, result);
+
+                    viewStates.add(
+                        new MapPoiViewState(
+                            result.getPlaceId(),
+                            result.getName(),
+                            result.getGeometry().getLocation().getLat(),
+                            result.getGeometry().getLocation().getLng(),
+                            hue
+                        )
+                    );
                 }
             }
         }
-        mediatorLiveData.setValue(viewStates);
+
+        mapPoiViewStatesLiveData.setValue(viewStates);
     }
 
-    private void bindCameraUpdate(LiveData<Location> locationLiveData) {
-        cameraUpdateSingleLiveEvent.addSource(locationLiveData, location -> {
-            if (location != null) {
-                cameraUpdateSingleLiveEvent.removeSource(locationLiveData);
-                cameraUpdateSingleLiveEvent.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
-            }
-        });
+    private float getHue(@Nullable String searchedQuery, @NonNull RestaurantResponse result) {
+        if (searchedQuery == null || result.getName() == null || !isRestaurantNamePartialMatchForQuery(result.getName(), searchedQuery)) {
+            return 0.0F;
+        } else {
+            return 60.0F;
+        }
     }
 
-    private boolean compareNameAndQuery(String restaurantName, String query) {
-        restaurantName = restaurantName.toLowerCase();
-        query = query.toLowerCase();
+    private boolean isRestaurantNamePartialMatchForQuery(final @NonNull String restaurantName, final @NonNull String query) {
+        String restaurantNameLowercase = restaurantName.toLowerCase();
+        String queryLowercase = query.toLowerCase();
         int i = 0;
-        for (int j = 0; j < restaurantName.length() && i < query.length(); j++) {
-            if (restaurantName.charAt(j) == query.charAt(i)) {
+        for (int j = 0; j < restaurantNameLowercase.length() && i < queryLowercase.length(); j++) {
+            if (restaurantNameLowercase.charAt(j) == queryLowercase.charAt(i)) {
                 i++;
             }
         }
-        return i == query.length();
+        return i == queryLowercase.length();
     }
 }

@@ -4,11 +4,8 @@ package com.davidvignon.go4lunch.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -59,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
     SearchView searchView;
     PredictionsAdapter adapter;
 
-    private OnPredictionClickedListener onPredictionClickedListener = this;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-        adapter = new PredictionsAdapter(onPredictionClickedListener);
+        adapter = new PredictionsAdapter(this);
         binding.predictionsRv.setAdapter(adapter);
         binding.predictionsRv.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
 
@@ -134,17 +129,17 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                     case (R.id.bottom_nav_map):
                         MainActivity.this.displayFragment(MapFragment.newInstance());
                         toolbar.setTitle(R.string.restaurantViewTitle);
-                        viewModel.OnSearchedRestaurantSelected(null);
+                        viewModel.onSearchedRestaurantSelected(null);
                         break;
                     case (R.id.bottom_nav_list):
                         MainActivity.this.displayFragment(RestaurantsFragment.newInstance());
                         toolbar.setTitle(R.string.restaurantViewTitle);
-                        viewModel.OnSearchedRestaurantSelected(null);
+                        viewModel.onSearchedRestaurantSelected(null);
                         break;
                     case (R.id.bottom_nav_workmates):
                         MainActivity.this.displayFragment(WorkmatesFragment.newInstance());
                         toolbar.setTitle(R.string.workermatesViewTitle);
-                        viewModel.OnSearchedRestaurantSelected(null);
+                        viewModel.onSearchedRestaurantSelected(null);
                         break;
                 }
                 return true;
@@ -188,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
 
             @Override
             public boolean onMenuItemActionCollapse(@NonNull MenuItem menuItem) {
-                viewModel.OnSearchedRestaurantSelected(null);
+                viewModel.onSearchedRestaurantSelected(null);
                 viewModel.getSearchQueryText(null);
                 return true;
             }
@@ -198,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                viewModel.OnSearchedRestaurantSelected(query);
+                viewModel.onSearchedRestaurantSelected(query);
                 inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
                 searchView.setQuery("", false);
                 return true;

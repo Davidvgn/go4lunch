@@ -7,23 +7,18 @@ import java.util.Objects;
 public class MapPoiViewState {
     @NonNull
     private final String placeId;
-
     @NonNull
     private final String title;
-
     private final double latitude;
-
     private final double longitude;
-    private final float colour;
+    private final float hue;
 
-
-
-    public MapPoiViewState(@NonNull String placeId, @NonNull String title, double latitude, double longitude, float colour) {
+    public MapPoiViewState(@NonNull String placeId, @NonNull String title, double latitude, double longitude, float hue) {
         this.placeId = placeId;
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.colour = colour;
+        this.hue = hue;
     }
 
     @NonNull
@@ -44,8 +39,8 @@ public class MapPoiViewState {
         return longitude;
     }
 
-    public float getColour() {
-        return colour;
+    public float getHue() {
+        return hue;
     }
 
     @Override
@@ -53,12 +48,12 @@ public class MapPoiViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MapPoiViewState that = (MapPoiViewState) o;
-        return Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0 && Float.compare(that.colour, colour) == 0 && placeId.equals(that.placeId) && title.equals(that.title);
+        return Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0 && Float.compare(that.hue, hue) == 0 && placeId.equals(that.placeId) && title.equals(that.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(placeId, title, latitude, longitude, colour);
+        return Objects.hash(placeId, title, latitude, longitude, hue);
     }
 
     @Override
@@ -68,7 +63,7 @@ public class MapPoiViewState {
             ", title='" + title + '\'' +
             ", latitude=" + latitude +
             ", longitude=" + longitude +
-            ", colour=" + colour +
+            ", hue=" + hue +
             '}';
     }
 }

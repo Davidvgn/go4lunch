@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.AutocompleteRepository;
-import com.davidvignon.go4lunch.data.CurrentSearchRepository;
+import com.davidvignon.go4lunch.data.CurrentQueryRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.autocomplete.PredictionsItem;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
@@ -39,7 +39,7 @@ public class MainViewModel extends ViewModel {
     private final PermissionRepository permissionRepository;
     @NonNull
     private final LocationRepository locationRepository;
-    private final CurrentSearchRepository currentSearchRepository;
+    private final CurrentQueryRepository currentQueryRepository;
 
     private final MutableLiveData<Boolean> onMyLunchClickedMutableLiveData = new MutableLiveData<>();
     private final LiveData<MainViewState> mainViewStateLiveData;
@@ -56,11 +56,11 @@ public class MainViewModel extends ViewModel {
         @NonNull PermissionRepository permissionRepository,
         @NonNull LocationRepository locationRepository,
         AutocompleteRepository autocompleteRepository,
-        CurrentSearchRepository currentSearchRepository
+        CurrentQueryRepository currentQueryRepository
     ) {
         this.permissionRepository = permissionRepository;
         this.locationRepository = locationRepository;
-        this.currentSearchRepository = currentSearchRepository;
+        this.currentQueryRepository = currentQueryRepository;
 
         LiveData<String> placeIdLiveData = userRepository.getRestaurantPlaceIdLiveData();
         LiveData<User> userLiveData = userRepository.getUserLiveData();
@@ -163,8 +163,8 @@ public class MainViewModel extends ViewModel {
         queryMutableLiveData.setValue(text);
     }
 
-    public void OnSearchedRestaurantSelected(String query) {
-        currentSearchRepository.setOnSearchRestaurantSelected(query);
+    public void onSearchedRestaurantSelected(@Nullable String query) {
+        currentQueryRepository.setCurrentRestaurantQuery(query);
     }
 
     private static class UserQueryAndLocation {
