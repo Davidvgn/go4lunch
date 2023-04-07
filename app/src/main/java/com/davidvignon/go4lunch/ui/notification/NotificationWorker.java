@@ -113,16 +113,24 @@ public class NotificationWorker extends Worker {
                     }
                 }
                 if (!workmateNameList.isEmpty()) {
-                    workmatesList = "\n" + "\n" + "Ce(s) collègue(s) mange(nt) ici également : \n" // TODO DAVID mettre dans des String + StringBuilder
-                        + "- " + workmateNameList.toString().replace("[", "").replace("]", "");//todo david utiliser les stringBuilder
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\n\n")
+                        .append(application.getString(R.string.notification_workmates_list))
+                        .append("\n");
+                    for (String workmateName : workmateNameList) {
+                        sb.append("- ")
+                            .append(workmateName)
+                            .append("\n");
+                    }
+                    workmatesList = sb.toString();
                 }
             }
 
-            hereYouEat = "Vous avez prévu de manger ici : " + restaurantName;
+            hereYouEat = application.getString(R.string.here_you_eat_notification) + restaurantName;
             notificationMessage = hereYouEat + workmatesList;
 
         } else {
-            notificationMessage = "Aucun restaurant sélectionné aujourd'hui ";
+            notificationMessage = application.getString(R.string.no_restaurant_selected_notification);
         }
         return notificationMessage;
     }

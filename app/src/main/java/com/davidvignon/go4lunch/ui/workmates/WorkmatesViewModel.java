@@ -3,11 +3,15 @@ package com.davidvignon.go4lunch.ui.workmates;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.data.CurrentQueryRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,45 +28,76 @@ public class WorkmatesViewModel extends ViewModel {
 
     private final Application application;
 
-    private final LiveData<List<WorkmatesViewState>> workmatesViewStatesLiveData;
+    private final MediatorLiveData<List<WorkmatesViewState>> mediatorLiveData = new MediatorLiveData<>();
 
     @NonNull
     private final FirebaseAuth firebaseAuth;
 
     @Inject
-    public WorkmatesViewModel(Application application, WorkmateRepository workmateRepository, @NonNull FirebaseAuth firebaseAuth) {
+    public WorkmatesViewModel(Application application, @NonNull WorkmateRepository workmateRepository, @NonNull FirebaseAuth firebaseAuth, @NonNull CurrentQueryRepository currentQueryRepository
+    ) {
         this.application = application;
         this.firebaseAuth = firebaseAuth;
+
         LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsersLiveData();
-        workmatesViewStatesLiveData = bindViewState(dataBaseUsersLiveData);
+        LiveData<String> currentRestaurantQueryLiveData = currentQueryRepository.getCurrentRestaurantQuery();
+
+        mediatorLiveData.addSource(dataBaseUsersLiveData, new Observer<List<Workmate>>() {
+            @Override
+            public void onChanged(List<Workmate> workmates) {
+                combine(workmates, currentRestaurantQueryLiveData.getValue());
+            }
+        });
+        mediatorLiveData.addSource(currentRestaurantQueryLiveData, new Observer<String>() {
+            @Override
+            public void onChanged(String query) {
+                combine(dataBaseUsersLiveData.getValue(), query);
+            }
+        });
     }
 
     @NonNull
     public LiveData<List<WorkmatesViewState>> getWorkmatesViewStatesLiveData() {
-        return workmatesViewStatesLiveData;
+        return mediatorLiveData;
     }
 
-    @NonNull
-    private LiveData<List<WorkmatesViewState>> bindViewState(LiveData<List<Workmate>> dataBaseUsersLiveData) {
-        return Transformations.map(dataBaseUsersLiveData, workmates -> {
+
+    private void combine(List<Workmate> workmatesList, String searchedQuery) {
+
+        if (workmatesList != null) {
             List<WorkmatesViewState> viewStates = new ArrayList<>();
 
-            for (Workmate workmate : workmates) {
+            for (Workmate workmate : workmatesList) {
                 if (!workmate.getId().equals(firebaseAuth.getCurrentUser().getUid())) {
                     String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName() + application.getString(R.string.a_restaurant_is_selected);
-                    viewStates.add(
-                        new WorkmatesViewState(
-                            workmate.getId(),
-                            workmateName,
-                            workmate.getPicturePath(),
-                            workmate.getSelectedRestaurant(),
-                            workmate.getSelectedRestaurantName()
-                        )
-                    );
+                    if (searchedQuery == null || (workmate.getSelectedRestaurantName() != null && isRestaurantNamePartialMatchForQuery(workmate.getSelectedRestaurantName(), searchedQuery))) {
+
+                        viewStates.add(
+                            new WorkmatesViewState(
+                                workmate.getId(),
+                                workmateName,
+                                workmate.getPicturePath(),
+                                workmate.getSelectedRestaurant(),
+                                workmate.getSelectedRestaurantName()
+                            )
+                        );
+                    }
+                    mediatorLiveData.setValue(viewStates);
                 }
             }
-            return viewStates;
-        });
+        }
+    }
+
+    private boolean isRestaurantNamePartialMatchForQuery(final @NonNull String restaurantName, final @NonNull String query) {
+        String restaurantNameLowercase = restaurantName.toLowerCase();
+        String queryLowercase = query.toLowerCase();
+        int i = 0;
+        for (int j = 0; j < restaurantNameLowercase.length() && i < queryLowercase.length(); j++) {
+            if (restaurantNameLowercase.charAt(j) == queryLowercase.charAt(i)) {
+                i++;
+            }
+        }
+        return i == queryLowercase.length();
     }
 }
 

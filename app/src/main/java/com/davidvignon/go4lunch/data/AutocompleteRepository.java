@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.data;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -30,7 +31,7 @@ public class AutocompleteRepository {
     }
 
 
-    public LiveData<PredictionsResponse> getPredictionsResponse(double latitude, double longitude, String input) {
+    public LiveData<PredictionsResponse> getPredictionsResponse(double latitude, double longitude,@NonNull String input) {
 
         MutableLiveData<PredictionsResponse> predictionsResponseMutableLiveData = new MutableLiveData<>();
 

@@ -30,8 +30,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class MapViewModel extends ViewModel {
     @NonNull
     private final PermissionRepository permissionRepository;
-
-    private final MediatorLiveData<List<MapPoiViewState>> mapPoiViewStatesLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<MapPoiViewState>> mediatorLiveData = new MediatorLiveData<>();
     private final SingleLiveEvent<LatLng> cameraUpdateSingleLiveEvent = new SingleLiveEvent<>();
 
     @Inject
@@ -39,7 +38,7 @@ public class MapViewModel extends ViewModel {
         @NonNull PermissionRepository permissionRepository,
         @NonNull LocationRepository locationRepository,
         @NonNull NearBySearchRepository nearBySearchRepository,
-        CurrentQueryRepository currentQueryRepository
+        @NonNull CurrentQueryRepository currentQueryRepository
     ) {
         this.permissionRepository = permissionRepository;
 
@@ -59,18 +58,18 @@ public class MapViewModel extends ViewModel {
 
         LiveData<String> currentRestaurantQueryLiveData = currentQueryRepository.getCurrentRestaurantQuery();
 
-        mapPoiViewStatesLiveData.addSource(nearbySearchResponseLiveData, nearbySearchResponse ->
+        mediatorLiveData.addSource(nearbySearchResponseLiveData, nearbySearchResponse ->
             combine(nearbySearchResponse, currentRestaurantQueryLiveData.getValue())
         );
 
-        mapPoiViewStatesLiveData.addSource(currentRestaurantQueryLiveData, query ->
+        mediatorLiveData.addSource(currentRestaurantQueryLiveData, query ->
             combine(nearbySearchResponseLiveData.getValue(), query)
         );
     }
 
     @NonNull
     public LiveData<List<MapPoiViewState>> getMapPoiViewStateLiveData() {
-        return mapPoiViewStatesLiveData;
+        return mediatorLiveData;
     }
 
     @NonNull
@@ -118,7 +117,7 @@ public class MapViewModel extends ViewModel {
             }
         }
 
-        mapPoiViewStatesLiveData.setValue(viewStates);
+        mediatorLiveData.setValue(viewStates);
     }
 
     private float getHue(@Nullable String searchedQuery, @NonNull RestaurantResponse result) {

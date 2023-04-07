@@ -1,28 +1,38 @@
 package com.davidvignon.go4lunch.data.google_places.autocomplete;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 public class PredictionsResponse {
 
+    @Nullable
     @SerializedName("predictions")
     private final List<PredictionsItem> predictions;
 
+    @Nullable
     @SerializedName("status")
     private final String status;
 
-    public PredictionsResponse(List<PredictionsItem> predictions, String status) {
+    public PredictionsResponse(@Nullable
+    List<PredictionsItem> predictions, @Nullable
+    String status) {
         this.predictions = predictions;
         this.status = status;
     }
 
-    public List<PredictionsItem> getPredictions(){
+    @Nullable
+    public List<PredictionsItem> getPredictions() {
         return predictions;
     }
 
-    public String getStatus(){
+    @Nullable
+    public String getStatus() {
         return status;
     }
 
@@ -39,6 +49,7 @@ public class PredictionsResponse {
         return Objects.hash(predictions, status);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AutoCompleteResponse{" +

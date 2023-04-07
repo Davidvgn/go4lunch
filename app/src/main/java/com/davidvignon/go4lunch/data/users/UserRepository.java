@@ -18,6 +18,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+@SuppressWarnings("SpellCheckingInspection")
 @Singleton
 public class UserRepository {
 

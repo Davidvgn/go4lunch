@@ -1,4 +1,4 @@
-package com.davidvignon.go4lunch.data.google_places;
+package com.davidvignon.go4lunch.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,7 +7,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 
 import com.davidvignon.go4lunch.BuildConfig;
-import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
+import com.davidvignon.go4lunch.data.google_places.PlacesApi;
+import com.davidvignon.go4lunch.data.google_places.autocomplete.PredictionsResponse;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 
 import org.junit.Before;
@@ -21,13 +22,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class NearBySearchRepositoryTest {
+public class AutocompleteRepositoryTest {
 
     private static final double DEFAULT_LATITUDE = 45.757830302;
     private static final double DEFAULT_LONGITUDE = 4.823496706;
+    private static final String DEFAULT_INPUT = "DEFAULT_INPUT";
     private static final String DEFAULT_RADIUS = "1500";
     private static final String DEFAULT_TYPE = "restaurant";
-    private static final String DEFAULT_KEY = BuildConfig.NEARBY_API_KEY;
+    private static final String DEFAULT_KEY = BuildConfig.AUTOCOMPLETE_API_KEY;
+
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -36,14 +39,14 @@ public class NearBySearchRepositoryTest {
 
     private final Call call = Mockito.mock(Call.class);
     private final ArgumentCaptor<Callback> callback = ArgumentCaptor.forClass(Callback.class);
-
-    private NearBySearchRepository nearBySearchRepository;
+    private AutocompleteRepository autocompleteRepository;
 
     @Before
-    public void setUp() {
-        nearBySearchRepository = new NearBySearchRepository(placesApi);
+    public void setUp(){
+        autocompleteRepository = new AutocompleteRepository(placesApi);
         Mockito.doNothing().when(call).enqueue(any());
-        Mockito.doReturn(call).when(placesApi).getNearbySearchResponse(
+        Mockito.doReturn(call).when(placesApi).getPredictionsResponse(
+            DEFAULT_INPUT,
             DEFAULT_LATITUDE + "," + DEFAULT_LONGITUDE,
             DEFAULT_RADIUS,
             DEFAULT_TYPE,
@@ -55,12 +58,13 @@ public class NearBySearchRepositoryTest {
     public void nominal_case() {
         // Given
         Response retrofitResponse = Mockito.mock(Response.class);
-        NearbySearchResponse expectedResponse = Mockito.mock(NearbySearchResponse.class);
+        PredictionsResponse expectedResponse = Mockito.mock(PredictionsResponse.class);
         Mockito.doReturn(expectedResponse).when(retrofitResponse).body();
 
         // When
-        LiveData<NearbySearchResponse> liveData = nearBySearchRepository.getNearbySearchResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
-        Mockito.verify(placesApi).getNearbySearchResponse(
+        LiveData<PredictionsResponse> liveData = autocompleteRepository.getPredictionsResponse(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, DEFAULT_INPUT);
+        Mockito.verify(placesApi).getPredictionsResponse(
+            DEFAULT_INPUT,
             DEFAULT_LATITUDE + "," + DEFAULT_LONGITUDE,
             DEFAULT_RADIUS,
             DEFAULT_TYPE,
@@ -69,10 +73,10 @@ public class NearBySearchRepositoryTest {
         Mockito.verify(call).enqueue(callback.capture());
         callback.getValue().onResponse(call, retrofitResponse);
 
-        NearbySearchResponse result = LiveDataTestUtils.getValueForTesting(liveData);
+        PredictionsResponse result = LiveDataTestUtils.getValueForTesting(liveData);
 
         // Then
         assertEquals(expectedResponse, result);
     }
-}
 
+}

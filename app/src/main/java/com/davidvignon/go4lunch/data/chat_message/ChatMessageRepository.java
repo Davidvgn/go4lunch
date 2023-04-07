@@ -10,6 +10,7 @@ import com.google.firebase.firestore.Query;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -33,21 +34,20 @@ public class ChatMessageRepository {
     public void sendMessage(String message, String userReceiverId) {
         final String roomId = getRoomId(userReceiverId);
 
-        ChatMessage chatMessage = new ChatMessage(
-            UUID.randomUUID().toString(),
-            firebaseAuth.getCurrentUser().getUid(),
-            userReceiverId,
-            message,
-            Instant.now().toEpochMilli()
-        );
+            ChatMessage chatMessage = new ChatMessage(
+                UUID.randomUUID().toString(),
+                Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid(),//todo Nino est bon pour enlever le warning ?
+                userReceiverId,
+                message,
+                Instant.now().toEpochMilli()
+            );
 
-        firebaseFirestore
-            .collection("chat")
-            .document(roomId)
-            .collection("messages")
-            .add(chatMessage);
+            firebaseFirestore
+                .collection("chat")
+                .document(roomId)
+                .collection("messages")
+                .add(chatMessage);
     }
-
     public LiveData<List<ChatMessage>> getChatMessagesLiveData(String userReceiverId) {
         final String roomId = getRoomId(userReceiverId);
 
@@ -67,7 +67,7 @@ public class ChatMessageRepository {
 
     @NonNull
     private String getRoomId(String userReceiverId) {
-        String myId = firebaseAuth.getCurrentUser().getUid();
+        String myId = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();//todo Nino est bon pour enlever le warning ?
 
         final String roomId;
 

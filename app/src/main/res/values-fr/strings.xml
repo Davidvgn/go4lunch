@@ -15,7 +15,7 @@
     <string name="upperscore">-</string>
     <string name="people_icon">Icone personnage</string>
     <string name="restaurantViewTitle">J\'ai Faim !</string>
-    <string name="workermatesViewTitle">Collègues</string>
+    <string name="workematesViewTitle">Collègues</string>
 
     <string name="restaurant_dtls_iv_header_descrip">Restaurant photo</string>
     <string name="call_restaurant">Appeler</string>
@@ -45,6 +45,9 @@
 
     <string name="notification_name">Notification du Restaurant Sélectionné</string>
     <string name="notification_description">Permet de recevoir une notification à 12h du restaurant sélectionné et des collaborateurs qui ont sélectionné le même restaurant que vous</string>
+    <string name="no_restaurant_selected_notification">Aucun restaurant sélectionné aujourd\'hui </string>
+    <string name="here_you_eat_notification">Vous avez prévu de manger ici : </string>
+
     <string name="message_is_empty">Le message est vide</string>
     <string name="date_time_formater">"dd/MM/yyyy \'à'\ HH:mm"</string>
 
@@ -52,6 +55,7 @@
     <string name="please_enable_notifications">Merci d\'\authoriser les notifications dans les paramètres</string>
     <string name="allow_notification">Authoriser les notifications</string>
     <string name="cancel">Annuler</string>
+    <string name="notification_workmates_list">Ce(s) collègue(s) mange(nt) ici également :</string>
 
 
     <string name="app_logo">Application Logo</string>

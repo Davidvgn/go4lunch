@@ -31,12 +31,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class RestaurantsViewModel extends ViewModel {
     @NonNull
-    private final NearBySearchRepository nearBySearchRepository;
-    private final WorkmateRepository workmateRepository;
-    private final CurrentQueryRepository currentQueryRepository;
-    @NonNull
     private final DistanceCalculator distanceCalculator;
-    private final LiveData<List<RestaurantsViewState>> restaurantViewState;
+    private final MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData = new MediatorLiveData<>();
 
     @Inject
     public RestaurantsViewModel(
@@ -46,62 +42,47 @@ public class RestaurantsViewModel extends ViewModel {
         @NonNull CurrentQueryRepository currentQueryRepository,
         @NonNull DistanceCalculator distanceCalculator
     ) {
-
-        this.nearBySearchRepository = nearBySearchRepository;
-        this.workmateRepository = workmateRepository;
         this.distanceCalculator = distanceCalculator;
-        this.currentQueryRepository = currentQueryRepository;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        restaurantViewState = getViewStateLiveData(locationLiveData);
-    }
-
-    @NonNull
-    public LiveData<List<RestaurantsViewState>> getRestaurantViewStateLiveData() {
-        return restaurantViewState;
-    }
-
-    @NonNull
-    private LiveData<List<RestaurantsViewState>> getViewStateLiveData(LiveData<Location> locationLiveData) {
 
         LiveData<NearbySearchResponse> nearbySearchResponsesLiveData = Transformations.switchMap(
             locationLiveData,
             location -> nearBySearchRepository.getNearbySearchResponse(location.getLatitude(), location.getLongitude())
         );
-
+        LiveData<String> currentOnSearchedLiveData = currentQueryRepository.getCurrentRestaurantQuery();
         LiveData<Map<String, Integer>> placeIdUserCountMapLiveData = workmateRepository.getPlaceIdUserCountMapLiveData();
 
-        LiveData<String> currentOnSearchedLiveData = currentQueryRepository.getCurrentRestaurantQuery();
-
-        MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData = new MediatorLiveData<>();
 
         mediatorLiveData.addSource(nearbySearchResponsesLiveData, new Observer<NearbySearchResponse>() {
             @Override
             public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue(), currentOnSearchedLiveData.getValue());
+                combine(locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue(), currentOnSearchedLiveData.getValue());
             }
         });
 
         mediatorLiveData.addSource(placeIdUserCountMapLiveData, new Observer<Map<String, Integer>>() {
             @Override
             public void onChanged(Map<String, Integer> placeIdUserCountMap) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap, currentOnSearchedLiveData.getValue());
+                combine(locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap, currentOnSearchedLiveData.getValue());
             }
         });
 
         mediatorLiveData.addSource(currentOnSearchedLiveData, new Observer<String>() {
             @Override
             public void onChanged(String query) {
-                combine(mediatorLiveData, locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMapLiveData.getValue(), query);
+                combine(locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMapLiveData.getValue(), query);
 
             }
         });
+    }
 
+    @NonNull
+    public LiveData<List<RestaurantsViewState>> getRestaurantViewStateLiveData() {
         return mediatorLiveData;
     }
 
     private void combine(
-        @NonNull MediatorLiveData<List<RestaurantsViewState>> mediatorLiveData,
         @NonNull LiveData<Location> locationLiveData,
         @Nullable NearbySearchResponse response,
         @Nullable Map<String, Integer> placeIdUserCountMap,

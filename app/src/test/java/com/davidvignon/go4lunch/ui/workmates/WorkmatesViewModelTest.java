@@ -8,6 +8,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.R;
+import com.davidvignon.go4lunch.data.CurrentQueryRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
@@ -22,7 +23,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "SpellCheckingInspection"})
 public class WorkmatesViewModelTest {
 
     private static final String DEFAULT_USER_UID = "DEFAULT_USER_UID";
@@ -45,10 +46,12 @@ public class WorkmatesViewModelTest {
 
     private final Application application = Mockito.mock(Application.class);
     private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
+    private final CurrentQueryRepository currentQueryRepository = Mockito.mock(CurrentQueryRepository.class);
     private final FirebaseAuth firebaseAuth = Mockito.mock(FirebaseAuth.class);
     private final FirebaseUser firebaseUser = Mockito.mock(FirebaseUser.class);
 
     private final MutableLiveData <List<Workmate>> workmateListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData <String> currentRestaurantQueryLiveData = new MutableLiveData<>();
 
     private WorkmatesViewModel viewModel;
 
@@ -57,6 +60,7 @@ public class WorkmatesViewModelTest {
         Mockito.doReturn(" is").when(application).getString(R.string.a_restaurant_is_selected);
         Mockito.doReturn(" hasn't").when(application).getString(R.string.no_selected_restaurant);
         Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getDataBaseUsersLiveData();
+        Mockito.doReturn(currentRestaurantQueryLiveData).when(currentQueryRepository).getCurrentRestaurantQuery();
         workmateListMutableLiveData.setValue(getWorkmateList());
 
         Mockito.doReturn(DEFAULT_USER_NAME).when(firebaseUser).getDisplayName();
@@ -64,7 +68,7 @@ public class WorkmatesViewModelTest {
         Mockito.doReturn(DEFAULT_USER_EMAIL).when(firebaseUser).getEmail();
         Mockito.doReturn(firebaseUser).when(firebaseAuth).getCurrentUser();
 
-        viewModel = new WorkmatesViewModel(application, workmateRepository, firebaseAuth);
+        viewModel = new WorkmatesViewModel(application, workmateRepository, firebaseAuth, currentQueryRepository);
     }
 
     @Test
@@ -91,12 +95,52 @@ public class WorkmatesViewModelTest {
 
     @Test
     public void if_workmates_have_selected_a_restaurant_is_value_is_added_to_their_name_instead_of_hasnt(){
+        // Given
         workmateListMutableLiveData.setValue(getWorkmateListWithRestaurantSelected());
 
+        // When
         List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
 
+        // Then
         assertEquals(getDefaultWorkmateViewStateWithRestaurantSelected(), viewStates);
 
+    }
+
+    @Test
+    public void if_query_only_matched_results_are_displayed(){
+        // Given
+        currentRestaurantQueryLiveData.setValue("d0");
+        workmateListMutableLiveData.setValue(getWorkmateListWithRestaurantSelected());
+
+        // When
+        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
+
+        // Then
+        assertEquals(1, viewStates.size());
+    }
+
+    @Test
+    public void if_no_query_all_workmates_are_displayed(){
+        // Given
+        currentRestaurantQueryLiveData.setValue(null);
+
+        // When
+        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
+
+        // Then
+        assertEquals(getDefaultWorkmateViewState(), viewStates);
+    }
+
+    @Test
+    public void if_no_match_no_workmates_are_displayed(){
+        // Given
+        currentRestaurantQueryLiveData.setValue("query");
+
+        // When
+        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
+
+        // Then
+        assertEquals(0, viewStates.size());
     }
 
     // region IN

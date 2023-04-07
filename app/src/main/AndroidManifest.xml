@@ -6,9 +6,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".MainApplication"
@@ -21,8 +21,8 @@
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.davidvignon.go4lunch.androidx-startup"
-            tools:node="remove">
-        </provider>
+            tools:node="remove"></provider>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -36,18 +36,15 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-
         <activity
             android:name=".ui.dispatcher.DispatcherActivity"
             android:exported="true"
             android:theme="@style/Theme.Go4Lunch.Transparent">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-
         <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.oauth.OAuthActivity" />
 
@@ -66,26 +63,22 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.details.RestaurantDetailsActivity"
             android:exported="true"
             android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/Theme.Details">
+            android:theme="@style/Theme.Go4Lunch.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.main.MainActivity"/>
+                android:value=".ui.main.MainActivity" />
         </activity>
         <activity
             android:name=".ui.chat.ChatActivity"
             android:exported="true"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.Go4Lunch.NoActionBar"></activity>
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:exported="true"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar">
-        </activity>
-
+            android:theme="@style/Theme.Go4Lunch.NoActionBar"></activity>
     </application>
 </manifest>

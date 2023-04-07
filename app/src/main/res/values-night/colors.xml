@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">@color/dominantRed</color>
+    <color name="primaryVariant">@color/darkRed</color>
+    <color name="onPrimary">@color/white</color>
+
 </resources>

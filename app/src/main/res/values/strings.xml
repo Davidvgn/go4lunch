@@ -24,7 +24,7 @@
     <string name="upperscore">-</string>
     <string name="people_icon">People icon</string>
     <string name="restaurantViewTitle">I\'m Hungry!</string>
-    <string name="workermatesViewTitle">Available workmate</string>
+    <string name="workematesViewTitle">Available workmate</string>
 
     <string name="restaurant_dtls_iv_header_descrip">Restaurant photo</string>
     <string name="call_restaurant">CALL</string>
@@ -53,12 +53,17 @@
 
     <string name="notification_name">Selected Restaurant Notification</string>
     <string name="notification_description">Send a notification at 12pm with selected restaurant and your workmates going there</string>
+    <string name="no_restaurant_selected_notification">No restaurant selected today </string>
+    <string name="here_you_eat_notification">Today\'s selected restaurant is : </string>
     <string name="message_is_empty">Message is empty</string>
     <string name="date_time_formater">"dd/MM/yyyy \'at'\ HH:mm"</string>
     <string name="notifications_disabled">Notifications disabled</string>
     <string name="please_enable_notifications">Please enable notifications in the settings to receive them.</string>
     <string name="allow_notification">Allow notifications</string>
     <string name="cancel">Cancel</string>
+    <string name="notification_workmates_list">They also eat here :</string>
+
+
     <string name="app_logo">Application Logo</string>
     <string name="header_menu_picture">Header menu picture</string>
     <string name="user_picture">User picture</string>

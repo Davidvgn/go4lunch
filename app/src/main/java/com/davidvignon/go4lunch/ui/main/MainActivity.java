@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
                         break;
                     case (R.id.bottom_nav_workmates):
                         MainActivity.this.displayFragment(WorkmatesFragment.newInstance());
-                        toolbar.setTitle(R.string.workermatesViewTitle);
+                        toolbar.setTitle(R.string.workematesViewTitle);
                         viewModel.onSearchedRestaurantSelected(null);
                         break;
                 }

@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.ui.details;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -29,6 +30,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity implements OnWo
         WorkmatesAdapter adapter = new WorkmatesAdapter(this);
         binding.workmatesRv.setAdapter(adapter);
         setSupportActionBar(binding.restaurantDetailsToolbar);
+        binding.restaurantDetailsToolbar.setTitleTextColor(Color.WHITE);
 
         RestaurantDetailsViewModel viewModel = new ViewModelProvider(this).get(RestaurantDetailsViewModel.class);
 
