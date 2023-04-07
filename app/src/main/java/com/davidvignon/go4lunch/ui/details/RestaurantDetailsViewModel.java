@@ -8,17 +8,16 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.R;
-import com.davidvignon.go4lunch.data.workmate.Workmate;
-import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.data.users.UserRepository;
+import com.davidvignon.go4lunch.data.workmate.Workmate;
+import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -98,56 +97,53 @@ public class RestaurantDetailsViewModel extends ViewModel {
             isSelected = false;
         }
 
-        if (response != null) {
+        if (response != null
+            && response.getResult() != null
+            && response.getResult().getName() != null
+            && response.getResult().getVicinity() != null
+            && response.getResult().getInternationalPhoneNumber() != null
+            && response.getResult().getWebsite() != null
+            && response.getResult().getPhotos() != null
+            && response.getResult().getPhotos().get(0) != null
+            && response.getResult().getPhotos().get(0).getPhotoReference() != null
+            && response.getResult().getRating() != null
+        ) {
+            restaurantDetailsViewState = new RestaurantDetailsViewState(
+                response.getResult().getName(),
+                response.getResult().getVicinity(),
+                response.getResult().getInternationalPhoneNumber(),
+                response.getResult().getWebsite(),
+                response.getResult().getPhotos().get(0).getPhotoReference(),
+                (float) (response.getResult().getRating() * 3 / 5),
+                isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
+                isSelected ? R.color.teal_200 : R.color.white,
+                isLiked ? "unlike" : "like",
+                isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
+            );
 
-            if (response.getResult() != null
-                && response.getResult().getRating() != null
-            ) {
+            restaurantName = response.getResult().getName();
+            if (workmatesList != null) {
+                for (Workmate workmate : workmatesList) {
+                    if (workmate.getSelectedRestaurant() != null
+                        && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())
+                        && FirebaseAuth.getInstance().getCurrentUser() != null
+                    ) {
+                        String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";//todo david stringbuilder
 
-                Double initialRating = response.getResult().getRating();
-
-                if (response.getResult().getName() != null
-                    && response.getResult().getVicinity() != null
-                    && response.getResult().getInternationalPhoneNumber() != null
-                    && response.getResult().getWebsite() != null
-                    && response.getResult().getPhotos() != null
-                    && response.getResult().getPhotos().get(0) != null
-                    && response.getResult().getPhotos().get(0).getPhotoReference() != null
-                    && initialRating != null
-                ) {
-                    restaurantDetailsViewState = new RestaurantDetailsViewState(
-                        response.getResult().getName(),
-                        response.getResult().getVicinity(),
-                        response.getResult().getInternationalPhoneNumber(),
-                        response.getResult().getWebsite(),
-                        response.getResult().getPhotos().get(0).getPhotoReference(),
-                        (float) (initialRating * 3 / 5),
-                        isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
-                        isLiked ? "unlike" : "like",
-                        isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
-                    );
-
-                    restaurantName = response.getResult().getName();
-                    if (workmatesList != null) {
-                        for (Workmate workmate : workmatesList) {
-                            if (workmate.getSelectedRestaurant() != null && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())) {
-                                String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";//todo david stringbuilder
-
-                                viewStates.add(new WorkmatesViewState(
-                                    workmate.getId(),
-                                    workmateName,
-                                    workmate.getPicturePath(),
-                                    workmate.getSelectedRestaurant(),
-                                    workmate.getSelectedRestaurantName()
-                                ));
-                            }
-                        }
-                        workmatesViewStatesLiveData.setValue(viewStates);
+                        viewStates.add(
+                            new WorkmatesViewState(
+                                workmate.getId(),
+                                workmateName,
+                                workmate.getPicturePath(),
+                                workmate.getSelectedRestaurant(),
+                                workmate.getSelectedRestaurantName()
+                            )
+                        );
                     }
-                    mediatorLiveData.setValue(restaurantDetailsViewState);
                 }
+                workmatesViewStatesLiveData.setValue(viewStates);
             }
-
+            mediatorLiveData.setValue(restaurantDetailsViewState);
         }
     }
 

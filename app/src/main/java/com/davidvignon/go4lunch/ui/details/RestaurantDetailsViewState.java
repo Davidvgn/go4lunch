@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.details;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
@@ -25,13 +26,16 @@ public class RestaurantDetailsViewState {
     private final float rating;
 
     @DrawableRes
-    private final int isSelected;
+    private final int selectedIconDrawableRes;
+
+    @ColorRes
+    private final int selectedBackgroundColorRes;
 
     @NonNull
     private final String likeButtonText;
 
     @DrawableRes
-    private final int likeButtonIcon;
+    private final int likeButtonIconDrawableRes;
 
     public RestaurantDetailsViewState(
         @NonNull String name,
@@ -40,9 +44,10 @@ public class RestaurantDetailsViewState {
         @NonNull String website,
         @NonNull String photoUrl,
         float rating,
-        int isSelected,
+        @DrawableRes int selectedIconDrawableRes,
+        @ColorRes int selectedBackgroundColorRes,
         @NonNull String likeButtonText,
-        int likeButtonIcon
+        @DrawableRes int likeButtonIconDrawableRes
     ) {
         this.name = name;
         this.vicinity = vicinity;
@@ -50,9 +55,10 @@ public class RestaurantDetailsViewState {
         this.website = website;
         this.photoUrl = photoUrl;
         this.rating = rating;
-        this.isSelected = isSelected;
+        this.selectedIconDrawableRes = selectedIconDrawableRes;
+        this.selectedBackgroundColorRes = selectedBackgroundColorRes;
         this.likeButtonText = likeButtonText;
-        this.likeButtonIcon = likeButtonIcon;
+        this.likeButtonIconDrawableRes = likeButtonIconDrawableRes;
     }
 
     @NonNull
@@ -84,8 +90,14 @@ public class RestaurantDetailsViewState {
         return rating;
     }
 
-    public int getSelectedButtonIcon() {
-        return isSelected;
+    @DrawableRes
+    public int getSelectedIconDrawableRes() {
+        return selectedIconDrawableRes;
+    }
+
+    @ColorRes
+    public int getSelectedBackgroundColorRes() {
+        return selectedBackgroundColorRes;
     }
 
     @NonNull
@@ -93,24 +105,24 @@ public class RestaurantDetailsViewState {
         return likeButtonText;
     }
 
-    public int getLikeButtonIcon() {
-        return likeButtonIcon;
+    @DrawableRes
+    public int getLikeButtonIconDrawableRes() {
+        return likeButtonIconDrawableRes;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RestaurantDetailsViewState viewState = (RestaurantDetailsViewState) o;
-        return Float.compare(viewState.rating, rating) == 0 && isSelected == viewState.isSelected && likeButtonIcon == viewState.likeButtonIcon && name.equals(viewState.name) && vicinity.equals(viewState.vicinity) && phoneNumber.equals(viewState.phoneNumber) && website.equals(viewState.website) && photoUrl.equals(viewState.photoUrl) && likeButtonText.equals(viewState.likeButtonText);
+        RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
+        return Float.compare(that.rating, rating) == 0 && selectedIconDrawableRes == that.selectedIconDrawableRes && selectedBackgroundColorRes == that.selectedBackgroundColorRes && likeButtonIconDrawableRes == that.likeButtonIconDrawableRes && name.equals(that.name) && vicinity.equals(that.vicinity) && phoneNumber.equals(that.phoneNumber) && website.equals(that.website) && photoUrl.equals(that.photoUrl) && likeButtonText.equals(that.likeButtonText);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, isSelected, likeButtonText, likeButtonIcon);
+        return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, selectedIconDrawableRes, selectedBackgroundColorRes, likeButtonText, likeButtonIconDrawableRes);
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetailsViewState{" +
@@ -120,9 +132,10 @@ public class RestaurantDetailsViewState {
             ", website='" + website + '\'' +
             ", photoUrl='" + photoUrl + '\'' +
             ", rating=" + rating +
-            ", isSelected=" + isSelected +
+            ", selectedIconDrawableRes=" + selectedIconDrawableRes +
+            ", selectedBackgroundColorRes=" + selectedBackgroundColorRes +
             ", likeButtonText='" + likeButtonText + '\'' +
-            ", likeButtonIcon=" + likeButtonIcon +
+            ", likeButtonIconDrawableRes=" + likeButtonIconDrawableRes +
             '}';
     }
 }
