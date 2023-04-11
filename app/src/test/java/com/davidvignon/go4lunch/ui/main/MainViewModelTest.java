@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.main;
 
-
 import android.location.Location;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -103,12 +102,6 @@ public class MainViewModelTest {
         Mockito.verify(locationRepository, Mockito.never()).startLocationRequest();
         Mockito.verify(locationRepository).stopLocationRequest();
     }
-
-    @Test
-    public void test(){
-
-    }
-
 
     private User getUser(){
         return new User(

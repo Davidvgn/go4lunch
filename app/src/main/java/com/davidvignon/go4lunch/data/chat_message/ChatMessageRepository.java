@@ -10,7 +10,6 @@ import com.google.firebase.firestore.Query;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -34,9 +33,10 @@ public class ChatMessageRepository {
     public void sendMessage(String message, String userReceiverId) {
         final String roomId = getRoomId(userReceiverId);
 
+        if (firebaseAuth.getCurrentUser() != null) {
             ChatMessage chatMessage = new ChatMessage(
                 UUID.randomUUID().toString(),
-                Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid(),//todo Nino est bon pour enlever le warning ?
+                firebaseAuth.getCurrentUser().getUid(),
                 userReceiverId,
                 message,
                 Instant.now().toEpochMilli()
@@ -47,6 +47,7 @@ public class ChatMessageRepository {
                 .document(roomId)
                 .collection("messages")
                 .add(chatMessage);
+        }
     }
     public LiveData<List<ChatMessage>> getChatMessagesLiveData(String userReceiverId) {
         final String roomId = getRoomId(userReceiverId);
@@ -67,15 +68,17 @@ public class ChatMessageRepository {
 
     @NonNull
     private String getRoomId(String userReceiverId) {
-        String myId = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();//todo Nino est bon pour enlever le warning ?
-
-        final String roomId;
-
-        if (myId.compareTo(userReceiverId) > 0) {
-            roomId = userReceiverId + "_" + myId;
-        } else {
-            roomId = myId + "_" + userReceiverId;
-        }
-        return roomId;
+            String myId;
+            final String roomId;
+            if (firebaseAuth.getCurrentUser() != null) {
+                myId = firebaseAuth.getCurrentUser().getUid();
+                if (myId.compareTo(userReceiverId) > 0) {
+                    roomId = userReceiverId + "_" + myId;
+                } else {
+                    roomId = myId + "_" + userReceiverId;
+                }
+                return roomId;
+            }
+        throw new RuntimeException("No value returned");
     }
 }

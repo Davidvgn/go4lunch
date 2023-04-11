@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.davidvignon.go4lunch.BuildConfig;
-import com.davidvignon.go4lunch.data.DataModule;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 
 import javax.inject.Inject;

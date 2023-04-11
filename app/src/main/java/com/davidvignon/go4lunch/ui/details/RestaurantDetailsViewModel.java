@@ -128,12 +128,10 @@ public class RestaurantDetailsViewModel extends ViewModel {
                         && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())
                         && FirebaseAuth.getInstance().getCurrentUser() != null
                     ) {
-                        String workmateName = (workmate.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) ? "You are" : workmate.getName() + " is";//todo david stringbuilder
-
                         viewStates.add(
                             new WorkmatesViewState(
                                 workmate.getId(),
-                                workmateName,
+                                workmate.getName(),
                                 workmate.getPicturePath(),
                                 workmate.getSelectedRestaurant(),
                                 workmate.getSelectedRestaurantName()

@@ -94,19 +94,6 @@ public class WorkmatesViewModelTest {
     }
 
     @Test
-    public void if_workmates_have_selected_a_restaurant_is_value_is_added_to_their_name_instead_of_hasnt(){
-        // Given
-        workmateListMutableLiveData.setValue(getWorkmateListWithRestaurantSelected());
-
-        // When
-        List<WorkmatesViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getWorkmatesViewStatesLiveData());
-
-        // Then
-        assertEquals(getDefaultWorkmateViewStateWithRestaurantSelected(), viewStates);
-
-    }
-
-    @Test
     public void if_query_only_matched_results_are_displayed(){
         // Given
         currentRestaurantQueryLiveData.setValue("d0");

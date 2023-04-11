@@ -16,6 +16,7 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.LocationR
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
+import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -34,7 +35,7 @@ public class MapViewModelTest {
     private static final double DEFAULT_LONGITUDE_OFFSET = 5.0;
     private static final double DEFAULT_LATITUDE = 45.757830302;
     private static final double DEFAULT_LONGITUDE = 4.823496706;
-    private static final float DEFAULT_HUE = 60.0F;
+    private static final float DEFAULT_HUE = 0.0F;
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -107,6 +108,31 @@ public class MapViewModelTest {
         assertEquals(new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),latLng);
 
     }
+
+    @Test
+    public void if_no_query_all_icons_are_red(){
+        // Given
+        currentRestaurantQueryLiveData.setValue(null);
+
+        // When
+        List<MapPoiViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getMapPoiViewStateLiveData());
+
+        // Then
+        assertEquals(getDefaultMapPoiViewStates(), viewStates);
+    }
+
+    @Test
+    public void if_query_matches_icon_color_changes(){
+        // Given
+        currentRestaurantQueryLiveData.setValue("D0");
+
+        // When
+        List<MapPoiViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getMapPoiViewStateLiveData());
+
+        // Then
+        assertEquals(60.0F, viewStates.get(0).getHue(), 0.0);
+    }
+
 
     // region IN
 

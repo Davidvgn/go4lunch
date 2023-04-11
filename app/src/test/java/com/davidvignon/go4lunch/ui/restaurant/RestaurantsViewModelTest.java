@@ -48,7 +48,7 @@ public class RestaurantsViewModelTest {
     private static final double DEFAULT_LATITUDE = 45.757830302;
     private static final double DEFAULT_LONGITUDE = 4.823496706;
     private static final double DEFAULT_LONGITUDE_OFFSET = 5.0;
-    private static final int DEFAULT_WORKMATES_GOING_THERE = 4;
+    private static final int DEFAULT_WORKMATES_GOING_THERE = 0;
 
 
     @Rule
@@ -138,11 +138,17 @@ public class RestaurantsViewModelTest {
         assertEquals(0, viewStates.size());
     }
 
+    @Test
+    public void if_query_matches_only_match_are_displayed(){
+        // Given
+        currentRestaurantQueryLiveData.setValue("D0");
 
+        // When
+        List<RestaurantsViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantViewStateLiveData());
 
-
-
-
+        // Then
+        assertEquals(1, viewStates.size());
+    }
 
     // region IN
     private NearbySearchResponse getDefaultNearbySearchResponse() {

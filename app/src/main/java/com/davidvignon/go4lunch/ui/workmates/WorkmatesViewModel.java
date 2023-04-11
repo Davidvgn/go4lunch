@@ -69,7 +69,7 @@ public class WorkmatesViewModel extends ViewModel {
 
             for (Workmate workmate : workmatesList) {
                 if (!workmate.getId().equals(firebaseAuth.getCurrentUser().getUid())) {
-                    String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName() + application.getString(R.string.a_restaurant_is_selected);
+                    String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName();
                     if (searchedQuery == null || (workmate.getSelectedRestaurantName() != null && isRestaurantNamePartialMatchForQuery(workmate.getSelectedRestaurantName(), searchedQuery))) {
 
                         viewStates.add(

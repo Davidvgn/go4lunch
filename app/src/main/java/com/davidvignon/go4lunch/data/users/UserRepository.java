@@ -37,64 +37,70 @@ public class UserRepository {
     public LiveData<User> getUserLiveData() {
 
         MutableLiveData<User> documentSnapshotMutableLiveData = new MutableLiveData<>();
+        if (firebaseAuth.getCurrentUser() != null) {
 
-        firebaseFirestore
-            .collection("users")
-            .document(firebaseAuth.getCurrentUser().getUid())
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    documentSnapshotMutableLiveData.setValue(task.getResult().toObject(User.class));
-                } else {
-                    Log.d("DavidVgn", "get failed with ", task.getException());
-                }
-            });
+            firebaseFirestore
+                .collection("users")
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        documentSnapshotMutableLiveData.setValue(task.getResult().toObject(User.class));
+                    } else {
+                        Log.d("DavidVgn", "get failed with ", task.getException());
+                    }
+                });
+        }
         return documentSnapshotMutableLiveData;
     }
 
     public LiveData<Boolean> isRestaurantSelectedLiveData(String placeId) {
         MutableLiveData<Boolean> isSelectedLiveData = new MutableLiveData<>();
-        firebaseFirestore
-            .collection("users")
-            .document(firebaseAuth.getCurrentUser().getUid())
-            .addSnapshotListener((documentSnapshot, error) -> {
-                if (documentSnapshot != null) {
-                    String selectedRestaurantField = documentSnapshot.getString("selectedRestaurant");
-                    if (Objects.equals(selectedRestaurantField, placeId)) {
-                        isSelectedLiveData.setValue(true);
+        if (firebaseAuth.getCurrentUser() != null) {
+            firebaseFirestore
+                .collection("users")
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (documentSnapshot != null) {
+                        String selectedRestaurantField = documentSnapshot.getString("selectedRestaurant");
+                        if (Objects.equals(selectedRestaurantField, placeId)) {
+                            isSelectedLiveData.setValue(true);
+                        } else {
+                            isSelectedLiveData.setValue(false);
+                        }
                     } else {
                         isSelectedLiveData.setValue(false);
                     }
-                } else {
-                    isSelectedLiveData.setValue(false);
-                }
-            });
+                });
+        }
         return isSelectedLiveData;
     }
 
     public void toggleRestaurantSelected(String placeId, String restaurantName) {
-        DocumentReference documentReference = firebaseFirestore
-            .collection("users")
-            .document((firebaseAuth.getCurrentUser()).getUid());
+        if (firebaseAuth.getCurrentUser() != null) {
+            DocumentReference documentReference = firebaseFirestore
+                .collection("users")
+                .document((firebaseAuth.getCurrentUser()).getUid());
 
-        documentReference.get().addOnCompleteListener(task -> {
-            String selectedRestaurantField = task.getResult().getString("selectedRestaurant");
-            if (!Objects.equals(selectedRestaurantField, placeId)) {
-                documentReference.update("selectedRestaurant", (placeId))
-                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
-                    .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
-                documentReference.update("selectedRestaurantName", (restaurantName))
-                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
-                    .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
-            } else {
-                documentReference.update("selectedRestaurant", null)
-                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
-                    .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
-                documentReference.update("selectedRestaurantName", (null))
-                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
-                    .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
-            }
-        });
+            documentReference.get().addOnCompleteListener(task -> {
+                String selectedRestaurantField = task.getResult().getString("selectedRestaurant");
+                if (!Objects.equals(selectedRestaurantField, placeId)) {
+                    documentReference.update("selectedRestaurant", (placeId))
+                        .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
+                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                    documentReference.update("selectedRestaurantName", (restaurantName))
+                        .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
+                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                } else {
+                    documentReference.update("selectedRestaurant", null)
+                        .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
+                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                    documentReference.update("selectedRestaurantName", (null))
+                        .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
+                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                }
+            });
+        }
     }
 
     public LiveData<Boolean> isRestaurantLikedByUserLiveData(String placeId) {
@@ -119,38 +125,43 @@ public class UserRepository {
     }
 
     public void toggleRestaurantLiked(String placeId) {
-        DocumentReference documentReference = firebaseFirestore
-            .collection("users")
-            .document((firebaseAuth.getCurrentUser()).getUid());
+        if (firebaseAuth.getCurrentUser() != null) {
+            DocumentReference documentReference = firebaseFirestore
+                .collection("users")
+                .document((firebaseAuth.getCurrentUser()).getUid());
 
-        documentReference.get().addOnCompleteListener(task -> {
-            DocumentSnapshot documentSnapshot = task.getResult();
-            List<String> favoritesRestaurantsField = (List<String>) documentSnapshot.get("favoritesRestaurants");
+            documentReference.get().addOnCompleteListener(task -> {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                List<String> favoritesRestaurantsField = (List<String>) documentSnapshot.get("favoritesRestaurants");
 
-            if (favoritesRestaurantsField != null && !favoritesRestaurantsField.contains(placeId)) {
-                documentReference.update("favoritesRestaurants", FieldValue.arrayUnion(placeId))
-                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated!"));
-            } else {
-                documentReference.update("favoritesRestaurants", FieldValue.arrayRemove(placeId))
-                    .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated! : element removed"));
-            }
-        });
+                if (favoritesRestaurantsField != null && !favoritesRestaurantsField.contains(placeId)) {
+                    documentReference.update("favoritesRestaurants", FieldValue.arrayUnion(placeId))
+                        .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated!"));
+                } else {
+                    documentReference.update("favoritesRestaurants", FieldValue.arrayRemove(placeId))
+                        .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated! : element removed"));
+                }
+            });
+        }
     }
 
     public LiveData<String> getRestaurantPlaceIdLiveData() {
         MutableLiveData<String> selectedRestaurantFieldMutable = new MutableLiveData<>();
-        firebaseFirestore.collection("users")
-            .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
-            .addSnapshotListener((documentSnapshot, error) -> {
-                if (documentSnapshot != null) {
-                    if (documentSnapshot.get("selectedRestaurant") != null) {
-                        String selectedRestaurantId = documentSnapshot.get("selectedRestaurant").toString();
-                        selectedRestaurantFieldMutable.setValue(selectedRestaurantId);
-                    } else {
-                        selectedRestaurantFieldMutable.setValue(null);
+        if (firebaseAuth.getCurrentUser() != null) {
+
+            firebaseFirestore.collection("users")
+                .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (documentSnapshot != null) {
+                        if (documentSnapshot.get("selectedRestaurant") != null) {
+                            String selectedRestaurantId = documentSnapshot.get("selectedRestaurant").toString();
+                            selectedRestaurantFieldMutable.setValue(selectedRestaurantId);
+                        } else {
+                            selectedRestaurantFieldMutable.setValue(null);
+                        }
                     }
-                }
-            });
+                });
+        }
         return selectedRestaurantFieldMutable;
     }
 

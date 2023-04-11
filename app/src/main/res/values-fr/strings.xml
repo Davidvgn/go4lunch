@@ -36,7 +36,8 @@
     <string name="chat_iv_description">Photo du destinataire</string>
     <string name="chat_ib_description">Send icon</string>
     <string name="hasnt_decide_yet"> encore décidé</string>
-    <string name="is_eating_at"> mange à </string>
+    <string name="planned"> a prévu :  </string>
+
     <string name="no_restaurant_selected">Aucun Restaurant Selectionné</string>
     <string name="no_selected_restaurant">\ n\'a pas\</string>
     <string name="a_restaurant_is_selected">\ est\</string>

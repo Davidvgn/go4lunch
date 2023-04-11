@@ -47,7 +47,7 @@ public class ChatMessageRepositoryTest {
     }
 
     @Test
-    public void test() {
+    public void send_messages_works() {
         // Given
         CollectionReference chatCollectionReference = Mockito.mock(CollectionReference.class);
         DocumentReference roomDocumentReference = Mockito.mock(DocumentReference.class);

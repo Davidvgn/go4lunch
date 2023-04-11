@@ -45,7 +45,8 @@ public class OAuthRepository {
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                if (user != null) {
+                if (user != null
+                    && user.getPhotoUrl() != null) {
                     String id = user.getUid();
                     String fullName = user.getDisplayName();
                     String email = user.getProviderData().get(1).getEmail();

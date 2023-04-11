@@ -30,25 +30,27 @@ public class NotificationRepository {
         CountDownLatch countDownLatch = new CountDownLatch(1);
 
         String[] selectedRestaurant = new String[1];
-        firebaseFirestore.collection("users")
-            .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        selectedRestaurant[0] = document.getString("selectedRestaurantName");
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+            firebaseFirestore.collection("users")
+                .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            selectedRestaurant[0] = document.getString("selectedRestaurantName");
+                        }
                     }
-                }
-                countDownLatch.countDown();
-            });
+                    countDownLatch.countDown();
+                });
 
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
         return selectedRestaurant[0];
     }
 
@@ -56,22 +58,25 @@ public class NotificationRepository {
     public String getRestaurantPlaceId() {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         String[] selectedRestaurantField = new String[1];
-        firebaseFirestore.collection("users")
-            .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        selectedRestaurantField[0] = document.getString("selectedRestaurant");
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+            firebaseFirestore.collection("users")
+                .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            selectedRestaurantField[0] = document.getString("selectedRestaurant");
+                        }
                     }
-                }
-                countDownLatch.countDown();
-            });
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+                    countDownLatch.countDown();
+                });
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
         return selectedRestaurantField[0];
     }
@@ -83,7 +88,7 @@ public class NotificationRepository {
         CountDownLatch countDownLatch = new CountDownLatch(1);
 
         firebaseFirestore.collection("users").whereEqualTo("selectedRestaurant", placeId).addSnapshotListener((value, error) -> {
-            if (value != null ) {
+            if (value != null) {
                 workmateArrayList.addAll(value.toObjects(Workmate.class));
             }
             countDownLatch.countDown();

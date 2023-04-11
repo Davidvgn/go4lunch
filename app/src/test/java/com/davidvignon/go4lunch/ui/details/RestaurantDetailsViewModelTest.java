@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.details;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import android.app.Application;
@@ -37,6 +36,7 @@ public class RestaurantDetailsViewModelTest {
     private static final String DEFAULT_PHOTO = "DEFAULT_PHOTO";
     private static final String DEFAULT_IS_LIKE = "DEFAULT_IS_LIKE";
     private static final int DEFAULT_IS_SELECTED = 0;
+    private static final int DEFAULT_SELECTED_BACKGROUND = 0;
     private static final int DEFAULT_STAR = 0;
     private static final double DEFAULT_RATING = 3.4;
 
@@ -342,8 +342,10 @@ public class RestaurantDetailsViewModelTest {
             DEFAULT_PHOTO,
             2.04F,
             DEFAULT_IS_SELECTED,
+            DEFAULT_SELECTED_BACKGROUND,
             DEFAULT_IS_LIKE,
             DEFAULT_STAR
+
         );
     }
     // endregion OUT
