@@ -53,7 +53,7 @@ public class WorkmatesFragment extends Fragment {
         binding.workmatesRv.setAdapter(adapter);
         binding.workmatesRv.addItemDecoration(new DividerItemDecoration(binding.workmatesRv.getContext(), DividerItemDecoration.VERTICAL));
 
-
+        //noinspection Convert2MethodRef
         viewModel.getWorkmatesViewStatesLiveData().observe(getViewLifecycleOwner(), workmatesViewStates -> adapter.submitList(workmatesViewStates));
     }
 

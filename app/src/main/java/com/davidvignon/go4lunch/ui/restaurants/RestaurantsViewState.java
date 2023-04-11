@@ -94,7 +94,7 @@ public class RestaurantsViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantsViewState that = (RestaurantsViewState) o;
-        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && workmatesGoingThere == that.workmatesGoingThere && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance);
+        return openOrClose == that.openOrClose && Float.compare(that.rating, rating) == 0 && workmatesGoingThere.equals(that.workmatesGoingThere) && placeId.equals(that.placeId) && name.equals(that.name) && vicinity.equals(that.vicinity) && photosItemResponse.equals(that.photosItemResponse) && distance.equals(that.distance);
     }
 
     @Override
@@ -102,6 +102,7 @@ public class RestaurantsViewState {
         return Objects.hash(placeId, name, vicinity, photosItemResponse, openOrClose, rating, distance, workmatesGoingThere);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantViewState{" +

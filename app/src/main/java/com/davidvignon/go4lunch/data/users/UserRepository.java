@@ -35,10 +35,8 @@ public class UserRepository {
 
 
     public LiveData<User> getUserLiveData() {
-
         MutableLiveData<User> documentSnapshotMutableLiveData = new MutableLiveData<>();
         if (firebaseAuth.getCurrentUser() != null) {
-
             firebaseFirestore
                 .collection("users")
                 .document(firebaseAuth.getCurrentUser().getUid())
@@ -47,7 +45,7 @@ public class UserRepository {
                     if (task.isSuccessful()) {
                         documentSnapshotMutableLiveData.setValue(task.getResult().toObject(User.class));
                     } else {
-                        Log.d("DavidVgn", "get failed with ", task.getException());
+                        Log.e("DavidVgn", "get failed with ", task.getException());
                     }
                 });
         }
@@ -109,13 +107,12 @@ public class UserRepository {
             .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
             .addSnapshotListener((documentSnapshot, error) -> {
                 if (documentSnapshot != null) {
-                    List<String> firestoreList = (List<String>) documentSnapshot.get("favoritesRestaurants");
-                    if (firestoreList != null) {
-                        if (firestoreList.contains(placeId)) {
-                            isLiked.setValue(true);
-                        } else {
-                            isLiked.setValue(false);
-                        }
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user != null) {
+                        List<String> firestoreList = user.getFavoritesRestaurants();
+                        isLiked.setValue(firestoreList != null && firestoreList.contains(placeId));
+                    } else {
+                        isLiked.setValue(false);
                     }
                 } else {
                     isLiked.setValue(false);

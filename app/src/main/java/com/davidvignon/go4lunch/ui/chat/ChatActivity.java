@@ -41,14 +41,17 @@ public class ChatActivity extends AppCompatActivity {
         viewModel.getChatViewStateLiveData().observe(this, chatViewState -> {
             binding.chatTvWorkmateName.setText(chatViewState.getWorkmateName());
 
-
             binding.chatEtMessage.setOnEditorActionListener((textView, i, keyEvent) -> {
-                viewModel.sendMessage(binding.chatEtMessage.getText().toString());
+                if (binding.chatEtMessage.getText() != null) {
+                    viewModel.sendMessage(binding.chatEtMessage.getText().toString());
+                }
                 binding.chatEtMessage.getText().clear();
                 return true;
             });
 
-            viewModel.getShowToastSingleLiveEvent().observe(this, message -> Toast.makeText(ChatActivity.this, message, Toast.LENGTH_SHORT).show());
+            viewModel.getShowToastSingleLiveEvent().observe(this, message ->
+                Toast.makeText(ChatActivity.this, message, Toast.LENGTH_SHORT).show()
+            );
 
             viewModel.getIsMessageSentValueLiveData().observe(this, aBoolean -> closeKeyboard());
 

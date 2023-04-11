@@ -21,7 +21,7 @@
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.davidvignon.go4lunch.androidx-startup"
-            tools:node="remove"></provider>
+            tools:node="remove"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -75,10 +75,10 @@
         <activity
             android:name=".ui.chat.ChatActivity"
             android:exported="true"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar"></activity>
+            android:theme="@style/Theme.Go4Lunch.NoActionBar"/>
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:exported="true"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar"></activity>
+            android:theme="@style/Theme.Go4Lunch.NoActionBar"/>
     </application>
 </manifest>

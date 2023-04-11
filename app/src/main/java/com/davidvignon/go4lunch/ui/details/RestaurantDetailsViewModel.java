@@ -15,6 +15,7 @@ import com.davidvignon.go4lunch.BuildConfig;
 import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
+import com.davidvignon.go4lunch.data.google_places.place_details.PhotosItem;
 import com.davidvignon.go4lunch.data.users.UserRepository;
 import com.davidvignon.go4lunch.data.workmate.Workmate;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -62,7 +64,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
         this.application = application;
         this.userRepository = userRepository;
 
-        String placeId = savedStateHandle.get(KEY_PLACE_ID);
+        String placeId = Objects.requireNonNull(
+            savedStateHandle.get(KEY_PLACE_ID),
+            "Use RestaurantDetailsViewModel.navigate() function instead"
+        );
+
         LiveData<DetailsResponse> detailsResponseLiveData = placeDetailsRepository.getDetailsResponseLiveData(placeId);
         LiveData<Boolean> isRestaurantLikedLiveData = userRepository.isRestaurantLikedByUserLiveData(placeId);
         LiveData<Boolean> isRestaurantSelectedLiveData = userRepository.isRestaurantSelectedLiveData(placeId);
@@ -104,44 +110,47 @@ public class RestaurantDetailsViewModel extends ViewModel {
             && response.getResult().getInternationalPhoneNumber() != null
             && response.getResult().getWebsite() != null
             && response.getResult().getPhotos() != null
-            && response.getResult().getPhotos().get(0) != null
-            && response.getResult().getPhotos().get(0).getPhotoReference() != null
+            && response.getResult().getPhotos().size() > 0
             && response.getResult().getRating() != null
         ) {
-            restaurantDetailsViewState = new RestaurantDetailsViewState(
-                response.getResult().getName(),
-                response.getResult().getVicinity(),
-                response.getResult().getInternationalPhoneNumber(),
-                response.getResult().getWebsite(),
-                response.getResult().getPhotos().get(0).getPhotoReference(),
-                (float) (response.getResult().getRating() * 3 / 5),
-                isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
-                isSelected ? R.color.teal_200 : R.color.white,
-                isLiked ? "unlike" : "like",
-                isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
-            );
+            PhotosItem photosItem = response.getResult().getPhotos().get(0);
 
-            restaurantName = response.getResult().getName();
-            if (workmatesList != null) {
-                for (Workmate workmate : workmatesList) {
-                    if (workmate.getSelectedRestaurant() != null
-                        && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())
-                        && FirebaseAuth.getInstance().getCurrentUser() != null
-                    ) {
-                        viewStates.add(
-                            new WorkmatesViewState(
-                                workmate.getId(),
-                                workmate.getName(),
-                                workmate.getPicturePath(),
-                                workmate.getSelectedRestaurant(),
-                                workmate.getSelectedRestaurantName()
-                            )
-                        );
+            if (photosItem != null && photosItem.getPhotoReference() != null) {
+                restaurantDetailsViewState = new RestaurantDetailsViewState(
+                    response.getResult().getName(),
+                    response.getResult().getVicinity(),
+                    response.getResult().getInternationalPhoneNumber(),
+                    response.getResult().getWebsite(),
+                    photosItem.getPhotoReference(),
+                    (float) (response.getResult().getRating() * 3 / 5),
+                    isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
+                    isSelected ? R.color.teal_200 : R.color.white,
+                    isLiked ? "unlike" : "like",
+                    isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
+                );
+
+                restaurantName = response.getResult().getName();
+                if (workmatesList != null) {
+                    for (Workmate workmate : workmatesList) {
+                        if (workmate.getSelectedRestaurant() != null
+                            && workmate.getSelectedRestaurant().equals(restaurantPlaceId.getValue())
+                            && FirebaseAuth.getInstance().getCurrentUser() != null
+                        ) {
+                            viewStates.add(
+                                new WorkmatesViewState(
+                                    workmate.getId(),
+                                    workmate.getName(),
+                                    workmate.getPicturePath(),
+                                    workmate.getSelectedRestaurant(),
+                                    workmate.getSelectedRestaurantName()
+                                )
+                            );
+                        }
                     }
+                    workmatesViewStatesLiveData.setValue(viewStates);
                 }
-                workmatesViewStatesLiveData.setValue(viewStates);
+                mediatorLiveData.setValue(restaurantDetailsViewState);
             }
-            mediatorLiveData.setValue(restaurantDetailsViewState);
         }
     }
 

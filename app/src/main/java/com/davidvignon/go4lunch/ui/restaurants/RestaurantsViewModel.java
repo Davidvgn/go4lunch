@@ -95,7 +95,7 @@ public class RestaurantsViewModel extends ViewModel {
                 ) {
 
                     final int openOrClosed;
-                    if (result.getOpeningHours().isOpenNow()) {
+                    if (Boolean.TRUE.equals(result.getOpeningHours().isOpenNow())) {
                         openOrClosed = R.string.open;
                     } else {
                         openOrClosed = R.string.closed;

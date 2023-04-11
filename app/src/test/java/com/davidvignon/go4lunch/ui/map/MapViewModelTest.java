@@ -300,7 +300,7 @@ public class MapViewModelTest {
                 new MapPoiViewState(
                     DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
                     DEFAULT_RESTAURANT_RESPONSE_NAME + i,
-                    (double) i,
+                    i,
                     DEFAULT_LONGITUDE_OFFSET + i,
                     DEFAULT_HUE
 

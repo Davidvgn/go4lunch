@@ -50,6 +50,7 @@ public class RestaurantsFragment extends Fragment {
         RestaurantsAdapter adapter = new RestaurantsAdapter(onRestaurantClickedListener);
         binding.restaurantRv.setAdapter(adapter);
 
+        //noinspection Convert2MethodRef
         viewModel.getRestaurantViewStateLiveData().observe(getViewLifecycleOwner(), restaurantsViewStates -> adapter.submitList(restaurantsViewStates));
     }
 

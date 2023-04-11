@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -72,13 +73,13 @@ public class OAuthActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onError(FacebookException exception) {
+                public void onError(@NonNull FacebookException exception) {
                     Log.d("DavidVgn", "onError: " + exception);
                 }
             });
     }
 
-    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
         viewModel.getGoogleUserInfo(task).observe(OAuthActivity.this, user -> startActivity(new Intent(OAuthActivity.this, MainActivity.class)));
     });

@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"rawtypes", "unchecked", "SpellCheckingInspection"})
 public class WorkmatesViewModelTest {
 
     private static final String DEFAULT_USER_UID = "DEFAULT_USER_UID";

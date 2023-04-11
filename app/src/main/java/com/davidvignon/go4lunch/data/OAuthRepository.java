@@ -41,7 +41,7 @@ public class OAuthRepository {
 
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d("DavidVgn", "onComplete: isSuccessful");
+                Log.i("Authentication", "getUserSignedInWithFacebook.onComplete: isSuccessful");
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 

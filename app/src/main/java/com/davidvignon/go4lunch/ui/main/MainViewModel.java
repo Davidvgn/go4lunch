@@ -87,6 +87,7 @@ public class MainViewModel extends ViewModel {
             ),
             predictionsResponse -> {
                 List<PredictionViewState> predictionViewStateList = new ArrayList<>();
+                if (predictionsResponse.getPredictions() != null) {
                     for (PredictionsItem response : predictionsResponse.getPredictions()) {
                         predictionViewStateList.add(
                             new PredictionViewState(
@@ -95,7 +96,8 @@ public class MainViewModel extends ViewModel {
                             )
                         );
                     }
-                    return predictionViewStateList;
+                }
+                return predictionViewStateList;
             }
         );
     }

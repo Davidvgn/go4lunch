@@ -18,11 +18,13 @@ import javax.inject.Singleton;
 @Singleton
 public class ChatMessageRepository {
 
+    public static final String COLLECTION_PATH_CHAT = "chat";
+    public static final String COLLECTION_PATH_MESSAGE = "messages";
+
     @NonNull
     private final FirebaseAuth firebaseAuth;
     @NonNull
     private final FirebaseFirestore firebaseFirestore;
-
 
     @Inject
     public ChatMessageRepository(@NonNull FirebaseAuth firebaseAuth, @NonNull FirebaseFirestore firebaseFirestore) {
@@ -43,12 +45,13 @@ public class ChatMessageRepository {
             );
 
             firebaseFirestore
-                .collection("chat")
+                .collection(COLLECTION_PATH_CHAT)
                 .document(roomId)
-                .collection("messages")
+                .collection(COLLECTION_PATH_MESSAGE)
                 .add(chatMessage);
         }
     }
+
     public LiveData<List<ChatMessage>> getChatMessagesLiveData(String userReceiverId) {
         final String roomId = getRoomId(userReceiverId);
 
@@ -68,17 +71,17 @@ public class ChatMessageRepository {
 
     @NonNull
     private String getRoomId(String userReceiverId) {
-            String myId;
-            final String roomId;
-            if (firebaseAuth.getCurrentUser() != null) {
-                myId = firebaseAuth.getCurrentUser().getUid();
-                if (myId.compareTo(userReceiverId) > 0) {
-                    roomId = userReceiverId + "_" + myId;
-                } else {
-                    roomId = myId + "_" + userReceiverId;
-                }
-                return roomId;
+        String myId;
+        final String roomId;
+        if (firebaseAuth.getCurrentUser() != null) {
+            myId = firebaseAuth.getCurrentUser().getUid();
+            if (myId.compareTo(userReceiverId) > 0) {
+                roomId = userReceiverId + "_" + myId;
+            } else {
+                roomId = myId + "_" + userReceiverId;
             }
+            return roomId;
+        }
         throw new RuntimeException("No value returned");
     }
 }

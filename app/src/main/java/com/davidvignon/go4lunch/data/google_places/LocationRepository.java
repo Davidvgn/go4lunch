@@ -63,10 +63,10 @@ public class LocationRepository {
         fusedLocationProviderClient.removeLocationUpdates(callback);
 
         fusedLocationProviderClient.requestLocationUpdates(
-            LocationRequest.create()
+            new LocationRequest.Builder(LOCATION_REQUEST_INTERVAL_MS)
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                .setSmallestDisplacement(SMALLEST_DISPLACEMENT_THRESHOLD_METER)
-                .setInterval(LOCATION_REQUEST_INTERVAL_MS),
+                .setMinUpdateDistanceMeters(SMALLEST_DISPLACEMENT_THRESHOLD_METER)
+                .build(),
             callback,
             looper
         );

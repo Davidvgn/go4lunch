@@ -65,9 +65,10 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         Toolbar toolbar = binding.mainToolBar;
         toolbar.setTitle(R.string.restaurantViewTitle);
 
-
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, R.string.nav_open, R.string.nav_close);
         binding.mainDrawerLayout.addDrawerListener(actionBarDrawerToggle);

@@ -21,13 +21,14 @@ public class Workmate {
 
     @Nullable
     private  String selectedRestaurant;
-    @NonNull
+
+    @Nullable
     private  String selectedRestaurantName;
 
     public Workmate() {
     }
 
-    public Workmate(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant,  @NonNull String selectedRestaurantName) {
+    public Workmate(@NonNull String id, @NonNull String name, @NonNull String email, @NonNull String picturePath, @Nullable String selectedRestaurant,  @Nullable String selectedRestaurantName) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -61,7 +62,7 @@ public class Workmate {
         return selectedRestaurant;
     }
 
-    @NonNull
+    @Nullable
     public String getSelectedRestaurantName() {
         return selectedRestaurantName;
     }
@@ -71,7 +72,7 @@ public class Workmate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Workmate workmate = (Workmate) o;
-        return id.equals(workmate.id) && name.equals(workmate.name) && email.equals(workmate.email) && picturePath.equals(workmate.picturePath) && Objects.equals(selectedRestaurant, workmate.selectedRestaurant) && selectedRestaurantName.equals(workmate.selectedRestaurantName);
+        return id.equals(workmate.id) && name.equals(workmate.name) && email.equals(workmate.email) && picturePath.equals(workmate.picturePath) && Objects.equals(selectedRestaurant, workmate.selectedRestaurant) && Objects.equals(selectedRestaurantName, workmate.selectedRestaurantName);
     }
 
     @Override

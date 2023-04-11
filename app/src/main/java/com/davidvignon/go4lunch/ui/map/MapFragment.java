@@ -2,11 +2,13 @@ package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
@@ -33,6 +35,7 @@ public class MapFragment extends SupportMapFragment {
 
         MapViewModel viewModel = new ViewModelProvider(this).get(MapViewModel.class);
 
+        //noinspection deprecation
         requestPermissions(
             new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -56,7 +59,14 @@ public class MapFragment extends SupportMapFragment {
             });
 
             //checked in PermissionRepository
-            viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), aBoolean -> googleMap.setMyLocationEnabled(aBoolean));
+            //noinspection Convert2Lambda,Anonymous2MethodRef
+            viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), new Observer<>() {
+                @SuppressLint("MissingPermission")
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    googleMap.setMyLocationEnabled(aBoolean);
+                }
+            });
 
             viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)));
         });

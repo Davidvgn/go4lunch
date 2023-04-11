@@ -108,7 +108,7 @@ public class NotificationWorker extends Worker {
 
             if (workmateGoingThereList != null) {
                 for (Workmate workmate : workmateGoingThereList) {
-                    if (!workmate.getId().equals(firebaseAuth.getCurrentUser().getUid())) {
+                    if (firebaseAuth.getCurrentUser() == null || !workmate.getId().equals(firebaseAuth.getCurrentUser().getUid())) {
                         workmateNameList.add(workmate.getName() + "\n");
                     }
                 }
