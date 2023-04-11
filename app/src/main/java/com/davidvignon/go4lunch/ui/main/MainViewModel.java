@@ -6,11 +6,9 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -67,32 +65,17 @@ public class MainViewModel extends ViewModel {
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
 
-        mainViewStateLiveData = Transformations.map(userLiveData, new Function<User, MainViewState>() {
-            @Override
-            public MainViewState apply(User user) {
-                return new MainViewState(
-                    user.getName(),
-                    user.getEmail(),
-                    user.getPicturePath()
-                );
-            }
-        });
+        mainViewStateLiveData = Transformations.map(userLiveData, user -> new MainViewState(
+            user.getName(),
+            user.getEmail(),
+            user.getPicturePath()
+        ));
 
         mainActionsMediatorLiveData.addSource(placeIdLiveData, placeId -> combineEvent(placeId, onMyLunchClickedMutableLiveData.getValue()));
         mainActionsMediatorLiveData.addSource(onMyLunchClickedMutableLiveData, onMyLunchClicked -> combineEvent(placeIdLiveData.getValue(), onMyLunchClicked));
 
-        userQueryAndLocationMediatorLiveData.addSource(locationLiveData, new Observer<Location>() {
-            @Override
-            public void onChanged(Location location) {
-                combine(location, queryMutableLiveData.getValue());
-            }
-        });
-        userQueryAndLocationMediatorLiveData.addSource(queryMutableLiveData, new Observer<String>() {
-            @Override
-            public void onChanged(String query) {
-                combine(locationLiveData.getValue(), query);
-            }
-        });
+        userQueryAndLocationMediatorLiveData.addSource(locationLiveData, location -> combine(location, queryMutableLiveData.getValue()));
+        userQueryAndLocationMediatorLiveData.addSource(queryMutableLiveData, query -> combine(locationLiveData.getValue(), query));
         predictionViewStateLiveData = Transformations.map(
             Transformations.switchMap(
                 userQueryAndLocationMediatorLiveData,

@@ -74,7 +74,7 @@
             android:maxLines="1"
             android:maxLength="30"
             android:ellipsize="end"
-            tools:text="12 rue Nicolaï Nicolaï Nicolaï Nicolaï" />
+            tools:text="Some street" />
 
         <ImageView
             android:id="@+id/restaurant_item_iv_person_icon"
@@ -83,7 +83,8 @@
             android:contentDescription="@string/people_icon"
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_tv_number"
             app:layout_constraintTop_toTopOf="@id/restaurant_item_tv_adress"
-            app:layout_constraintBottom_toBottomOf="@id/restaurant_item_tv_adress"            app:srcCompat="@drawable/ic_baseline_person_outline_24" />
+            app:layout_constraintBottom_toBottomOf="@id/restaurant_item_tv_adress"
+            app:srcCompat="@drawable/ic_baseline_person_outline_24" />
 
         <TextView
             android:id="@+id/restaurant_item_tv_number"

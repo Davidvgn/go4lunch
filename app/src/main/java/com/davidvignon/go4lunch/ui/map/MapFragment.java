@@ -2,23 +2,19 @@ package com.davidvignon.go4lunch.ui.map;
 
 import android.Manifest;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -55,22 +51,12 @@ public class MapFragment extends SupportMapFragment {
                             .title(result.getTitle())
                             .alpha(0.8f)
                             .icon(BitmapDescriptorFactory.defaultMarker(result.getHue())));
-                    googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                        @Override
-                        public void onInfoWindowClick(@NonNull Marker marker) {
-                            startActivity(RestaurantDetailsViewModel.navigate(requireContext(), result.getPlaceId()));
-                        }
-                    });
+                    googleMap.setOnInfoWindowClickListener(marker -> startActivity(RestaurantDetailsViewModel.navigate(requireContext(), result.getPlaceId())));
                 }
             });
 
-            viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), new Observer<Boolean>() {
-                @SuppressLint("MissingPermission") //checked in PermissionRepository
-                @Override
-                public void onChanged(Boolean aBoolean) {
-                    googleMap.setMyLocationEnabled(aBoolean);
-                }
-            });
+            //checked in PermissionRepository
+            viewModel.isLocationGrantedLiveData().observe(MapFragment.this.getViewLifecycleOwner(), aBoolean -> googleMap.setMyLocationEnabled(aBoolean));
 
             viewModel.getFocusOnUser().observe(getViewLifecycleOwner(), latLng -> googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)));
         });

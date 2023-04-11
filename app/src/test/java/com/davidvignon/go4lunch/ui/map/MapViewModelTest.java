@@ -16,7 +16,6 @@ import com.davidvignon.go4lunch.data.google_places.nearby_places_model.LocationR
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
-import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 import com.google.android.gms.maps.model.LatLng;
 

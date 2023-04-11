@@ -24,7 +24,6 @@ import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsViewState;
-import com.davidvignon.go4lunch.ui.workmates.WorkmatesViewState;
 import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 
 import org.junit.Before;

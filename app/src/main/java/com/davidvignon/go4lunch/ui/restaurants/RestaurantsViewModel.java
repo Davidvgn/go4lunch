@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -54,27 +53,11 @@ public class RestaurantsViewModel extends ViewModel {
         LiveData<Map<String, Integer>> placeIdUserCountMapLiveData = workmateRepository.getPlaceIdUserCountMapLiveData();
 
 
-        mediatorLiveData.addSource(nearbySearchResponsesLiveData, new Observer<NearbySearchResponse>() {
-            @Override
-            public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                combine(locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue(), currentOnSearchedLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(nearbySearchResponsesLiveData, nearbySearchResponse -> combine(locationLiveData, nearbySearchResponse, placeIdUserCountMapLiveData.getValue(), currentOnSearchedLiveData.getValue()));
 
-        mediatorLiveData.addSource(placeIdUserCountMapLiveData, new Observer<Map<String, Integer>>() {
-            @Override
-            public void onChanged(Map<String, Integer> placeIdUserCountMap) {
-                combine(locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap, currentOnSearchedLiveData.getValue());
-            }
-        });
+        mediatorLiveData.addSource(placeIdUserCountMapLiveData, placeIdUserCountMap -> combine(locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMap, currentOnSearchedLiveData.getValue()));
 
-        mediatorLiveData.addSource(currentOnSearchedLiveData, new Observer<String>() {
-            @Override
-            public void onChanged(String query) {
-                combine(locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMapLiveData.getValue(), query);
-
-            }
-        });
+        mediatorLiveData.addSource(currentOnSearchedLiveData, query -> combine(locationLiveData, nearbySearchResponsesLiveData.getValue(), placeIdUserCountMapLiveData.getValue(), query));
     }
 
     @NonNull

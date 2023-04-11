@@ -3,11 +3,8 @@ package com.davidvignon.go4lunch.ui.workmates;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.davidvignon.go4lunch.R;
@@ -42,18 +39,8 @@ public class WorkmatesViewModel extends ViewModel {
         LiveData<List<Workmate>> dataBaseUsersLiveData = workmateRepository.getDataBaseUsersLiveData();
         LiveData<String> currentRestaurantQueryLiveData = currentQueryRepository.getCurrentRestaurantQuery();
 
-        mediatorLiveData.addSource(dataBaseUsersLiveData, new Observer<List<Workmate>>() {
-            @Override
-            public void onChanged(List<Workmate> workmates) {
-                combine(workmates, currentRestaurantQueryLiveData.getValue());
-            }
-        });
-        mediatorLiveData.addSource(currentRestaurantQueryLiveData, new Observer<String>() {
-            @Override
-            public void onChanged(String query) {
-                combine(dataBaseUsersLiveData.getValue(), query);
-            }
-        });
+        mediatorLiveData.addSource(dataBaseUsersLiveData, workmates -> combine(workmates, currentRestaurantQueryLiveData.getValue()));
+        mediatorLiveData.addSource(currentRestaurantQueryLiveData, query -> combine(dataBaseUsersLiveData.getValue(), query));
     }
 
     @NonNull
@@ -68,6 +55,7 @@ public class WorkmatesViewModel extends ViewModel {
             List<WorkmatesViewState> viewStates = new ArrayList<>();
 
             for (Workmate workmate : workmatesList) {
+                if (firebaseAuth.getCurrentUser() != null){
                 if (!workmate.getId().equals(firebaseAuth.getCurrentUser().getUid())) {
                     String workmateName = (workmate.getSelectedRestaurant() == null) ? workmate.getName() + application.getString(R.string.no_selected_restaurant) : workmate.getName();
                     if (searchedQuery == null || (workmate.getSelectedRestaurantName() != null && isRestaurantNamePartialMatchForQuery(workmate.getSelectedRestaurantName(), searchedQuery))) {
@@ -82,6 +70,7 @@ public class WorkmatesViewModel extends ViewModel {
                             )
                         );
                     }
+                }
                     mediatorLiveData.setValue(viewStates);
                 }
             }

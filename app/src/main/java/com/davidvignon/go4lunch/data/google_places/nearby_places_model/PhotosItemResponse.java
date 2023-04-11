@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class PhotosItemResponse {
 
     @SerializedName("photo_reference")
-    private String photoReference;
+    private final String photoReference;
 
     @SerializedName("width")
     private int width;

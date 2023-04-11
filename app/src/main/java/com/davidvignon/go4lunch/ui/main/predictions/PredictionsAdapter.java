@@ -1,7 +1,6 @@
 package com.davidvignon.go4lunch.ui.main.predictions;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -44,12 +43,7 @@ public class PredictionsAdapter extends ListAdapter<PredictionViewState, Predict
 
         public void bind(PredictionViewState item, OnPredictionClickedListener listener) {
             binding.predictionItemTextViewName.setText(item.getDescription());
-            binding.predictionItemClRoot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onPredictionClickedListener(item.getPlaceId(), item.getDescription());
-                }
-            });
+            binding.predictionItemClRoot.setOnClickListener(view -> listener.onPredictionClickedListener(item.getPlaceId(), item.getDescription()));
 
         }
     }

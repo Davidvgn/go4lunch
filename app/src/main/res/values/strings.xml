@@ -19,7 +19,7 @@
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
 
-    <string name="type_your_search">Type your search...</string>
+    <string name="type_your_search">Type your search</string>
     <string name="Restaurant_picture">Restaurant Picture</string>
     <string name="upperscore">-</string>
     <string name="people_icon">People icon</string>
@@ -68,7 +68,7 @@
     <string name="header_menu_picture">Header menu picture</string>
     <string name="user_picture">User picture</string>
     <string name="small_application_logo">Small Application Logo</string>
-    <string name="select_restaurant_button">Select restaurant button</string>
+    <string name="select_restaurant">Select restaurant</string>
     <string name="workmate_picture">Workmate picture</string>
     <string name="search">Search</string>
 

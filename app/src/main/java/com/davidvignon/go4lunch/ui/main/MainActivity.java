@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
@@ -33,17 +32,13 @@ import com.davidvignon.go4lunch.ui.OnWorkmateClickedListener;
 import com.davidvignon.go4lunch.ui.chat.ChatViewModel;
 import com.davidvignon.go4lunch.ui.details.RestaurantDetailsViewModel;
 import com.davidvignon.go4lunch.ui.map.MapFragment;
-import com.davidvignon.go4lunch.ui.main.predictions.PredictionViewState;
 import com.davidvignon.go4lunch.ui.main.predictions.PredictionsAdapter;
 import com.davidvignon.go4lunch.ui.settings.SettingsActivity;
 import com.davidvignon.go4lunch.ui.oauth.OAuthActivity;
 import com.davidvignon.go4lunch.ui.restaurants.RestaurantsFragment;
 import com.davidvignon.go4lunch.ui.workmates.WorkmatesFragment;
 import com.facebook.login.LoginManager;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -91,12 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             headerBinding.headerUserEmail.setText(state.getMail());
         });
 
-        viewModel.getPredictionsViewStateLiveData().observe(this, new Observer<List<PredictionViewState>>() {
-            @Override
-            public void onChanged(List<PredictionViewState> predictionViewStates) {
-                adapter.submitList(predictionViewStates);
-            }
-        });
+        viewModel.getPredictionsViewStateLiveData().observe(this, predictionViewStates -> adapter.submitList(predictionViewStates));
         toolbar.setNavigationOnClickListener(view -> binding.mainDrawerLayout.open());
 
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
@@ -122,28 +112,25 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
             displayFragment(MapFragment.newInstance());
         }
 
-        binding.mainBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case (R.id.bottom_nav_map):
-                        MainActivity.this.displayFragment(MapFragment.newInstance());
-                        toolbar.setTitle(R.string.restaurantViewTitle);
-                        viewModel.onSearchedRestaurantSelected(null);
-                        break;
-                    case (R.id.bottom_nav_list):
-                        MainActivity.this.displayFragment(RestaurantsFragment.newInstance());
-                        toolbar.setTitle(R.string.restaurantViewTitle);
-                        viewModel.onSearchedRestaurantSelected(null);
-                        break;
-                    case (R.id.bottom_nav_workmates):
-                        MainActivity.this.displayFragment(WorkmatesFragment.newInstance());
-                        toolbar.setTitle(R.string.workematesViewTitle);
-                        viewModel.onSearchedRestaurantSelected(null);
-                        break;
-                }
-                return true;
+        binding.mainBottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case (R.id.bottom_nav_map):
+                    MainActivity.this.displayFragment(MapFragment.newInstance());
+                    toolbar.setTitle(R.string.restaurantViewTitle);
+                    viewModel.onSearchedRestaurantSelected(null);
+                    break;
+                case (R.id.bottom_nav_list):
+                    MainActivity.this.displayFragment(RestaurantsFragment.newInstance());
+                    toolbar.setTitle(R.string.restaurantViewTitle);
+                    viewModel.onSearchedRestaurantSelected(null);
+                    break;
+                case (R.id.bottom_nav_workmates):
+                    MainActivity.this.displayFragment(WorkmatesFragment.newInstance());
+                    toolbar.setTitle(R.string.workematesViewTitle);
+                    viewModel.onSearchedRestaurantSelected(null);
+                    break;
             }
+            return true;
         });
 
         viewModel.getMainActionLiveData().observe(this, wrapper -> {

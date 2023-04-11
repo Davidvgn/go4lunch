@@ -10,7 +10,7 @@
     <string name="nav_open">Ouvert</string>
     <string name="nav_close">Fermé</string>
 
-    <string name="type_your_search">Tapez votre recherche ...</string>
+    <string name="type_your_search">Tapez votre recherche</string>
     <string name="Restaurant_picture">Photo du restaurant</string>
     <string name="upperscore">-</string>
     <string name="people_icon">Icone personnage</string>
@@ -31,7 +31,7 @@
 
     <string name="googleLogin">S\'identifier avec Google</string>
 
-    <string name="message_field">Tapez votre message ici...</string>
+    <string name="message_field">Tapez votre message</string>
     <string name="chat_activity_title">Messages</string>
     <string name="chat_iv_description">Photo du destinataire</string>
     <string name="chat_ib_description">Send icon</string>
@@ -59,11 +59,11 @@
     <string name="notification_workmates_list">Ce(s) collègue(s) mange(nt) ici également :</string>
 
 
-    <string name="app_logo">Application Logo</string>
-    <string name="header_menu_picture">Header menu picture</string>
-    <string name="user_picture">User picture</string>
-    <string name="small_application_logo">Small Application Logo</string>
-    <string name="select_restaurant_button">Select restaurant button</string>
-    <string name="workmate_picture">Workmate picture</string>
-    <string name="search">Search</string>
+    <string name="app_logo">Logo de l\'\application</string>
+    <string name="header_menu_picture">Photo du menu</string>
+    <string name="user_picture">Photo utilisateur</string>
+    <string name="small_application_logo">Logo de l\'\application</string>
+    <string name="select_restaurant">Sélection de restaurant</string>
+    <string name="workmate_picture">photo du collègue</string>
+    <string name="search">Recherche</string>
 </resources>

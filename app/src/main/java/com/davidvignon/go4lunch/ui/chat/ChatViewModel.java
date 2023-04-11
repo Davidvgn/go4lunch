@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
@@ -73,19 +72,9 @@ public class ChatViewModel extends ViewModel {
         LiveData<List<ChatMessage>> chatMessagesLiveData = chatMessageRepository.getChatMessagesLiveData(workmateId);
 
         isMessageSentMutableLiveData.setValue(false);
-        chatViewStateMediatorLiveData.addSource(workmateLiveData, new Observer<Workmate>() {
-            @Override
-            public void onChanged(Workmate workmate) {
-                ChatViewModel.this.combine(workmate, chatMessagesLiveData.getValue());
-            }
-        });
+        chatViewStateMediatorLiveData.addSource(workmateLiveData, workmate -> ChatViewModel.this.combine(workmate, chatMessagesLiveData.getValue()));
 
-        chatViewStateMediatorLiveData.addSource(chatMessagesLiveData, new Observer<List<ChatMessage>>() {
-            @Override
-            public void onChanged(List<ChatMessage> sentMessagesList) {
-                ChatViewModel.this.combine(workmateLiveData.getValue(), sentMessagesList);
-            }
-        });
+        chatViewStateMediatorLiveData.addSource(chatMessagesLiveData, sentMessagesList -> ChatViewModel.this.combine(workmateLiveData.getValue(), sentMessagesList));
     }
 
     public void combine(@Nullable Workmate workmate, @Nullable List<ChatMessage> chatMessages) {
@@ -98,15 +87,19 @@ public class ChatViewModel extends ViewModel {
         for (ChatMessage chatMessage : chatMessages) {
             boolean isFromWorkmate = chatMessage.getSenderId().equals(workmateId);
 
-            chatViewStateItems.add(
-                new ChatViewStateItem(
-                    chatMessage.getUuid(),
-                    isFromWorkmate ? workmate.getName() : firebaseAuth.getCurrentUser().getDisplayName(),
-                    chatMessage.getMessage(),
-                    Instant.ofEpochMilli(chatMessage.getEpochMilli()).atZone(ZoneId.systemDefault()).format(timeFormatter),
-                    !isFromWorkmate
-                )
-            );
+            if (firebaseAuth.getCurrentUser() != null &&
+                firebaseAuth.getCurrentUser().getDisplayName() != null) {
+
+                chatViewStateItems.add(
+                    new ChatViewStateItem(
+                        chatMessage.getUuid(),
+                        isFromWorkmate ? workmate.getName() : firebaseAuth.getCurrentUser().getDisplayName(),
+                        chatMessage.getMessage(),
+                        Instant.ofEpochMilli(chatMessage.getEpochMilli()).atZone(ZoneId.systemDefault()).format(timeFormatter),
+                        !isFromWorkmate
+                    )
+                );
+            }
         }
 
         chatViewStateMediatorLiveData.setValue(
@@ -136,7 +129,7 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
-    public LiveData<Boolean> getIsMessageSentValueLiveData(){
+    public LiveData<Boolean> getIsMessageSentValueLiveData() {
         return isMessageSentMutableLiveData;
     }
 
