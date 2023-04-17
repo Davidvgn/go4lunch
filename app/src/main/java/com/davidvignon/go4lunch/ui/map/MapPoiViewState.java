@@ -56,6 +56,7 @@ public class MapPoiViewState {
         return Objects.hash(placeId, title, latitude, longitude, hue);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "MapPoiViewState{" +

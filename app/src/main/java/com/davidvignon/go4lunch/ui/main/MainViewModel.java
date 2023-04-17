@@ -174,6 +174,7 @@ public class MainViewModel extends ViewModel {
             return Objects.hash(location, query);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "UserQueryAndLocation{" +

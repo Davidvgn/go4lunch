@@ -22,7 +22,7 @@ public class OpeningHoursResponse {
     }
 
     @VisibleForTesting
-    public OpeningHoursResponse(Boolean openNow) {
+    public OpeningHoursResponse(@Nullable Boolean openNow) {
         this.openNow = openNow;
     }
 

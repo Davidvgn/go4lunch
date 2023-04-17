@@ -57,9 +57,9 @@ public class ChatMessageRepository {
 
         MutableLiveData<List<ChatMessage>> chatMessageMutableLiveData = new MutableLiveData<>();
         firebaseFirestore
-            .collection("chat")
+            .collection(COLLECTION_PATH_CHAT)
             .document(roomId)
-            .collection("messages")
+            .collection(COLLECTION_PATH_MESSAGE)
             .orderBy("epochMilli", Query.Direction.DESCENDING)
             .addSnapshotListener((value, error) -> {
                 if (value != null) {

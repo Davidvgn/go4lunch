@@ -162,7 +162,7 @@ public class ChatViewModelTest {
     }
 
 
-    public List<ChatMessage> getDefaultMessages() {
+    private List<ChatMessage> getDefaultMessages() {
         List<ChatMessage> chatMessages = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
@@ -177,7 +177,7 @@ public class ChatViewModelTest {
         return chatMessages;
     }
 
-    public Workmate getWorkmateInfo() {
+    private Workmate getWorkmateInfo() {
         return new Workmate(
             DEFAULT_WORKMATE_ID,
             DEFAULT_WORKMATE_NAME,
@@ -188,7 +188,7 @@ public class ChatViewModelTest {
         );
     }
 
-    public ChatViewState getChatViewState() {
+    private ChatViewState getChatViewState() {
         return new ChatViewState(
             DEFAULT_WORKMATE_NAME,
             DEFAULT_WORKMATE_PICTURE_PATH,
@@ -196,7 +196,7 @@ public class ChatViewModelTest {
         );
     }
 
-    public List<ChatViewStateItem> getDefaultMessagesViewSate() {
+    private List<ChatViewStateItem> getDefaultMessagesViewSate() {
 
         List<ChatViewStateItem> viewStateItems = new ArrayList<>();
 

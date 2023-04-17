@@ -15,6 +15,7 @@ import com.davidvignon.go4lunch.data.CurrentQueryRepository;
 import com.davidvignon.go4lunch.data.google_places.LocationRepository;
 import com.davidvignon.go4lunch.data.google_places.NearBySearchRepository;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.NearbySearchResponse;
+import com.davidvignon.go4lunch.data.google_places.nearby_places_model.PhotosItemResponse;
 import com.davidvignon.go4lunch.data.google_places.nearby_places_model.RestaurantResponse;
 import com.davidvignon.go4lunch.data.utils.DistanceCalculator;
 import com.davidvignon.go4lunch.data.workmate.WorkmateRepository;
@@ -129,19 +130,24 @@ public class RestaurantsViewModel extends ViewModel {
                         }
                     }
 
-                    if (searchedQuery == null || isRestaurantNamePartialMatchForQuery(result.getName(), searchedQuery)) {
-                        viewStates.add(
-                            new RestaurantsViewState(
-                                result.getPlaceId(),
-                                result.getName(),
-                                result.getVicinity(),
-                                result.getPhotos().get(0).getPhotoReference(),
-                                openOrClosed,
-                                (float) (initialRating * 3 / 5),
-                                distanceText.toString(),
-                                usersGoingToThisRestaurantText
-                            )
-                        );
+                    if (searchedQuery == null || isRestaurantNamePartialMatchForQuery(result.getName(), searchedQuery)
+                    ) {
+                        PhotosItemResponse photosItem = result.getPhotos().get(0);
+                        if (photosItem != null && photosItem.getPhotoReference() != null) {
+
+                            viewStates.add(
+                                new RestaurantsViewState(
+                                    result.getPlaceId(),
+                                    result.getName(),
+                                    result.getVicinity(),
+                                    photosItem.getPhotoReference(),
+                                    openOrClosed,
+                                    (float) (initialRating * 3 / 5),
+                                    distanceText != null ? distanceText.toString() : "",
+                                    usersGoingToThisRestaurantText
+                                )
+                            );
+                        }
                     }
                 }
             }

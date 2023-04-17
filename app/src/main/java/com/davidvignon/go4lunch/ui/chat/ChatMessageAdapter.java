@@ -1,6 +1,6 @@
 package com.davidvignon.go4lunch.ui.chat;
 
-
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.davidvignon.go4lunch.databinding.ChatItemviewBinding;
 
 public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, RecyclerView.ViewHolder> {
@@ -69,6 +68,7 @@ public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, RecyclerV
         public void bind(ChatViewStateItem item) {
 
             binding.chatRcTv.setText(item.getMessage());
+            binding.chatRcTv.setBackgroundColor(Color.BLUE);
             binding.chatRcTvMessageDate.setText(item.getTime());
             binding.chatRcTvMessageAuthor.setText(item.getWorkmateName());
         }
@@ -85,7 +85,8 @@ public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, RecyclerV
         public void bind(ChatViewStateItem item) {
 
             binding.chatRcTv.setText(item.getMessage());
-            binding.chatRcTvMessageDate.setText(item.getTime());
+            binding.chatRcTv.setBackgroundColor(Color.RED);
+            binding.chatRcTvMessageDate.setText(item.getTime( ));
             binding.chatRcTvMessageAuthor.setText(item.getWorkmateName());
         }
     }

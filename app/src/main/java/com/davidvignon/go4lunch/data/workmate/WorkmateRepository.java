@@ -17,6 +17,9 @@ import javax.inject.Singleton;
 @Singleton
 public class WorkmateRepository {
 
+    public static final String COLLECTION_PATH_USERS = "users";
+    public static final String ID = "id";
+    public static final String SELECTED_RESTAURANT = "selectedRestaurant";
     @NonNull
     private final FirebaseFirestore firebaseFirestore;
 
@@ -27,7 +30,7 @@ public class WorkmateRepository {
 
     public LiveData<Workmate> getWorkmateInfoLiveData(String workmateId) {
         MutableLiveData<Workmate> workmateMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("users").whereEqualTo("id", workmateId).addSnapshotListener((value, error) -> {
+        firebaseFirestore.collection(COLLECTION_PATH_USERS).whereEqualTo(ID, workmateId).addSnapshotListener((value, error) -> {
             if (value != null) {
                 workmateMutableLiveData.setValue(value.toObjects(Workmate.class).get(0));
             }
@@ -37,7 +40,7 @@ public class WorkmateRepository {
 
     public LiveData<List<Workmate>> getDataBaseUsersLiveData() {
         MutableLiveData<List<Workmate>> workmateMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("users").addSnapshotListener((value, error) -> {
+        firebaseFirestore.collection(COLLECTION_PATH_USERS).addSnapshotListener((value, error) -> {
             if (value != null) {
                 workmateMutableLiveData.setValue(value.toObjects(Workmate.class));
             }
@@ -47,8 +50,8 @@ public class WorkmateRepository {
 
     public LiveData<List<Workmate>> getUserListGoingToLiveData(String placeId) {
         MutableLiveData<List<Workmate>> userMutableLiveData = new MutableLiveData<>();
-        firebaseFirestore.collection("users")
-            .whereEqualTo("selectedRestaurant", placeId)
+        firebaseFirestore.collection(COLLECTION_PATH_USERS)
+            .whereEqualTo(SELECTED_RESTAURANT, placeId)
             .addSnapshotListener((value, error) -> {
                 if (value != null) {
                     userMutableLiveData.setValue(value.toObjects(Workmate.class));
@@ -60,13 +63,13 @@ public class WorkmateRepository {
     public LiveData<Map<String, Integer>> getPlaceIdUserCountMapLiveData() {
         MutableLiveData<Map<String, Integer>> placeIdUserCountMapMutableLiveData = new MutableLiveData<>();
 
-        firebaseFirestore.collection("users")
+        firebaseFirestore.collection(COLLECTION_PATH_USERS)
             .addSnapshotListener((queryDocumentSnapshots, error) -> {
                 if (queryDocumentSnapshots != null) {
                     Map<String, Integer> placeIdUserCountMap = new HashMap<>();
 
                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                        String placeId = queryDocumentSnapshot.getString("selectedRestaurant");
+                        String placeId = queryDocumentSnapshot.getString(SELECTED_RESTAURANT);
 
                         Integer previousCount = placeIdUserCountMap.get(placeId);
 

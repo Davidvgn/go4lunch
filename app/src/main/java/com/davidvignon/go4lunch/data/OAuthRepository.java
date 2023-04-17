@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 @Singleton
 public class OAuthRepository {
 
+    public static final String COLLECTION_PATH_USERS = "users";
     @NonNull
     private final FirebaseFirestore firebaseFirestore;
 
@@ -53,19 +54,20 @@ public class OAuthRepository {
                     String picturePath = user.getPhotoUrl().toString() + "?access_token=" + token.getToken();
 
                     if (fullName != null) {
-                        DocumentReference documentReference = firebaseFirestore.collection("users").document(id);
+                        DocumentReference documentReference = firebaseFirestore.collection(COLLECTION_PATH_USERS).document(id);
 
                         User currentUser = new User(
                             id,
                             fullName,
+
                             picturePath,
-                            email,
+                            email != null ? email : "",
                             null,
                             null
                         );
                         userMutableLiveData.setValue(currentUser);
 
-                        documentReference.set(currentUser).addOnSuccessListener(unused -> Log.d("DavidVgn", "onSuccessFirestore: "));
+                        documentReference.set(currentUser).addOnSuccessListener(unused -> Log.i("Authentication", "onSuccessFirestore: "));
                     }
                 }
             }
@@ -81,7 +83,7 @@ public class OAuthRepository {
             AuthCredential credential = GoogleAuthProvider.getCredential(googleAccount.getIdToken(), null);
             FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Log.d("DavidVgn", "onComplete: isSuccessful");
+                    Log.i("Authentication", "onComplete: isSuccessful");
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -92,25 +94,25 @@ public class OAuthRepository {
                         Uri pictureUri = user.getPhotoUrl();
                         String picturePath = pictureUri != null ? pictureUri.toString() : null;
                         if (fullName != null) {
-                            DocumentReference documentReference = firebaseFirestore.collection("users").document(id);
+                            DocumentReference documentReference = firebaseFirestore.collection(COLLECTION_PATH_USERS).document(id);
 
                             User currentUser = new User(
                                 id,
                                 fullName,
                                 picturePath,
-                                email,
+                                email != null ? email : "",
                                 null,
                                 null
                             );
                             userMutableLiveData.setValue(currentUser);
 
-                            documentReference.set(currentUser).addOnSuccessListener(unused -> Log.d("DavidVgn", "onSuccessFirestore: "));
+                            documentReference.set(currentUser).addOnSuccessListener(unused -> Log.i("Authentication", "onSuccessFirestore: "));
                         }
                     }
                 }
             });
         } catch (ApiException e) {
-            Log.w("DavidVgn", "signInResult:failed code=" + e.getStatusCode());
+            Log.w("Authentication", "signInResult:failed code=" + e.getStatusCode());
         }
         return userMutableLiveData;
     }

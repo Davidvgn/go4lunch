@@ -123,6 +123,7 @@ public class RestaurantDetailsViewState {
         return Objects.hash(name, vicinity, phoneNumber, website, photoUrl, rating, selectedIconDrawableRes, selectedBackgroundColorRes, likeButtonText, likeButtonIconDrawableRes);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetailsViewState{" +

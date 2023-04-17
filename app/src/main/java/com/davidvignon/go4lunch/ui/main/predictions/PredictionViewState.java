@@ -37,6 +37,7 @@ public class PredictionViewState {
         return Objects.hash(placeId, description);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PredictionViewState{" +

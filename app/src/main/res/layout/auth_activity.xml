@@ -50,7 +50,7 @@
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/auth_Facebook_LoginButton"
-        android:layout_width="0dp"
+        android:layout_width="288dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/horizontal_edge_size"
         android:layout_marginEnd="@dimen/horizontal_edge_size"
@@ -62,7 +62,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/auth_Google_LoginButton"
-        android:layout_width="0dp"
+        android:layout_width="288dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/horizontal_edge_size"
         android:layout_marginEnd="@dimen/horizontal_edge_size"

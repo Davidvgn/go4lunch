@@ -36,6 +36,8 @@ public class ChatActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, true);
         binding.chatRv.setLayoutManager(layoutManager);
 
+
+
         ChatViewModel viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
 
         viewModel.getChatViewStateLiveData().observe(this, chatViewState -> {

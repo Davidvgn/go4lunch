@@ -26,8 +26,10 @@ public class SettingsActivity extends AppCompatActivity {
         NotificationActivityBinding binding = NotificationActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.notificationToolBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         SettingsViewModel viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
 

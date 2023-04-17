@@ -52,7 +52,7 @@ public class OAuthActivity extends AppCompatActivity {
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         binding.authGoogleLoginButton.setOnClickListener(view -> {
-            Log.d("DavidVgn", "googleLoginButton.setOnClickListener");
+            Log.i("OAuthActivity", "googleLoginButton.setOnClickListener");
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             activityResultLauncher.launch(signInIntent);
         });
@@ -69,12 +69,12 @@ public class OAuthActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancel() {
-                    Log.d("DavidVgn", "onCancel: ");
+                    Log.i("OAuthActivity", "onCancel: ");
                 }
 
                 @Override
                 public void onError(@NonNull FacebookException exception) {
-                    Log.d("DavidVgn", "onError: " + exception);
+                    Log.i("OAuthActivity","onError: " + exception);
                 }
             });
     }

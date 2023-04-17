@@ -17,6 +17,9 @@ import javax.inject.Singleton;
 
 @Singleton
 public class NotificationRepository {
+    public static final String COLLECTION_PATH_USERS = "users";
+    public static final String SELECTED_RESTAURANT_NAME = "selectedRestaurantName";
+    public static final String SELECTED_RESTAURANT = "selectedRestaurant";
     @NonNull
     private final FirebaseFirestore firebaseFirestore;
 
@@ -32,14 +35,14 @@ public class NotificationRepository {
         String[] selectedRestaurant = new String[1];
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
-            firebaseFirestore.collection("users")
+            firebaseFirestore.collection(COLLECTION_PATH_USERS)
                 .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            selectedRestaurant[0] = document.getString("selectedRestaurantName");
+                            selectedRestaurant[0] = document.getString(SELECTED_RESTAURANT_NAME);
                         }
                     }
                     countDownLatch.countDown();
@@ -60,14 +63,14 @@ public class NotificationRepository {
         String[] selectedRestaurantField = new String[1];
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
-            firebaseFirestore.collection("users")
+            firebaseFirestore.collection(COLLECTION_PATH_USERS)
                 .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            selectedRestaurantField[0] = document.getString("selectedRestaurant");
+                            selectedRestaurantField[0] = document.getString(SELECTED_RESTAURANT);
                         }
                     }
                     countDownLatch.countDown();
@@ -87,7 +90,7 @@ public class NotificationRepository {
         List<Workmate> workmateArrayList = new ArrayList<>();
         CountDownLatch countDownLatch = new CountDownLatch(1);
 
-        firebaseFirestore.collection("users").whereEqualTo("selectedRestaurant", placeId).addSnapshotListener((value, error) -> {
+        firebaseFirestore.collection(COLLECTION_PATH_USERS).whereEqualTo(SELECTED_RESTAURANT, placeId).addSnapshotListener((value, error) -> {
             if (value != null) {
                 workmateArrayList.addAll(value.toObjects(Workmate.class));
             }

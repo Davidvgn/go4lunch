@@ -96,6 +96,7 @@
         android:id="@+id/chat_et_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="16dp"
