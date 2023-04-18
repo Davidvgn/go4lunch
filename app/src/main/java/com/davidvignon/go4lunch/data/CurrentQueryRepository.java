@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.data;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -15,7 +16,7 @@ public class CurrentQueryRepository {
     public CurrentQueryRepository() {
     }
 
-    public void setCurrentRestaurantQuery(String query){
+    public void setCurrentRestaurantQuery(@Nullable String query){
         queryMutableLiveData.setValue(query);
     }
 

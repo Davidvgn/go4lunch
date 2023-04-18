@@ -11,14 +11,15 @@
     tools:ignore="HardcodedText"
     >
 
-
     <ImageView
         android:id="@+id/header_background"
         android:layout_width="0dp"
-        android:minWidth="300dp"
         android:layout_height="200dp"
-        android:contentDescription="@string/header_menu_picture"
         android:background="@drawable/restaurant_image"
+        android:contentDescription="@string/header_menu_picture"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -40,17 +41,15 @@
 
     <ImageView
         android:id="@+id/header_iv"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/user_picture"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_app_name"
         tools:src="@tools:sample/avatars"
         />
-
 
     <TextView
         android:id="@+id/header_user_name"

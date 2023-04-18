@@ -59,10 +59,9 @@ public class NotificationRepository {
 
     @WorkerThread
     public String getRestaurantPlaceId() {
-        CountDownLatch countDownLatch = new CountDownLatch(1);
         String[] selectedRestaurantField = new String[1];
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-
+            CountDownLatch countDownLatch = new CountDownLatch(1);
             firebaseFirestore.collection(COLLECTION_PATH_USERS)
                 .document((FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .get()
@@ -78,9 +77,11 @@ public class NotificationRepository {
             try {
                 countDownLatch.await();
             } catch (InterruptedException e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
+
         return selectedRestaurantField[0];
     }
 

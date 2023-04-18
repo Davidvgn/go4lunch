@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -49,7 +50,11 @@ public class DataModule {
     @Provides
     public PlacesApi providePlacesApi() {
         Gson gson = new GsonBuilder().setLenient().create();
-        OkHttpClient httpClient = new OkHttpClient.Builder().build();
+
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+            .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+            .build();
+
         String baseUrl = "https://maps.googleapis.com/";
 
         Retrofit retrofit = new Retrofit.Builder()

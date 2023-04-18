@@ -87,7 +87,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/chat_card_view"
-                tools:listitem="@layout/chat_itemview"
+                tools:listitem="@layout/chat_sender_itemview"
                 tools:reverseLayout="true" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -101,7 +101,7 @@
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/round_corner"
+        android:background="@drawable/round_corner_editor"
         android:hint="@string/message_field"
         android:imeOptions="actionSend"
         android:inputType="textCapSentences|textAutoCorrect"

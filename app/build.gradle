@@ -20,9 +20,25 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
+    signingConfigs {
+        debug {
+            storeFile file("../keystore_debug.jks")
+            storePassword "android"
+            keyAlias "debug"
+            keyPassword "android"
+        }
+//        release { // TODO David Generate keystore, update SHA1 config on firebase and update google-services.json
+//            storeFile file("../keystore_debug.jks")
+//            storePassword "android"
+//            keyAlias "debug"
+//            keyPassword "android"
+//        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled true // TODO DAVID 'true' breaks Retrofit calls (and other stuff)
+//            signingConfig signingConfigs.release
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -40,15 +56,6 @@ android {
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
         animationsDisabled = true
-    }
-
-    signingConfigs {
-        debug {
-            storeFile file("../keystore_debug.jks")
-            storePassword "android"
-            keyAlias "debug"
-            keyPassword "android"
-        }
     }
 }
 
@@ -128,8 +135,6 @@ def openReport(htmlOutDir) {
     def os = org.gradle.internal.os.OperatingSystem.current()
     if (os.isWindows()) {
         exec { commandLine 'cmd', '/c', "start $reportPath" }
-    } else if (os.isMacOsX()) {
-        exec { commandLine 'open', "$reportPath" }
     } else if (os.isLinux()) {
         try {
             exec { commandLine 'xdg-open', "$reportPath" }

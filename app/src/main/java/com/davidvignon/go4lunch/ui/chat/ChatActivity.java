@@ -37,7 +37,6 @@ public class ChatActivity extends AppCompatActivity {
         binding.chatRv.setLayoutManager(layoutManager);
 
 
-
         ChatViewModel viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
 
         viewModel.getChatViewStateLiveData().observe(this, chatViewState -> {
@@ -69,15 +68,16 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void closeKeyboard() {
-        View view = this.getCurrentFocus();
-            InputMethodManager manager
-                = (InputMethodManager)
-                getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            manager
-                .hideSoftInputFromWindow(
-                    view.getWindowToken(), 0);
+        View view = getCurrentFocus();
+
+        if (view != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (manager != null) {
+                manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();

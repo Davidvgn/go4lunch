@@ -69,17 +69,15 @@ public class NotificationWorker extends Worker {
                 notificationManager.createNotificationChannel(channel);
             }
 
-            Intent intent = RestaurantDetailsViewModel.navigate(getApplicationContext(), notificationRepository.getRestaurantPlaceId())
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Intent intent = RestaurantDetailsViewModel.navigate(getApplicationContext(), notificationRepository.getRestaurantPlaceId());
 
             if (notificationRepository.getRestaurantPlaceId() != null) {
                 PendingIntent pendingIntent = TaskStackBuilder.create(getApplicationContext())
-                    .addNextIntentWithParentStack(intent)
+                    .addNextIntentWithParentStack(intent) // TODO David or addNextIntent?
                     .getPendingIntent(
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                     );
-
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                     .setSmallIcon(R.drawable.baseline_notifications_24)

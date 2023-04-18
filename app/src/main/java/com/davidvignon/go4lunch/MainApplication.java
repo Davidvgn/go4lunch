@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.HiltAndroidApp;
 
 @HiltAndroidApp
-public class MainApplication extends Application implements Configuration.Provider  {
+public class MainApplication extends Application implements Configuration.Provider {
 
     @Inject
     HiltWorkerFactory workerFactory;

@@ -1,6 +1,5 @@
 package com.davidvignon.go4lunch.ui.chat;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -8,7 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import com.davidvignon.go4lunch.databinding.ChatItemviewBinding;
+
+import com.davidvignon.go4lunch.databinding.ChatReceiverItemviewBinding;
+import com.davidvignon.go4lunch.databinding.ChatSenderItemviewBinding;
 
 public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, RecyclerView.ViewHolder> {
 
@@ -27,12 +28,12 @@ public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, RecyclerV
         switch (ViewType.values()[viewType]) {
             case CURRENT_USER:
                 return new CurrentUserViewHolder(
-                    ChatItemviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false)
+                    ChatSenderItemviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false)
                 );
             case OTHER_USER:
             default:
                 return new OtherUserViewHolder(
-                    ChatItemviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false)
+                    ChatReceiverItemviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false)
                 );
         }
     }
@@ -58,35 +59,31 @@ public class ChatMessageAdapter extends ListAdapter<ChatViewStateItem, RecyclerV
     }
 
     public static class CurrentUserViewHolder extends RecyclerView.ViewHolder {
-        private final ChatItemviewBinding binding;
+        private final ChatSenderItemviewBinding binding;
 
-        public CurrentUserViewHolder(@NonNull ChatItemviewBinding binding) {
+        public CurrentUserViewHolder(@NonNull ChatSenderItemviewBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
         public void bind(ChatViewStateItem item) {
-
             binding.chatRcTv.setText(item.getMessage());
-            binding.chatRcTv.setBackgroundColor(Color.BLUE);
             binding.chatRcTvMessageDate.setText(item.getTime());
             binding.chatRcTvMessageAuthor.setText(item.getWorkmateName());
         }
     }
 
     public static class OtherUserViewHolder extends RecyclerView.ViewHolder {
-        private final ChatItemviewBinding binding;
+        private final ChatReceiverItemviewBinding binding;
 
-        public OtherUserViewHolder(@NonNull ChatItemviewBinding binding) {
+        public OtherUserViewHolder(@NonNull ChatReceiverItemviewBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
         public void bind(ChatViewStateItem item) {
-
             binding.chatRcTv.setText(item.getMessage());
-            binding.chatRcTv.setBackgroundColor(Color.RED);
-            binding.chatRcTvMessageDate.setText(item.getTime( ));
+            binding.chatRcTvMessageDate.setText(item.getTime());
             binding.chatRcTvMessageAuthor.setText(item.getWorkmateName());
         }
     }

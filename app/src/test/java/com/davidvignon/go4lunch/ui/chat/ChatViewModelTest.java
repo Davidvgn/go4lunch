@@ -116,35 +116,28 @@ public class ChatViewModelTest {
 
     @Test
     public void message_sender_name_depends_of_boolean() {
-        boolean isFromWorkmate = true;
-        String name;
-        if (isFromWorkmate) {
-            name = DEFAULT_WORKMATE_NAME;
-        } else {
-            name = DEFAULT_USER_NAME;
-        }
 
         ChatViewStateItem viewStateItem = new ChatViewStateItem(
             DEFAULT_MESSAGE_ID,
             DEFAULT_WORKMATE_NAME,
             DEFAULT_MESSAGE,
             DEFAULT_TIME,
-            isFromWorkmate
+            true
         );
         ChatViewStateItem viewStateItemFromWorkmate = new ChatViewStateItem(
             DEFAULT_MESSAGE_ID,
-            name,
+            DEFAULT_WORKMATE_NAME,
             DEFAULT_MESSAGE,
             DEFAULT_TIME,
-            isFromWorkmate
+            true
         );
 
         ChatViewStateItem viewStateItemFromUser = new ChatViewStateItem(
             DEFAULT_MESSAGE_ID,
-            name,
+            DEFAULT_WORKMATE_NAME,
             DEFAULT_MESSAGE,
             DEFAULT_TIME,
-            !isFromWorkmate
+            false
         );
 
         assertEquals(viewStateItem, viewStateItemFromWorkmate);

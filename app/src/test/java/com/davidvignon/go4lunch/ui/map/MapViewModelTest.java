@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
@@ -49,7 +50,7 @@ public class MapViewModelTest {
     private final MutableLiveData<Boolean> permissionMutableLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<NearbySearchResponse> nearbySearchResponseMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData <String> currentRestaurantQueryLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> currentRestaurantQueryLiveData = new MutableLiveData<>();
 
 
     private MapViewModel viewModel;
@@ -87,6 +88,15 @@ public class MapViewModelTest {
     }
 
     @Test
+    public void nominal_case_getFocusOnUser() {
+        // When
+        LatLng latLng = LiveDataTestUtils.getValueForTesting(viewModel.getFocusOnUser());
+
+        // Then
+        assertEquals(new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), latLng);
+    }
+
+    @Test
     public void if_all_or_one_element_is_null_it_returns_no_response() {
         //Given
         nearbySearchResponseMutableLiveData.setValue(getNearbySearchResponseWithElementMissing());
@@ -99,17 +109,7 @@ public class MapViewModelTest {
     }
 
     @Test
-    public void nominal_case_getFocusOnUser(){
-        // When
-        LatLng latLng = LiveDataTestUtils.getValueForTesting(viewModel.getFocusOnUser());
-
-        // Then
-        assertEquals(new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),latLng);
-
-    }
-
-    @Test
-    public void if_no_query_all_icons_are_red(){
+    public void if_no_query_all_icons_are_red() {
         // Given
         currentRestaurantQueryLiveData.setValue(null);
 
@@ -121,7 +121,7 @@ public class MapViewModelTest {
     }
 
     @Test
-    public void if_query_matches_icon_color_changes(){
+    public void if_query_matches_icon_color_changes() {
         // Given
         currentRestaurantQueryLiveData.setValue("D0");
 
@@ -129,9 +129,8 @@ public class MapViewModelTest {
         List<MapPoiViewState> viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getMapPoiViewStateLiveData());
 
         // Then
-        assertEquals(60.0F, viewStates.get(0).getHue(), 0.0);
+        assertEquals(getDefaultMapPoiViewState(0, 60f), viewStates.get(0));
     }
-
 
     // region IN
 
@@ -297,18 +296,27 @@ public class MapViewModelTest {
 
         for (int i = 0; i < 3; i++) {
             result.add(
-                new MapPoiViewState(
-                    DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
-                    DEFAULT_RESTAURANT_RESPONSE_NAME + i,
-                    i,
-                    DEFAULT_LONGITUDE_OFFSET + i,
-                    DEFAULT_HUE
-
-                )
+                getDefaultMapPoiViewState(i)
             );
         }
 
         return result;
+    }
+
+    @NonNull
+    private static MapPoiViewState getDefaultMapPoiViewState(int index) {
+        return getDefaultMapPoiViewState(index, DEFAULT_HUE);
+    }
+
+    @NonNull
+    private static MapPoiViewState getDefaultMapPoiViewState(int index, float hue) {
+        return new MapPoiViewState(
+            DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + index,
+            DEFAULT_RESTAURANT_RESPONSE_NAME + index,
+            index,
+            DEFAULT_LONGITUDE_OFFSET + index,
+            hue
+        );
     }
     // endregion OUT
 }
