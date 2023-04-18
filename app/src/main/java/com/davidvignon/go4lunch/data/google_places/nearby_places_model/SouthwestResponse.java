@@ -1,9 +1,11 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+@Keep
 public class SouthwestResponse {
 
     @SerializedName("lng")

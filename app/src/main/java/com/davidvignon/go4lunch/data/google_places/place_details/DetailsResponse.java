@@ -1,11 +1,14 @@
 package com.davidvignon.go4lunch.data.google_places.place_details;
 
+import androidx.annotation.Keep;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+@Keep
 public class DetailsResponse {
 
     @Nullable

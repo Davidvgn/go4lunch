@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.data.google_places.place_details;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
 
+@Keep
 public class PhotosItem{
 
     @Nullable

@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.data.google_places.nearby_places_model;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
@@ -7,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
 
+@Keep
 public class OpeningHoursResponse {
 
     @Nullable

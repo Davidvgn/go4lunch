@@ -1,8 +1,11 @@
 package com.davidvignon.go4lunch.data.google_places.place_details;
 
+import androidx.annotation.Keep;
+
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
+@Keep
 public class AddressComponentsItem{
 
     @SerializedName("types")

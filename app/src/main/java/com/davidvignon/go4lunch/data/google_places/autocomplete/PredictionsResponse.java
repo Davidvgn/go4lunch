@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.data.google_places.autocomplete;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
 
+@Keep
 public class PredictionsResponse {
 
     @Nullable
