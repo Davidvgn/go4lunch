@@ -3,9 +3,11 @@ package com.davidvignon.go4lunch.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -76,6 +78,23 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantClick
         adapter = new PredictionsAdapter(this);
         binding.predictionsRv.setAdapter(adapter);
         binding.predictionsRv.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
+
+        binding.mainIvIcon.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                int orientation = getResources().getConfiguration().orientation;
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    binding.mainIvIcon.setVisibility(View.GONE);
+                } else {
+                    binding.mainIvIcon.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+
+
+
 
         viewModel.getMainViewStateLiveData().observe(this, state -> {
             Glide.with(headerBinding.headerIv)

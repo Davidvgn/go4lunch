@@ -46,6 +46,8 @@ public class ChatActivity extends AppCompatActivity {
             binding.chatEtMessage.setOnEditorActionListener((textView, i, keyEvent) -> {
                 if (binding.chatEtMessage.getText() != null) {
                     viewModel.sendMessage(binding.chatEtMessage.getText().toString());
+                    binding.chatRv.postDelayed(() -> binding.chatRv.scrollToPosition(0), 300);
+
                 }
                 binding.chatEtMessage.getText().clear();
                 return true;
@@ -61,7 +63,6 @@ public class ChatActivity extends AppCompatActivity {
                 .load(chatViewState.getWorkmatePicture())
                 .apply(RequestOptions.circleCropTransform())
                 .into(binding.chatIv);
-
             adapter.submitList(chatViewState.getMessages());
         });
     }

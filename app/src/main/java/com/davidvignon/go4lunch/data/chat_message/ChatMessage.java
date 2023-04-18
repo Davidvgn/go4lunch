@@ -6,16 +6,21 @@ import java.util.Objects;
 
 public class ChatMessage {
 
+    @NonNull
     private String uuid;
+    @NonNull
     private String senderId;
+    @NonNull
     private String receiverId;
+    @NonNull
     private String message;
     private long epochMilli;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String uuid, String senderId, String receiverId, String message, long epochMilli) {
+    public ChatMessage(@NonNull String uuid, @NonNull String senderId, @NonNull String receiverId, @NonNull String message,
+        long epochMilli) {
         this.uuid = uuid;
         this.senderId = senderId;
         this.receiverId = receiverId;
@@ -23,18 +28,22 @@ public class ChatMessage {
         this.epochMilli = epochMilli;
     }
 
+    @NonNull
     public String getUuid() {
         return uuid;
     }
 
+    @NonNull
     public String getSenderId() {
         return senderId;
     }
 
+    @NonNull
     public String getReceiverId() {
         return receiverId;
     }
 
+    @NonNull
     public String getMessage() {
         return message;
     }

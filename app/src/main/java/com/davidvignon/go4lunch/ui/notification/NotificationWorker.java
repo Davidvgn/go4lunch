@@ -72,30 +72,32 @@ public class NotificationWorker extends Worker {
             Intent intent = RestaurantDetailsViewModel.navigate(getApplicationContext(), notificationRepository.getRestaurantPlaceId())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-            PendingIntent pendingIntent = TaskStackBuilder.create(getApplicationContext())
-                .addNextIntentWithParentStack(intent)
-                .getPendingIntent(
-                    0,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                );
+            if (notificationRepository.getRestaurantPlaceId() != null) {
+                PendingIntent pendingIntent = TaskStackBuilder.create(getApplicationContext())
+                    .addNextIntentWithParentStack(intent)
+                    .getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                    );
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_notifications_24)
-                .setContentTitle(getApplicationContext().getString(R.string.app_name))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationMessage()))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
 
-            notificationManager.notify(0, builder.build());
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    .setSmallIcon(R.drawable.baseline_notifications_24)
+                    .setContentTitle(getApplicationContext().getString(R.string.app_name))
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationMessage()))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+
+                notificationManager.notify(0, builder.build());
+            }
         }
-
         return Result.success();
     }
 
     public String getNotificationMessage() {
 
-        String notificationMessage;
+        String notificationMessage ="";
         String workmatesList = "";
         String hereYouEat;
 
@@ -128,9 +130,6 @@ public class NotificationWorker extends Worker {
 
             hereYouEat = application.getString(R.string.here_you_eat_notification) + restaurantName;
             notificationMessage = hereYouEat + workmatesList;
-
-        } else {
-            notificationMessage = application.getString(R.string.no_restaurant_selected_notification);
         }
         return notificationMessage;
     }

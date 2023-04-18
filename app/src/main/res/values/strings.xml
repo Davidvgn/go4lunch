@@ -53,7 +53,6 @@
 
     <string name="notification_name">Selected Restaurant Notification</string>
     <string name="notification_description">Send a notification at 12pm with selected restaurant and your workmates going there</string>
-    <string name="no_restaurant_selected_notification">No restaurant selected today </string>
     <string name="here_you_eat_notification">Today\'s selected restaurant is : </string>
     <string name="message_is_empty">Message is empty</string>
     <string name="date_time_formater">"dd/MM/yyyy \'at'\ HH:mm"</string>

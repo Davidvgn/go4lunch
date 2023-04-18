@@ -46,7 +46,6 @@
 
     <string name="notification_name">Notification du Restaurant Sélectionné</string>
     <string name="notification_description">Permet de recevoir une notification à 12h du restaurant sélectionné et des collaborateurs qui ont sélectionné le même restaurant que vous</string>
-    <string name="no_restaurant_selected_notification">Aucun restaurant sélectionné aujourd\'hui </string>
     <string name="here_you_eat_notification">Vous avez prévu de manger ici : </string>
 
     <string name="message_is_empty">Le message est vide</string>
