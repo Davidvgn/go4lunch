@@ -380,5 +380,26 @@ public class RestaurantsViewModelTest {
 
         return result;
     }
+
+    private List<RestaurantsViewState> getDefaultRestaurantViewStateWithNoDistance() {
+        List<RestaurantsViewState> result = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            result.add(
+                new RestaurantsViewState(
+                    DEFAULT_RESTAURANT_RESPONSE_PLACE_ID + i,
+                    DEFAULT_RESTAURANT_RESPONSE_NAME + i,
+                    DEFAULT_VICINITY + i,
+                    DEFAULT_PHOTO_REFERENCE + i,
+                    i == 1 ? R.string.open : R.string.closed,
+                    2.04F,
+                    null,
+                    "" + DEFAULT_WORKMATES_GOING_THERE
+                )
+            );
+        }
+
+        return result;
+    }
     // endregion OUT
 }

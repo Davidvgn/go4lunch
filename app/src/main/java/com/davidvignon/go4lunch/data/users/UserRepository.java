@@ -144,10 +144,10 @@ public class UserRepository {
                         }
                         if (!favoritesRestaurantsField.contains(placeId)) {
                             documentReference.update(FAVORITES_RESTAURANTS, FieldValue.arrayUnion(placeId))
-                                .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated!"));
+                                .addOnSuccessListener(aVoid -> Log.i("UserRepository", "DocumentSnapshot successfully updated!"));
                         } else {
                             documentReference.update(FAVORITES_RESTAURANTS, FieldValue.arrayRemove(placeId))
-                                .addOnSuccessListener(aVoid -> Log.d("DavidVgn", "DocumentSnapshot successfully updated! : element removed"));
+                                .addOnSuccessListener(aVoid -> Log.i("UserRepository", "DocumentSnapshot successfully updated! : element removed"));
                         }
                     }
                 }

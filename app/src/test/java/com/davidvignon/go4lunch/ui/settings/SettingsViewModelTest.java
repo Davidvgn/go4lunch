@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.ui.settings;
 
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -11,6 +12,7 @@ import androidx.work.WorkManager;
 
 import com.davidvignon.go4lunch.data.permission.PermissionRepository;
 import com.davidvignon.go4lunch.data.preferences.PreferencesRepository;
+import com.davidvignon.go4lunch.utils.LiveDataTestUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,6 +31,7 @@ public class SettingsViewModelTest {
     private final WorkManager workManager = Mockito.mock(WorkManager.class);
     private final Operation operation = Mockito.mock(Operation.class);
     private final MutableLiveData<Boolean> isLunchNotificationEnabledLiveData = new MutableLiveData<>();
+
     private SettingsViewModel viewModel;
 
 
@@ -86,4 +89,17 @@ public class SettingsViewModelTest {
         Mockito.verify(preferencesRepository).setLunchNotificationEnabled(false);
         Mockito.verify(workManager).cancelAllWorkByTag(any());
     }
+
+    @Test
+    public void getSwitchValueLiveData_returns_good_value(){
+        // Given
+        isLunchNotificationEnabledLiveData.setValue(true);
+
+        // When
+        Boolean switchValue = LiveDataTestUtils.getValueForTesting(viewModel.getSwitchValueLiveData());
+
+       // Then
+        assertTrue(switchValue);
+    }
+
 }

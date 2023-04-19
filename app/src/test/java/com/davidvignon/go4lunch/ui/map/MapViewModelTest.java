@@ -1,6 +1,7 @@
 package com.davidvignon.go4lunch.ui.map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.location.Location;
@@ -94,6 +95,18 @@ public class MapViewModelTest {
 
         // Then
         assertEquals(new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), latLng);
+    }
+
+    @Test
+    public void if_permission_is_denied_in_repo_it_returns_false() {
+        // Given
+        permissionMutableLiveData.setValue(false);
+
+        // When
+        Boolean perm = LiveDataTestUtils.getValueForTesting(viewModel.isLocationGrantedLiveData());
+
+        // Then
+        assertFalse(perm);
     }
 
     @Test

@@ -203,21 +203,6 @@ public class WorkmatesViewModelTest {
         }
         return workmateList;
     }
-
-    private List<WorkmatesViewState> getDefaultWorkmateViewStateWithRestaurantSelected(){
-        List<WorkmatesViewState> workmateList = new ArrayList<>();
-
-        for(int i = 0; i < 3; i++){
-            workmateList.add(new WorkmatesViewState(
-                DEFAULT_WORKMATE_ID + i,
-                DEFAULT_WORKMATE_NAME + i + " is",
-                DEFAULT_WORKMATE_PICTURE_PATH + i,
-                DEFAULT_WORKMATE_SELECTED_RESTAURANT_ID + i,
-                DEFAULT_WORKMATE_SELECTED_RESTAURANT_NAME + i
-            ));
-        }
-        return workmateList;
-    }
     // endregion OUT
 
 }

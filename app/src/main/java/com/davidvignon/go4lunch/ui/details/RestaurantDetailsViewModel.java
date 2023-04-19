@@ -125,7 +125,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                     (float) (response.getResult().getRating() * 3 / 5),
                     isSelected ? R.drawable.ic_baseline_check_circle_24 : R.drawable.ic_baseline_check_circle_outline_24,
                     isSelected ? R.color.teal_200 : R.color.white,
-                    isLiked ? "unlike" : "like",
+                    isLiked ? application.getString(R.string.unlike_restaurant) : application.getString(R.string.like_restaurant),
                     isLiked ? R.drawable.ic_baseline_gold_star_rate_24 : R.drawable.ic_baseline_star_outline_24
                 );
 

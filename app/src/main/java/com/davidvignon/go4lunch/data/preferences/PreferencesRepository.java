@@ -32,9 +32,12 @@ public class PreferencesRepository {
 
         isLunchNotificationEnabledMutableLiveData.setValue(sharedPreferences.getBoolean(SWITCH_KEY, false));
 
-        SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, key) -> {
-            if (key.equals(SWITCH_KEY)) {
-                isLunchNotificationEnabledMutableLiveData.setValue(sharedPreferences.getBoolean(SWITCH_KEY, false));
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if (key.equals(SWITCH_KEY)) {
+                    isLunchNotificationEnabledMutableLiveData.setValue(sharedPreferences.getBoolean(SWITCH_KEY, false));
+                }
             }
         };
 

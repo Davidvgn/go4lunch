@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -61,7 +60,6 @@ public class NotificationWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("Dvgn", "Sending notification");
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, application.getString(R.string.notification_name), NotificationManager.IMPORTANCE_DEFAULT);
@@ -73,7 +71,7 @@ public class NotificationWorker extends Worker {
 
             if (notificationRepository.getRestaurantPlaceId() != null) {
                 PendingIntent pendingIntent = TaskStackBuilder.create(getApplicationContext())
-                    .addNextIntentWithParentStack(intent) // TODO David or addNextIntent?
+                    .addNextIntentWithParentStack(intent)
                     .getPendingIntent(
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE

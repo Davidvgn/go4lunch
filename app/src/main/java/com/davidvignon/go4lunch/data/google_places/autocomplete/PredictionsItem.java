@@ -9,25 +9,35 @@ import com.google.gson.annotations.SerializedName;
 public class PredictionsItem{
 
     @SerializedName("reference")
-    private String reference;
+    private final String reference;
 
     @SerializedName("types")
-    private List<String> types;
+    private final List<String> types;
 
     @SerializedName("matched_substrings")
-    private List<MatchedSubstringsItem> matchedSubstrings;
+    private final List<MatchedSubstringsItem> matchedSubstrings;
 
     @SerializedName("terms")
-    private List<TermsItem> terms;
+    private final List<TermsItem> terms;
 
     @SerializedName("structured_formatting")
-    private StructuredFormatting structuredFormatting;
+    private final StructuredFormatting structuredFormatting;
 
     @SerializedName("description")
-    private String description;
+    private final String description;
+
+    public PredictionsItem(String reference, List<String> types, List<MatchedSubstringsItem> matchedSubstrings, List<TermsItem> terms, StructuredFormatting structuredFormatting, String description, String placeId) {
+        this.reference = reference;
+        this.types = types;
+        this.matchedSubstrings = matchedSubstrings;
+        this.terms = terms;
+        this.structuredFormatting = structuredFormatting;
+        this.description = description;
+        this.placeId = placeId;
+    }
 
     @SerializedName("place_id")
-    private String placeId;
+    private final String placeId;
 
     public String getReference(){
         return reference;

@@ -1,5 +1,6 @@
 package com.davidvignon.go4lunch.ui.details;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import android.app.Application;
@@ -9,6 +10,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 
+import com.davidvignon.go4lunch.R;
 import com.davidvignon.go4lunch.data.google_places.PlaceDetailsRepository;
 import com.davidvignon.go4lunch.data.google_places.place_details.DetailsResponse;
 import com.davidvignon.go4lunch.data.google_places.place_details.PhotosItem;
@@ -34,10 +36,7 @@ public class RestaurantDetailsViewModelTest {
     private static final String DEFAULT_NUMBER = "DEFAULT_NUMBER";
     private static final String DEFAULT_WEBSITE = "DEFAULT_WEBSITE";
     private static final String DEFAULT_PHOTO = "DEFAULT_PHOTO";
-    private static final String DEFAULT_IS_LIKE = "DEFAULT_IS_LIKE";
-    private static final int DEFAULT_IS_SELECTED = 0;
-    private static final int DEFAULT_SELECTED_BACKGROUND = 0;
-    private static final int DEFAULT_STAR = 0;
+
     private static final double DEFAULT_RATING = 3.4;
 
     @Rule
@@ -58,12 +57,12 @@ public class RestaurantDetailsViewModelTest {
 
     @Before
     public void setUp() {
+        Mockito.doReturn("unlike").when(application).getString(R.string.unlike_restaurant);
+        Mockito.doReturn("like").when(application).getString(R.string.like_restaurant);
 
         detailsResponseMutableLiveData.setValue(getDefaultDetailsResponse());
-        isRestaurantLikedMutableLiveData.setValue(true);
-        isRestaurantSelectedMutableLiveData.setValue(true);
-        workmateListMutableLiveData.setValue(getAWorkmateList());
-
+        isRestaurantLikedMutableLiveData.setValue(false);
+        isRestaurantSelectedMutableLiveData.setValue(false);
         Mockito.doReturn(DEFAULT_KEY_PLACE_ID).when(savedStateHandle).get("KEY_PLACE_ID");
 
         Mockito.doReturn(detailsResponseMutableLiveData).when(placeDetailsRepository).getDetailsResponseLiveData(DEFAULT_KEY_PLACE_ID);
@@ -72,6 +71,15 @@ public class RestaurantDetailsViewModelTest {
         Mockito.doReturn(workmateListMutableLiveData).when(workmateRepository).getUserListGoingToLiveData(DEFAULT_KEY_PLACE_ID);
 
         viewModel = new RestaurantDetailsViewModel(application, placeDetailsRepository, userRepository, workmateRepository, savedStateHandle);
+    }
+
+    @Test
+    public void nominal_case() {
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData());
+
+        // Then
+        assertEquals(getDefaultRestaurantViewState(), viewStates);
     }
 
     @Test
@@ -156,6 +164,20 @@ public class RestaurantDetailsViewModelTest {
 
         // Then
         assertNull(viewStates);
+    }
+
+    @Test
+    public void all_boolean_are_true_icons_and_text_change() {
+        // Given
+        isRestaurantLikedMutableLiveData.setValue(true);
+        isRestaurantSelectedMutableLiveData.setValue(true);
+
+        // When
+        RestaurantDetailsViewState viewStates = LiveDataTestUtils.getValueForTesting(viewModel.getRestaurantDetailsViewStateLiveData());
+
+        // Then
+        assertEquals(getRestaurantViewStateWithAllBooleanAtTrue(), viewStates);
+
     }
 
     // region IN
@@ -340,29 +362,27 @@ public class RestaurantDetailsViewModelTest {
             DEFAULT_NUMBER,
             DEFAULT_WEBSITE,
             DEFAULT_PHOTO,
-            2.04F,
-            DEFAULT_IS_SELECTED,
-            DEFAULT_SELECTED_BACKGROUND,
-            DEFAULT_IS_LIKE,
-            DEFAULT_STAR
+            0.0F,
+            R.drawable.ic_baseline_check_circle_outline_24,
+            R.color.white,
+            application.getString(R.string.like_restaurant),
+            R.drawable.ic_baseline_star_outline_24
+        );
+    }
 
+    private RestaurantDetailsViewState getRestaurantViewStateWithAllBooleanAtTrue() {
+        return new RestaurantDetailsViewState(
+            DEFAULT_NAME,
+            DEFAULT_VICINITY,
+            DEFAULT_NUMBER,
+            DEFAULT_WEBSITE,
+            DEFAULT_PHOTO,
+            0.0F,
+            R.drawable.ic_baseline_check_circle_24,
+            R.color.teal_200,
+            application.getString(R.string.unlike_restaurant),
+            R.drawable.ic_baseline_gold_star_rate_24
         );
     }
     // endregion OUT
-
-
-    private List<Workmate> getAWorkmateList(){
-        List<Workmate> workmateList = new ArrayList<>();
-
-        workmateList.add(new Workmate(
-            "23",
-        "workmateName",
-        "workmateEmail",
-        "workmatePicture",
-        "selectedRestaurant",
-        "selectedRestaurantName"
-        ));
-
-        return workmateList;
-    }
 }

@@ -64,7 +64,7 @@ public class SettingsViewModel extends ViewModel {
                 PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
                     NotificationWorker.class, 1, TimeUnit.DAYS)
                     .addTag(TAG_NOTIFICATION_WORKER)
-//                    .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+                    .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
                     .build();
 
                 workManager.enqueueUniquePeriodicWork(TAG_NOTIFICATION_WORKER, ExistingPeriodicWorkPolicy.KEEP, workRequest);
