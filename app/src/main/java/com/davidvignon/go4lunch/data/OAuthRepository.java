@@ -65,7 +65,6 @@ public class OAuthRepository {
 
                     String uuid = user.getUid();
 
-//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
                     CollectionReference usersRef = firebaseFirestore.collection("users");
 
                     Query query = usersRef.whereEqualTo("id", uuid);
@@ -143,7 +142,6 @@ public class OAuthRepository {
 
                         String uuid = user.getUid();
 
-//                        FirebaseFirestore db = FirebaseFirestore.getInstance();
                         CollectionReference usersRef = firebaseFirestore.collection("users");
 
                         Query query = usersRef.whereEqualTo("id", uuid);
