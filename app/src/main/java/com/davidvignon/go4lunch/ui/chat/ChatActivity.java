@@ -41,6 +41,7 @@ public class ChatActivity extends AppCompatActivity {
 
         viewModel.getChatViewStateLiveData().observe(this, chatViewState -> {
             binding.chatTvWorkmateName.setText(chatViewState.getWorkmateName());
+            binding.chatRv.scrollToPosition(0);
 
             binding.chatEtMessage.setOnEditorActionListener((textView, i, keyEvent) -> {
                 if (binding.chatEtMessage.getText() != null) {

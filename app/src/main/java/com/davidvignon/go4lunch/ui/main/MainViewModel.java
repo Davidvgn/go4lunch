@@ -89,12 +89,14 @@ public class MainViewModel extends ViewModel {
                 List<PredictionViewState> predictionViewStateList = new ArrayList<>();
                 if (predictionsResponse.getPredictions() != null) {
                     for (PredictionsItem response : predictionsResponse.getPredictions()) {
-                        predictionViewStateList.add(
-                            new PredictionViewState(
-                                response.getPlaceId(),
-                                response.getDescription()
-                            )
-                        );
+                        if (response.getPlaceId() != null) {
+                            predictionViewStateList.add(
+                                new PredictionViewState(
+                                    response.getPlaceId(),
+                                    response.getDescription()
+                                )
+                            );
+                        }
                     }
                 }
                 return predictionViewStateList;

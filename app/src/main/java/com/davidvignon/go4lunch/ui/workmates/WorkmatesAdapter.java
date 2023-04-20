@@ -66,6 +66,13 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesViewState, WorkmatesA
 
                 binding.itemListSentence.setText(R.string.hasnt_decide_yet);
                 binding.itemListSentence.setTypeface(null, Typeface.ITALIC);
+                binding.itemListSentence.setTextColor(Color.GRAY);
+                binding.itemListName.setTextColor(Color.GRAY);
+                binding.itemListRestaurantName.setTextColor(Color.GRAY);
+
+
+                binding.itemListRestaurantName.setText(null);
+
             }
 
             Glide.with(binding.itemListAvatar.getContext())

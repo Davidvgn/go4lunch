@@ -95,11 +95,11 @@ public class UserRepository {
                         .addOnFailureListener(e -> Log.w("UserRepository", "Error updating document", e));
                 } else {
                     documentReference.update(SELECTED_RESTAURANT, null)
-                        .addOnSuccessListener(aVoid -> Log.i("UserRepository", "DocumentSnapshot for placeId : " + placeId + " successfully updated!"))
+                        .addOnSuccessListener(aVoid -> Log.i("UserRepository", "DocumentSnapshot for placeId : " + placeId + " successfully removed!"))
                         .addOnFailureListener(e -> Log.w("UserRepository", "Error updating document", e));
                     documentReference.update(SELECTED_RESTAURANT_NAME, (null))
-                        .addOnSuccessListener(aVoid -> Log.i("UserRepository", "DocumentSnapshot for placeId : " + restaurantName + " successfully updated!"))
-                        .addOnFailureListener(e -> Log.w("DavidVgn", "Error updating document", e));
+                        .addOnSuccessListener(aVoid -> Log.i("UserRepository", "DocumentSnapshot for placeId : " + restaurantName + " successfully removed!"))
+                        .addOnFailureListener(e -> Log.w("UserRepository", "Error updating document", e));
                 }
             });
         }
