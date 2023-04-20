@@ -18,8 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -51,35 +54,63 @@ public class OAuthRepository {
                     && user.getPhotoUrl() != null) {
                     String id = user.getUid();
                     String fullName = user.getDisplayName();
-                    String email = null;
+                    String[] email = new String[1];
                     for (UserInfo userInfo : user.getProviderData()) {
-                        if (userInfo.getEmail() != null)  {
-                            email = userInfo.getEmail();
+                        if (userInfo.getEmail() != null) {
+                            email[0] = userInfo.getEmail();
                             break;
                         }
                     }
                     String picturePath = user.getPhotoUrl().toString() + "?access_token=" + token.getToken();
 
-                    if (fullName != null && email != null) {
-                        DocumentReference documentReference = firebaseFirestore.collection(COLLECTION_PATH_USERS).document(id);
+                    String uuid = user.getUid();
 
-                        User currentUser = new User(
-                            id,
-                            fullName,
-                            picturePath,
-                            email,
-                            null,
-                            null
-                        );
-                        userMutableLiveData.setValue(currentUser);
+//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    CollectionReference usersRef = firebaseFirestore.collection("users");
 
-                        documentReference.set(currentUser).addOnSuccessListener(unused -> Log.i("Authentication", "onSuccessFirestore: "));
-                    } else {
-                        Log.e("OAuthRepository", "getUserSignedInWithFacebook() FAILED ! No email available.");
-                    }
+                    Query query = usersRef.whereEqualTo("id", uuid);
+
+                    query.get().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task1.getResult();
+                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                firebaseFirestore
+                                    .collection(COLLECTION_PATH_USERS)
+                                    .document(user.getUid())
+                                    .get()
+                                    .addOnCompleteListener(task2 -> {
+                                        if (task2.isSuccessful()) {
+                                            userMutableLiveData.setValue(task2.getResult().toObject(User.class));
+                                        } else {
+                                            Log.e("UserRepository", "get failed with ", task.getException());
+                                        }
+                                    });
+                            } else {
+                                if (fullName != null && email[0] != null) {
+                                    DocumentReference documentReference = firebaseFirestore.collection(COLLECTION_PATH_USERS).document(id);
+                                    User currentUser = new User(
+                                        id,
+                                        fullName,
+                                        picturePath,
+                                        email[0],
+                                        null,
+                                        null
+                                    );
+                                    userMutableLiveData.setValue(currentUser);
+
+                                    documentReference.set(currentUser).addOnSuccessListener(unused -> Log.i("Authentication", "onSuccessFirestore: "));
+                                } else {
+                                    Log.e("OAuthRepository", "getUserSignedInWithFacebook() FAILED ! No email available.");
+                                }
+                            }
+                        }
+                    });
                 }
+            } else {
+                Log.e("OAuthRepository", "Task Failed !");
             }
         });
+
         return userMutableLiveData;
 
     }
@@ -98,33 +129,65 @@ public class OAuthRepository {
                     if (user != null) {
                         String id = user.getUid();
                         String fullName = user.getDisplayName();
-                        String email = null;
+                        String[] email = new String[1];
                         for (UserInfo userInfo : user.getProviderData()) {
-                            if (userInfo.getEmail() != null)  {
-                                email = userInfo.getEmail();
+                            if (userInfo.getEmail() != null) {
+                                email[0] = userInfo.getEmail();
                                 break;
                             }
                         }
+
                         Uri pictureUri = user.getPhotoUrl();
                         String picturePath = pictureUri != null ? pictureUri.toString() : null;
-                        if (fullName != null && email != null) {
-                            DocumentReference documentReference = firebaseFirestore.collection(COLLECTION_PATH_USERS).document(id);
 
-                            User currentUser = new User(
-                                id,
-                                fullName,
-                                picturePath,
-                                email,
-                                null,
-                                null
-                            );
-                            userMutableLiveData.setValue(currentUser);
 
-                            documentReference.set(currentUser).addOnSuccessListener(unused -> Log.i("Authentication", "onSuccessFirestore: "));
-                        } else {
-                            Log.e("OAuthRepository", "getUserSignedInWithGoogle() FAILED ! No email available.");
-                        }
+                        String uuid = user.getUid();
+
+//                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        CollectionReference usersRef = firebaseFirestore.collection("users");
+
+                        Query query = usersRef.whereEqualTo("id", uuid);
+
+                        query.get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                QuerySnapshot querySnapshot = task1.getResult();
+                                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                    firebaseFirestore
+                                        .collection(COLLECTION_PATH_USERS)
+                                        .document(user.getUid())
+                                        .get()
+                                        .addOnCompleteListener(task2 -> {
+                                            if (task2.isSuccessful()) {
+                                                userMutableLiveData.setValue(task2.getResult().toObject(User.class));
+                                            } else {
+                                                Log.e("UserRepository", "get failed with ", task.getException());
+                                            }
+                                        });
+                                } else {
+
+                                    if (fullName != null && email[0] != null) {
+                                        DocumentReference documentReference = firebaseFirestore.collection(COLLECTION_PATH_USERS).document(id);
+
+                                        User currentUser = new User(
+                                            id,
+                                            fullName,
+                                            picturePath,
+                                            email[0],
+                                            null,
+                                            null
+                                        );
+                                        userMutableLiveData.setValue(currentUser);
+
+                                        documentReference.set(currentUser).addOnSuccessListener(unused -> Log.i("Authentication", "onSuccessFirestore: "));
+                                    } else {
+                                        Log.e("OAuthRepository", "getUserSignedInWithGoogle() FAILED ! No email available.");
+                                    }
+                                }
+                            }
+                        });
                     }
+                } else {
+                    Log.e("OAuthRepository", "Task Failed !");
                 }
             });
         } catch (ApiException e) {
